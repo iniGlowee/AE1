@@ -57,8 +57,9 @@ python server.py --port 8001
 # then open http://localhost:8001/editor/
 ```
 
-Click **New Project**, pick a type (point-and-click adventure or 3D game), and you're
-in the workspace. Read `docs/guide/01-getting-started.md` for the ten-minute tour.
+Open the **Starter** project (a minimal original 3D scene) and press **▶ Play**, or click
+**New Project**, pick a type (point-and-click adventure or 3D game), and you're in the
+workspace. Read `docs/guide/01-getting-started.md` for the ten-minute tour.
 
 ### Optional: export-quality tools
 
@@ -100,7 +101,7 @@ engine/      the engine — elements, Angel Script, 3D stack (three.js vendored,
 native/      the Windows player (C++) + vendored permissive libraries
 docs/        guide/ (make games) · engine/ (work on AE1) · ROADMAP.md
 examples/    reference Angel Scripts for engine features (bring your own media)
-projects/    your projects live here (empty on purpose)
+projects/    your projects live here — `starter/` is an original minimal 3D scene to begin from
 server.py    the local server · exporter.py  Build & Ship · *forge.py  asset generators
 DESIGN.md    the decision record · respawn.md  pick AE1 up cold
 ```

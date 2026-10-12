@@ -1,0 +1,27 @@
+<?dat
+; One string per action — and a string may name ALTERNATIVES, space-separated:
+; any held one fires. Key names are KeyboardEvent.code ("KeyW", "Space",
+; "ShiftLeft"); mouse buttons are Mouse0 (left) / Mouse2 (right); gamepad
+; buttons are PadA PadB PadX PadY PadLB PadRB PadLT PadRT PadSelect PadStart
+; PadLS PadRS PadUp PadDown PadLeft PadRight. Arrows alias WASD.
+(forward "KeyW ArrowUp")
+(back "KeyS ArrowDown")
+(left "KeyA ArrowLeft")
+(right "KeyD ArrowRight")
+(jump "Space PadA")
+(primary "Mouse0 PadRT")
+(secondary "Mouse2 PadLB")
+(interact "KeyE PadX")
+; Controller input on/off; left stick moves, right stick orbits the camera.
+(gamepad true)
+; Mouse look: degrees per pixel; padLookSpeed: degrees/second at full stick.
+(sensitivity 0.15)
+(padLookSpeed 180)
+(invertY false)
+?>
+<?def
+(extends Controller)
+(name "Controller")
+
+; Pure data — the character asks this element which codes to watch.
+ags?>

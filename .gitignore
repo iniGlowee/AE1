@@ -30,3 +30,6 @@ native/third_party/*.zip
 Thumbs.db
 .DS_Store
 *.blend1
+
+# The Starter project ships its media: ORIGINAL meshforge-generated glbs (~114 KB).
+!projects/starter/media/*.glb
