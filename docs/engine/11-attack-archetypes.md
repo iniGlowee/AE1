@@ -77,18 +77,18 @@ meshes: `orange_orb.glb`, `red_ring.glb`, `aoe_orb.glb`.
 
 | enemy | classified attacks |
 | --- | --- |
-| Stubby (em0000) | 2× melee 8 + **Trumpet aoe2 orb** (6 dmg, 6 m) |
-| Medium Biped (em0010) | 2× melee 4 + **Attack_3 stomp aoe1 ring** (8 dmg, 8 m, lands at windup 1.2 into the slam) |
-| **Small Flyer (em0030)** — NEW | **ranged** 5 dmg orb, 4 m/s, fired from ~7 m |
+| Stubby (<asset>) | 2× melee 8 + **Trumpet aoe2 orb** (6 dmg, 6 m) |
+| Medium Biped (<asset>) | 2× melee 4 + **Attack_3 stomp aoe1 ring** (8 dmg, 8 m, lands at windup 1.2 into the slam) |
+| **Small Flyer (<asset>)** — NEW | **ranged** 5 dmg orb, 4 m/s, fired from ~7 m |
 
 The flyer proved two things: `(hoverHeight 2.2)` floats the same
 wander/chase brain at altitude (the ground snap targets ground+hover; death
 drops it — the machine falls out of the sky), and a ranged enemy needs ZERO
 new brain code — `(attackRange 9)` makes the chase stop at ~7 m and fire
-from there. the reference game's flyers shoot from their hover pose, so `Attack_Shoot` IS
+from there. The reference game's flyers shoot from their hover pose, so `Attack_Shoot` IS
 the idle mot baked under an attack name (its motion pack ships no attack
 animation at all — check `AnimationTable.csv` before assuming ids exist:
-em0030's pack has 29 mots and no `05xx`).
+<asset>'s pack has 29 mots and no `05xx`).
 
 ## Traps found and paid for
 

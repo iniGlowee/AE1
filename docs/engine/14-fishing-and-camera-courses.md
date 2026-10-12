@@ -1,6 +1,6 @@
 # 14. Fishing & Camera Courses
 
-*(DESIGN.md §18.49 — the fishing1 project round. the reference game's fishing system,
+*(DESIGN.md §18.49 — the fishing1 project round. The reference game's fishing system,
 rough-cut: real extracted animations, a real extracted fish, and the new
 camera-cinematics elements that present the catch.)*
 
@@ -35,7 +35,7 @@ camera itself — the one-active rule holds by construction.
 
 ## The fishing system (fishing1, "Lakeside")
 
-**The animations are the player character's own** — the contiguous `e0cb–e0ce` block from
+**The animations are the player character's own** — the contiguous `e0cb–<asset>` block from
 pl000f (community-labeled): Stand-to-Fishing, the Release cycle, the 7.4 s
 Fishing cycle, Fishing-to-Stand — curated into a NEW pack `fishingPack`
 (set `Fishing`, action-only in `tagOf`: she must never cast uninvited).
@@ -67,13 +67,13 @@ fishing chair (`etf100`). One `export_static_glb.py` call each.
 shore — the colosseum map's proven placement pushed 420 m north — with a
 meshforged translucent water plane and a plank pier. A real lake TILE
 (city-ruins crater lake) is queued: LibCPK.dll is driveable from PowerShell
-(TOC verified against Steam's data013/014), recipe in tools/ENVIRONMENTS.md.
+(TOC verified against Steam's <pack>/014), recipe in tools/ENVIRONMENTS.md.
 
 Verified end-to-end headless: pack loads, every phase in order on loaded
 dice, the miss→recast loop, the koi at the focus point, the sweep claiming
 the camera, a second `play()` REFUSED mid-sweep, and a clean release.
 
-## TriggerBox, bloom, and the the reference action game glow secret (§18.50)
+## TriggerBox, bloom, and the reference action game glow secret (§18.50)
 
 **`TriggerBox`** (builtin, `engine/triggerbox.js`) generalizes the audio
 regions: a `(sizeX/Y/Z)` volume that dispatches **`onStart`** to its own
@@ -106,7 +106,7 @@ glows correctly with zero hand-tagging.
   `(extends ...)` script (the Skybox convention, third time).
 - The fishing clips have no labeled "catch success" mot — the presentation
   is Exit + fish + camera, which reads right; the unlabeled neighbors of
-  `e0cc` may hide a bite reaction for a later pass.
+  `<asset>` may hide a bite reaction for a later pass.
 - Interact targets need a VISIBLE element with render bounds — a mesh-less
   Hitbox is untargetable by the real E-press (`containsPoint` reads
   `boundsOf`). Headless tests must ALSO drive the real input path, never

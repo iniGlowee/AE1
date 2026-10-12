@@ -80,13 +80,13 @@ bake is one command:
 blender --background --python motion-matching/tools/bake_enemy_glb.py -- ^
   --blend "<extracted model .blend>" ^
   --mots  "<unpacked emXXXf.dat directory>" ^
-  --clips "Idle=em0000_0000,Walk=em0000_0010,...,Death=em0000_0190" ^
+  --clips "Idle=<asset>,Walk=<asset>,...,Death=<asset>" ^
   --out   "<out>.glb"
 py -3 motion-matching/tools/import_ae1_media.py --as stubby.glb <out>.glb
 ```
 
 The tool strips LOD/shadow meshes (`--drop`, default `-LOD\d|-SHADOW`),
-drives the the game's Blender add-on mot importer headless per clip, stashes each
+drives the game's Blender add-on mot importer headless per clip, stashes each
 action to NLA, exports one glb, then **strips every animation channel that
 targets a scene-root node**. That last step is load-bearing:
 
@@ -100,13 +100,13 @@ targets a scene-root node**. That last step is load-bearing:
 
 ### Where enemy animations live (the reference action game)
 
-Same convention as the player: `pl000f.dat` → `em000f.dat`. The `f`-suffixed
-dat is the motion pack (118 mots for em0000); the numbered dat is
-model+params. **The game ships its own labeling**: `em0000.dat/AnimationTable.csv`
-maps semantic states to motion ids (`a0000l` idle → `em0000_0000.mot`,
+Same convention as the player: `<asset>` → `<asset>`. The `f`-suffixed
+dat is the motion pack (118 mots for <asset>); the numbered dat is
+model+params. **The game ships its own labeling**: `<asset>.dat/AnimationTable.csv`
+maps semantic states to motion ids (`a0000l` idle → `<asset>.mot`,
 `0500`/`0510`/`0600-0602` attacks, `01xx` damage reactions, `0190` death,
-`03xx` stun) — no triage gallery needed. Variants (em0002-em0007, em000b…)
-re-skin the same rig and **reuse em000f.dat**, so palette-swap enemies cost
+`03xx` stun) — no triage gallery needed. Variants (<asset>-<asset>, em000b…)
+re-skin the same rig and **reuse <asset>**, so palette-swap enemies cost
 one mesh bake.
 
 ## The Combat Room
@@ -118,7 +118,7 @@ a Hitbox + `goToScene`, the standard door recipe), with
 `combat-door-back.ags.txt` leading home. Two species live there, one of
 each temperament:
 
-| | Stubby (em0000) | Medium Biped (em0010) |
+| | Stubby (<asset>) | Medium Biped (<asset>) |
 | --- | --- | --- |
 | script | `stubby.ags.txt` | `biped.ags.txt` |
 | temperament | `friendlyUntilAttacked true` — potters until hit | hostile on sight |
@@ -141,11 +141,11 @@ The biped proved this list is complete; nothing else was touched. In order:
    (500 blends, all of cpk006/016/100). Open the *game's own*
    `<id>.dat/AnimationTable.csv` in the CPK unpack for locomotion/damage/death
    ids, and `<id>EmInfo.csv` for attack motion ids (`M0_XXXX` rows). Ids are
-   per-species — em0000's dash is `0021`, em0010's is `0020`. Never guess;
+   per-species — <asset>'s dash is `0021`, <asset>'s is `0020`. Never guess;
    the table knows.
 2. **Check the blend's mesh names** (`inspect_blend.py`) only if the bake's
-   default `--drop` regex (`-LOD\d|-SHADOW`) might not fit; both em0000 and
-   em0010 fit it as-is.
+   default `--drop` regex (`-LOD\d|-SHADOW`) might not fit; both <asset> and
+   <asset> fit it as-is.
 3. **One bake command** — `bake_enemy_glb.py` with the `Name=motStem` map
    (Idle/Walk/Run/Attack_*/Hit/Hit_Big/Death; bake `Walk_B`/`Stun` too, they
    are nearly free). Then `import_ae1_media.py --as <name>.glb`.

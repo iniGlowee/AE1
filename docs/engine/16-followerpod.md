@@ -23,9 +23,9 @@ Design rules, in the engine's usual shape:
   offset on a spring. It never pushes back. `(host "the player character")` names the
   element; empty auto-finds the player.
 - **The pod is its own element** with its own model and clips — the DLC
-  pod skins share the wp3000 pod SKELETON, so the companion pod plays real
+  pod skins share the <asset> pod SKELETON, so the companion pod plays real
   pod motions with no retargeting (`Idle` = the 0000 hover, `Fire` = the
-  0010 fire cycle, `Special` = the e050 flourish).
+  0010 fire cycle, `Special` = the <asset> flourish).
 - **Flight-unit rule** (Austin's spec): the pod vanishes while its host
   pilots an Aircraft and reappears on dismount. The engine reads
   `host._pilotCraft` — the truth the aircraft already maintains — so no
@@ -42,7 +42,7 @@ Design rules, in the engine's usual shape:
   splash. Kills credit the host — combat-feel hooks (slow-mo, rumble)
   fire there. `podSpecial` remains as an OPTIONAL dedicated extra button
   (empty by default).
-- **The idle clip owns the hover.** wp3000_0000 breathes on its own; the
+- **The idle clip owns the hover.** <asset> breathes on its own; the
   procedural `bobAmp/bobFreq` is only a slow drift on top (default 0.02 /
   0.35 Hz). Stacking a fast sine over the authored hover read as frantic
   bobbing — set `bobAmp 0` when the clip carries the motion.
@@ -73,12 +73,12 @@ damage)`.
 
 ## The asset pipeline (what was new)
 
-- The the companion pod pod is **wp3011 in Steam `data101.cpk`** (the DLC
+- The the companion pod is **<asset> in Steam `data101.cpk`** (the DLC
   pod skins live one per DLC archive: 3012 cardboard in 105, 3014 in 107,
-  3017 in 108; the Emil head is wp3020 in data016). Pulled by LibCPK into
+  3017 in 108; the a character head is <asset> in <pack>). Pulled by LibCPK into
   `CPK/dlc_wp/unpacked/wp/` — `bulk_import_models.py` gained the
   `cpkdlc` root for exactly this layout.
-- Pod ANIMATIONS live in `data006 wp/wp300f.dat` — 45 `wp3000_*.mot`
+- Pod ANIMATIONS live in `<pack>/<asset>` — 45 `<asset>`
   files, unpacked with the plugin's `dat_unpacker` (drive it inside
   Blender; note its extract-path quirk joins with a leading backslash and
   lands at the DRIVE ROOT — move the files after).

@@ -1,5 +1,7 @@
 # 2. Code Map
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 ~15,000 lines of JavaScript, plus the Python server and exporter. Every file, what it owns, and
 what you must not break.
 
@@ -299,15 +301,15 @@ friendly names to real glTF clip names; `(animLibs ("file.glb"))` names glbs con
 only (§18.10). `_aliasList()`/`_libList()` normalise the single-item collapse (`DESIGN.md §18.7`).
 State machines are the author's script — nothing here hard-codes states.
 
-### `the motion-matching core (not in the public build)` · `the motion-matching driver (not in the public build)` · `ladder.js` — the motion-matched character
+### `the motion-matching core †` · `the motion-matching driver †` · `ladder.js` — the motion-matched character
 
-`the motion-matching core (not in the public build)` is the matcher: a **hand-diverged fork** of the motion-matching lab's core
+`the motion-matching core †` is the matcher: a **hand-diverged fork** of the motion-matching lab's core
 (never re-carve, never lab-publish — see [Motion Matching](06-motion-matching.md)). It owns
 the search tables and cost model, the `WEAPONS` family registry
 ([Weapon-Type Classes](07-weapon-archetypes.md)), root motion + the arc-length loop repair,
 inertialization, foot IK + pelvis grounding, the air system (takeoff/fall/land phases,
 touchdown hook, double jump, freefall, glide), ladder MODE, and the live `tune` block.
-`the motion-matching driver (not in the public build)` is the AE1-owned glue and is **never carved**: input → `mm.update`,
+`the motion-matching driver †` is the AE1-owned glue and is **never carved**: input → `mm.update`,
 the ladder climb PROTOCOL, item equip/`setCombatWeapon`, `playCombatAttack` + the strike
 sweep, traversal sheathe dispatch. `ladder.js` is `AE1Ladder` (BUILTIN `Ladder`): publishes
 climb geometry from `rung_NN` sockets; the character does the climbing

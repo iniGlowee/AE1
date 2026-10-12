@@ -1,5 +1,7 @@
 # 18 — Dialogue, possession, and NPCs (§18.79–§18.83)
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 The bunker1 era (Aug 30–31) gave the engine its character layer: talkable
 NPCs, a playable cast you can swap between, and native animation packs for
 characters that are not the player character. Everything here ships in `projects/devroom`.
@@ -14,7 +16,7 @@ shows on every element wearing the same media.
 
 ## Dialogue v1 (§18.81) — `dialogue.ags.txt`
 
-- **`world.uiLock`** (engine, the motion-matching driver (not in the public build)): while truthy the
+- **`world.uiLock`** (engine, the motion-matching driver †): while truthy the
   player updates on neutral input — idles in place, no locomotion, interact,
   or combat. The same pattern the piloting and death branches use.
 - **The DialogueUI element renders a DOM overlay.** 3D projects have no 2D
@@ -35,7 +37,7 @@ shows on every element wearing the same media.
 
 ## Possession and autopilot (§18.82)
 
-`(autopilot true)` on a the motion-matching character (not in the public build) turns it into a simple wander
+`(autopilot true)` on a motion-matching character † turns it into a simple wander
 NPC: synthetic `{wx,wz,amount}` intent fed into the same `mm.update`, with
 both-ways `blocked()` vetting so it never paths somewhere it can't return
 from. The rules that make swapping work:
@@ -57,7 +59,7 @@ from. The rules that make swapping work:
 Retargeting the player character's motion onto the companion character was rejected (her stances on his body). The
 doctrine is **rename, never retarget**:
 
-1. His own pl0200 mots (483 of them) are triaged in the motion-matching curator
+1. His own <asset> mots (483 of them) are triaged in the motion-matching curator
    (`serve.py` port 8010, `?src=9s`).
 2. The **Native bake** button → `/convert?src=9s` → `bake_9s_native.py`: no
    retarget; the bake synthesizes a canonical root (smoothed hip ground path
@@ -76,7 +78,7 @@ reference or all left/right clips mirror in game ("the sticks are switched").
 
 Pack hygiene learned on his idle pool: transitions get their own set (labeled
 transitions in the Idle set make the matcher twitch at rest), and the pool
-needs one LONG idle cycle. the reference action game pl characters have **no standing-turn mots**
+needs one LONG idle cycle. The reference action game pl characters have **no standing-turn mots**
 (the game steers in engine) — clips that score like turns are knockdowns;
 check the thumbnails, then use pivotAssist instead.
 

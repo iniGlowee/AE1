@@ -1,5 +1,7 @@
 # Movement Systems: Ladders, Air, Dashes — and the IK/Camera Caveats
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 The movement subsystems layered on top of the matcher, and the rules that
 keep them from fighting each other. Companion to
 [Motion Matching](06-motion-matching.md) (the data) and
@@ -22,7 +24,7 @@ else. Existing examples: `wall_ladder` (22 rungs, 0.28 m pitch, 6 m deck)
 and `sky_ladder` (286 rungs, the 80 m freefall test tower).
 
 **The protocol** (`_mmLadderTick` / `_mmLadderEnter` in
-`engine/the motion-matching driver (not in the public build)`) — the reference action game doctrine throughout:
+`engine/the motion-matching driver †`) — the reference action game doctrine throughout:
 
 - **Proximity mount, no button.** Walk into the ladder and she grabs.
   **Air grab** works at collision height mid-fall; the grab yaw eases at
@@ -40,7 +42,7 @@ and `sky_ladder` (286 rungs, the 80 m freefall test tower).
   lands her exactly on the deck (`mm.clipRise(name)` reads the baked root).
 - **Jump releases**, with a 0.5 s re-grab cooldown so she doesn't re-stick.
 
-**The mode** (`api.setLadderMode(on)` in `engine/the motion-matching core (not in the public build)`): on —
+**The mode** (`api.setLadderMode(on)` in `engine/the motion-matching core †`): on —
 gravity, ground, walls, facing, and search all suspend; `playAction` clips
 apply full 3D root motion (climbs rise); **entering the mode zeroes the air
 state** (`airT`, glide, freefall, double-jump) because an air grab is a
@@ -154,7 +156,7 @@ Inside the lock, the load-bearing design points:
 - **Traversal sheathes the weapon.** The character watches the traversal/
   ladder edge (`state === 'traversal' || mm.inLadder`) and dispatches
   `onSheathe`/`onUnsheathe` — bare-hand GASP clips own vaults and climbs,
-  and the meshes vanish the reference action game-style; the weapon *tag* stays claimed so
+  and the meshes vanish reference-game-style; the weapon *tag* stays claimed so
   combat locomotion resumes on landing.
 - The camera boom/collision tuning was built for GASP speeds and holds up
   at the reference game's 11 m/s sprint; the one camera-adjacent regression to check on

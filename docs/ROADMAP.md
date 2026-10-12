@@ -26,7 +26,7 @@ extraction pipeline + the foxcam testbed.**
 - **The .lay layout layer (`factory1`)**: the reference game's prop-placement system
   imported for the first time — the abandoned Factory (wd5 g52001) with
   all 182 authored placements from its Layout.lay (12 unique ba/bg/bh
-  models from data005) stamped into the map blend and baked as one glb.
+  models from <pack>) stamped into the map blend and baked as one glb.
   Pipeline: pure-python lay parser → prop extraction/import (root
   `cpkfp`) → placement stamp in Blender (the plugin's +90°X convention:
   lay is Y-up, museum blends are Z-up raw) → the standard static bake.
@@ -35,16 +35,16 @@ extraction pipeline + the foxcam testbed.**
 
 - **The Tower (`tower1`)**: wd5 g50001 identified and shipped — the Route-C
   spire: Library (spawn), Church, Under-Church, Red Girls' room, the faction
-  arena, elevator hall, all over the 7 km Earth cloud dome. the player character + Grimoire
-  pod + the the flight unit on the Library floor, 75 fps. The chunk's mesh groups
+  arena, elevator hall, all over the 7 km Earth cloud dome. The player character + Grimoire
+  pod + the flight unit on the Library floor, 75 fps. The chunk's mesh groups
   are NAMED (unlike city tiles) — per-room work is addressable. Destroyed
   "_D" duplicate set + BEFORE/AFTER variants dropped at bake. The wd5
   survey also identified the Copied City (g50010) and the Factory
   (g52001), both import-ready. THE BUNKER is not in wd5 — best lead is
-  data012 st5/r5xx (different file family, needs its own import path).
+  <pack> st5/r5xx (different file family, needs its own import path).
 
 - **The Follower Pod (§18.55)**: `FollowerPod` base element + `PodBolt` —
-  the companion pod (wp3011, DLC cpk) on the real wp3000 pod skeleton with
+  the companion pod (<asset>, DLC cpk) on the real <asset> pod skeleton with
   real pod motions; shoulder follow, own fire/special buttons (KeyQ/RB,
   KeyC/LT), lock-target aiming, friendly-wave special, vanishes while
   piloting the flight unit. Demo project `pod1`. Follow-ups queued below.
@@ -73,13 +73,13 @@ extraction pipeline + the foxcam testbed.**
 ## Landed 2026-08-30 (this cycle)
 
 - **The Bunker (`bunker1`, §18.65)**: the orbital station found by
-  archive string-scan (ba1200, data015 — r550 is audio-only, wd5 was a
+  archive string-scan (<asset>, <pack> — r550 is audio-only, wd5 was a
   dead end). Hangars, control room, the androids' quarters, corridor
   rings, own 16km starfield sphere. Skinning-strip bake pass (ba props
   are armature-bound → SkinnedMesh → no ground rays), element-side
   orientation (ba axes ≠ wd tiles by 90°), the bound-vs-unbound model
   path doctrine written down. Cloned from flight1 → flight unit +
-  boarding ready; **ba1210 (the companion character's armed flight unit) identified as the
+  boarding ready; **<asset> (the companion character's armed flight unit) identified as the
   enemy model for space battles — pulled, not yet baked.** Spawn on the
   corridor ring, collision verified by 111-point probe grid. Export
   shipped (663 MB). Eyes-on pass pending (browser pane closed mid-verify).
@@ -87,8 +87,8 @@ extraction pipeline + the foxcam testbed.**
 ## Now / next (high leverage, unblocked)
 
 - **Pod polish**: muzzle-flash timing pass, bolt tracers, Fire_Start/End
-  clip stitching, per-pod-program specials (laser/hammer — the the reference game
-  program roster as dats), a second pod skin (wp3000/3001 already
+  clip stitching, per-pod-program specials (laser/hammer — the reference game
+  program roster as dats), a second pod skin (<asset>/3001 already
   extracted), pod voice barks via Ambience.
 
 - **Shader layer, phase 2**: bloom (¼-res Kawase), soft-shoulder tone curve
@@ -100,9 +100,9 @@ extraction pipeline + the foxcam testbed.**
 - **Camera trauma layer**: impact shake (trauma², Perlin, 8°/8°/5° max) fed
   by the §18.41 combat-feel seams; CQC-style finisher dolly on kills.
 - **Main-game map tiles**: pull wd1 city-ruins tiles (g10716 first) via the
-  documented CriPakGUI recipe (tools/ENVIRONMENTS.md); then the data015
-  prop sweep (ba0700 tree-skyscraper, bg cars/trees) for set dressing.
-- **Enemy roster growth**: em0050 small biped family (em005f pack), the
+  documented CriPakGUI recipe (tools/ENVIRONMENTS.md); then the <pack>
+  prop sweep (<asset> tree-skyscraper, bg cars/trees) for set dressing.
+- **Enemy roster growth**: <asset> small biped family (em005f pack), the
   spin-attack chain (0600-0602 as a multi-phase archetype), directional hit
   reactions (attacker-bearing pick from the 011x grid).
 
@@ -119,7 +119,7 @@ extraction pipeline + the foxcam testbed.**
   static meshes now carry a boundsTree, combat with three aggroed enemies
   went 23 → 14 ms and the periodic GC spikes vanished. Still open for
   phase 4: spatial-cell material join, InstancedMesh for repeated props,
-  coreeff.dtt sprite dig, skinned mesh count on the unit.
+  <asset> sprite dig, skinned mesh count on the unit.
 
 ## Queued (valuable, not urgent)
 

@@ -1,5 +1,7 @@
 # 10. Combat Feel — time effects, rumble, hurt reactions
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 *(DESIGN.md §18.41. The research behind the numbers: hit-stop frame data from
 the publisher beat-'em-ups and Smash, UE global-time-dilation conventions, the
 Vlambeer "art of screenshake" school. This page is the impact layer ON TOP of
@@ -46,7 +48,7 @@ the camera, which at these durations nobody can see.
 | light hit landed (damage < 20) | `thirdperson.js::_attackSweep` | hitStop 0.08 s @ 0.05 | 0.45 / 0.3 / 90 |
 | heavy hit landed (≥ 20) | same | hitStop 0.13 s @ 0.05 | 0.7 / 0.3 / 140 |
 | **fatal blow** | same (+ `projectile.js` for a killing round) | **slowMo 0.7 s @ 0.12, ease 0.45** | 1.0 / 0.6 / 320 |
-| player takes a hit | `the motion-matching driver (not in the public build)::takeDamage` | none (never punish the player's eyes) | light 0.55/0.5/140 · big 0.9/0.5/260 |
+| player takes a hit | `the motion-matching driver †::takeDamage` | none (never punish the player's eyes) | light 0.55/0.5/140 · big 0.9/0.5/260 |
 
 These sit inside the research ranges (light stops 50–83 ms, heavy 130–230 ms,
 kill dilation 0.1–0.25 held ≤ 1 s). Projectile kills get the slow-mo but
@@ -64,13 +66,13 @@ it landed on. Keyboard players simply never feel it; nothing else branches.
 
 ## the player character's hurt reactions (the `Reaction` set)
 
-The pack gained an action-only set: `Hit_S` (pl0000_1000, trimmed 0:55) and
-`Hit_B` (pl0000_1005) — the player character's own damage mots from the `10xx` range, curated
+The pack gained an action-only set: `Hit_S` (<asset>, trimmed 0:55) and
+`Hit_B` (<asset>) — the player character's own damage mots from the `10xx` range, curated
 through the normal lab `/convert` flow. `tagOf` routes `set === 'Reaction'`
 to `'action'` (the Ladder precedent): named-only, never searchable —
 searchable flinches match ordinary standing frames and she winces uninvited.
 
-`AE1the motion-matching character (not in the public build).takeDamage` plays them under the reference game's rules:
+`AE1the motion-matching character †.takeDamage` plays them under the reference game's rules:
 
 - **A light hit never steals an in-flight strike** — the combo survives; you
   still get the rumble.
@@ -121,9 +123,9 @@ Zero health ends the run. The fatal blow triggers the game's deepest
 emphasis (slow-mo 1 s @ 0.18, full-strength 500 ms rumble) and one of the player character's
 own death animations from the reference action game, curated into the pack's `Reaction` set:
 
-- **`Death`** — `pl0000_1065`, the Self-Destruct collapse (the canonical
+- **`Death`** — `<asset>`, the Self-Destruct collapse (the canonical
   one), for ordinary killing blows;
-- **`Death_B`** — `pl0000_1092`, blown flat on her back, when the fatal hit
+- **`Death_B`** — `<asset>`, blown flat on her back, when the fatal hit
   was `(bigHitAt)`+.
 
 Both are weaponless collapses, so ONE pair serves every weapon

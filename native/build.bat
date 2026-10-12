@@ -1,16 +1,38 @@
 @echo off
-REM build.bat — compile the AE1 native tools with MSVC (VS2019 Build Tools).
+REM build.bat ? compile the AE1 native tools with MSVC (Visual Studio 2019 or 2022, Build Tools or a full edition).
 REM No CMake dependency: we drive cl.exe directly through vcvars64.bat.
 REM Output: native\build\ae1pack.exe
 setlocal
 
-set "VCVARS=C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-if not exist "%VCVARS%" (
-  echo ERROR: vcvars64.bat not found at "%VCVARS%"
-  echo Install the "Desktop development with C++" workload for VS Build Tools 2019.
+REM ---- locate MSVC: any Visual Studio 2019/2022 (Build Tools or a full edition) ----
+REM 1) vswhere (ships with every VS installer) -> newest install with the C++ tools
+set "VCVARS="
+set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+if exist "%VSWHERE%" (
+  for /f "usebackq delims=" %%I in (`"%VSWHERE%" -latest -products * -property installationPath 2^>nul`) do (
+    if exist "%%I\VC\Auxiliary\Build\vcvars64.bat" set "VCVARS=%%I\VC\Auxiliary\Build\vcvars64.bat"
+  )
+)
+REM 2) well-known paths, newest first
+if not defined VCVARS for %%P in (
+  "%ProgramFiles%\Microsoft Visual Studio\2022\BuildTools"
+  "%ProgramFiles%\Microsoft Visual Studio\2022\Community"
+  "%ProgramFiles%\Microsoft Visual Studio\2022\Professional"
+  "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise"
+  "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\BuildTools"
+  "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community"
+  "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Professional"
+  "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise"
+) do if not defined VCVARS if exist "%%~P\VC\Auxiliary\Build\vcvars64.bat" set "VCVARS=%%~P\VC\Auxiliary\Build\vcvars64.bat"
+REM 3) or point at it yourself:  set AE1_VCVARS=C:\path\to\vcvars64.bat
+if defined AE1_VCVARS if exist "%AE1_VCVARS%" set "VCVARS=%AE1_VCVARS%"
+if not defined VCVARS (
+  echo ERROR: no Visual Studio 2019/2022 C++ toolchain found.
+  echo        Install "Build Tools for Visual Studio" with the "Desktop development with C++" workload,
+  echo        or set AE1_VCVARS to your vcvars64.bat.
   exit /b 1
 )
-
+echo Using %VCVARS%
 call "%VCVARS%" >nul
 if errorlevel 1 ( echo ERROR: vcvars failed & exit /b 1 )
 

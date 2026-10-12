@@ -1,5 +1,7 @@
 # Weapon-Type Classes (Database-Driven Combat)
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 How the Combat Bracers (type-3 fists) and the Dragoon Lance (spear) work,
 and the exact order of operations for bringing in the next weapon class
 (e.g. `smallSword`). Prerequisite reading:
@@ -24,7 +26,7 @@ weapon is equipped:
 - **Two set names** in the pack: the ground set (`Combat`, `Spear`) and the
   air set (`CombatAir`, `SpearAir`).
 
-All three live in one registry in `engine/the motion-matching core (not in the public build)`:
+All three live in one registry in `engine/the motion-matching core †`:
 
 ```js
 const WEAPONS = {
@@ -38,7 +40,7 @@ const WEAPONS = {
 **`unarmed` is the DEFAULT family.** The character claims it whenever the
 equipped item declares no `weaponTag` of its own — empty hands, the key,
 the portal gun, the bazooka — via the fallback in
-`the motion-matching driver (not in the public build).setCombatWeapon` (`tag || 'unarmed'`, plus the
+`the motion-matching driver †.setCombatWeapon` (`tag || 'unarmed'`, plus the
 `Unarmed_Dash_*` evades as default dashes). It is the reference game's out-of-combat
 moveset (the `0001`–`006c` mots: plain walk/run/sprint, the dash grid,
 the jump family, four double-jump variants) and it uses the same ~25-clip
@@ -100,7 +102,7 @@ by engine machinery or `playAction`).
 | `_Jump_Loop_Fall` | `c432` 2/3 Cycle | — | searched (air) | bakes to 2 frames — the engine force-loops and pose-holds it |
 | `_Jump_Land_Stand` | `c434` 3/3 | — | named-only* | at-contact absorb; *lives in the air table but landings are never alignment-selected for weapon families — the **touchdown hook** plays them at contact by `reqSpeed` (>4 roll, >0.8 run, else stand) |
 | `_Jump_Land_Run` | `c436` Landing Run | — | named-only* | |
-| `_Jump_Land_Roll` | `000c` roll-to-sprint (shared mot) | — | named-only* | full commit — a the reference action game roll is a committed move |
+| `_Jump_Land_Roll` | `000c` roll-to-sprint (shared mot) | — | named-only* | full commit — a reference action game roll is a committed move |
 | `_Jump_Double` | `c43b` Double Jump | — | named-only | once per flight; restarts the air clock (re-arms the glide window) |
 | `_Freefall` | `00a4` Sky Dive (shared) | — | named-only | installs at airT > 2.2 s; exhausts into `_Jump_Loop_Fall` |
 | `_Freefall_Slam` | `00a5` Landing (shared) | **0:120** | named-only | the crater landing; 0.9 s commit |
@@ -133,7 +135,7 @@ structural difference between the fists' script and the lance's.
 **Grip tuning**: `mountX/Y/Z` (position) and `mountOffsetX/Y/Z` (degrees)
 are read **live** by the renderer — tune in Properties during play. Facts
 learned the hard way: the hand bone's local **+Y is the forearm line**
-(elbow→hand), so a the reference action game spear-style along-arm carry is a near-identity
+(elbow→hand), so a reference action game spear-style along-arm carry is a near-identity
 rotation; grip conventions come from the source game, not from geometry
 metrics — when in doubt, render a **titled contact sheet** of candidate
 orientations and let the director point at one.
@@ -178,7 +180,7 @@ action-clip attack path.
    as `Sword_*` in the same convert payload.
 3. **Convert + bake** (one `/convert` call, ~31 clips), then
    `refresh_ae1_pack.py locomotionPack` (editor on Projects page, reload).
-4. **Registry line** in `engine/the motion-matching core (not in the public build)`:
+4. **Registry line** in `engine/the motion-matching core †`:
    `sword: { prefix: 'Sword', set: 'Sword', airSet: 'SwordAir' }` — and add
    the prefix to the `WP` alternation next to it, a `sword: []` bucket in
    `tables`, and a `tagCounts` line. Seed `GAIT_RATE` with the family's
@@ -205,7 +207,7 @@ Steps 1–3 are an afternoon; 4–5 are minutes; 6–7 are the real work.
   for a speed the table couldn't serve — full stick walked forever.
 - **Speed ramps belong in the output domain.** The whole matcher is
   calibrated to *snapped* speed requests; a swept request self-traps (walk
-  pins the measurement, continuity wins). the reference game's gradual build-up = the
+  pins the measurement, continuity wins). The reference game's gradual build-up = the
   authored `_Walk_to_Run` clip + the run spin-up (`runUpT`, 70%→100% over
   0.7 s) multiplying playback rate.
 - **Every family-conditional path needs the family bias — including

@@ -1,5 +1,7 @@
 # respawn.md
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 **You are picking up AE1 cold.** This file exists so a session that has never seen this
 project can be useful within a few minutes. Read it top to bottom before touching anything.
 
@@ -32,13 +34,13 @@ character inside AE1. Verified in editor play: she walks the 3d-sandbox-mm
 world in motion-matched GASP mocap at 2 m/s, camera follows, ground raycast
 feeds the matcher, stops clean.
 
-- **`engine/the motion-matching core (not in the public build)`** — the matcher core (4.2k lines), CARVED from
-  motion-matching's play.js by `scratchpad <pack>.py`-style marker cuts: lab
+- **`engine/the motion-matching core †`** — the matcher core (4.2k lines), CARVED from
+  motion-matching's play.js by `scratchpad the surgery script`-style marker cuts: lab
   shell (renderer/HUD/fixtures/54-invariant suite) removed, async factory
-  `the motion-matching factory (not in the public build)({packs, rig, characterRoot, groundBase})` added. THE LAB
+  `the motion-matching factory †({packs, rig, characterRoot, groundBase})` added. THE LAB
   REMAINS THE SOURCE OF TRUTH — tune there, re-carve here; never hand-diverge
   the core.
-- **`engine/the motion-matching driver (not in the public build)`** — `(extends the motion-matching character (not in the public build))`:
+- **`engine/the motion-matching driver †`** — `(extends the motion-matching character †)`:
   subclasses AE1ThirdPersonCharacter (keeps every instanceof: camera, audio
   volumes, passive dialogue) but replaces the tick wholesale — no clip state
   machine, no animLibs; the matcher poses bones directly. Lazy init on first
@@ -46,9 +48,9 @@ feeds the matcher, stops clean.
   driver every frame (that IS the render transform + what the camera reads).
 - **Hooks added to BOTH hosts** (game3d.js + viewport3d.js, Principle 2):
   `env3d.objectFor(el)` → the bound THREE object.
-- **BUILTINS**: `the motion-matching character (not in the public build)` registered in ags/runtime.js.
+- **BUILTINS**: `the motion-matching character †` registered in ags/runtime.js.
 - **Project `3d-sandbox-mm`** (+ .ae1proj): clone of 3d-sandbox; player script
-  extends the motion-matching character (not in the public build), dat carries `(mmPacks "<pack> <pack>")`
+  extends the motion-matching character †, dat carries `(mmPacks "<pack> <pack>")`
   + literal media names so the exporter's reference scan keeps them; player
   element wears `2b.glb` (node `UE5_Manny_DEFORM`). Media imported content-
   addressed: 2b.glb 177 MB (merged:true) + six db files (~181 MB).
@@ -88,7 +90,7 @@ Measured after: y flat to the sample across a full walk.
 
 **THE WIELD FRAMEWORK RUNS ON THE MATCHER NOW (2026-08-02).** Pickup (E),
 drop (Shift+E), inventory wheel, hand-socket mounting, aim assist and
-ON-CALL ACTION CLIPS all work on the motion-matching character (not in the public build) — verified in play
+ON-CALL ACTION CLIPS all work on the motion-matching character † — verified in play
 (lance picked/mounted/swung; bazooka equipped via wheel, fired, missile
 spawned mid-clip, matcher resumed). How: pickup/equip/inventory are
 INHERITED from the old kit untouched; `_mmTick` lifts its aim block; an
@@ -107,7 +109,7 @@ into every frame. `_mm.setYaw` makes the trigger-pull aim snap HOLD after
 the clip (element rotationY alone snapped back on the first resumed frame).
 
 **THE LAB SYNC LOOP** is documented in `motion-matching/AE1-SYNC.md` (read it
-before touching the motion-matching core (not in the public build) or rebaking): <pack>.py (now in
+before touching the motion-matching core † or rebaking): the surgery script (now in
 motion-matching/tools/) re-carves the core from play.js — its NEW_HEAD/
 INPUT_STUB/TAIL strings are the AE1-owned blocks, edit them THERE;
 tools/publish_ae1.py (or the lab's "Publish to AE1" button, serve.py's
@@ -117,7 +119,7 @@ a tool UI (Databases/Tuning/Import & Rebake panels + green viewport debug
 overlay); `motion-matching/packs.json` decides WHICH dbs publish and under what
 prefix, and new FBX packs arrive via `motion-matching/import/<name>/` (see
 AE1-SYNC.md §2b). AE1 SCRIPTS SWITCH DATABASES AT RUNTIME:
-`this.setPacks("<pack>")` on a the motion-matching character (not in the public build) rebuilds the driver
+`this.setPacks("<pack>")` on a motion-matching character † rebuilds the driver
 on the named published prefixes (verified live mid-play) — per-level packs,
 cutscene packs, state-dependent movement sets are one call each.
 
@@ -141,7 +143,7 @@ index.html is 647 MB (2b.glb + both databases + course); first paint takes
 **FOOTSTEPS RUN ON THE MATCHER (2026-08-02), non-destructively:** the old
 kit's `_footTick` machinery (surface map from the ground element's
 `(groundType …)`, loop lifecycle, touch-only-on-change) is inherited
-UNCHANGED; `_mmFootTick` in the motion-matching driver (not in the public build) derives the three
+UNCHANGED; `_mmFootTick` in the motion-matching driver † derives the three
 fields its old physics maintained (`_grounded`, `_state`, `_groundEl`) from
 the DRIVER's public api — grounded && speed > 0.5 && not air/traversal/
 action ⇒ 'move'. The matcher core untouched. Verified: floor loop on the

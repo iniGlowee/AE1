@@ -1,5 +1,7 @@
 # AE1 native runtime
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 The Windows build target from Build & Ship. The editor, Curator, and motion-matching
 lab stay in the browser forever (docs/engine/20); this is the C++ *player* that
 consumes a frozen AE1 Game Package (AGP, docs/engine/21) and will grow into the
@@ -140,7 +142,7 @@ build\ae1game.exe ..\exports\devroom-agp ..\engine
 - **Step 7 (done):** materials — base-color textures. KTX2 (`KHR_texture_basisu`)
   images are transcoded to RGBA8 via the vendored Basis Universal transcoder
   (`tex.hpp/.cpp`), UVs (+ `KHR_texture_transform`) are read into the vertex, and
-  a textured D3D11 shader samples them. the player character and the cast render with their real
+  a textured D3D11 shader samples them. The player character and the cast render with their real
   materials. (PNG-encoded images — the §18.96 hair cutouts — are skipped for now.)
 - **Step 8 (done) — the tick+draw join** (`ae1game`): ONE native loop that hosts
   the real engine scheduler in QuickJS (as `ae1run`) AND renders the scene (as
@@ -160,7 +162,7 @@ build\ae1game.exe ..\exports\devroom-agp ..\engine
   builds a native `world`: `input3d` backed by the platform keyboard (KeyboardEvent.code
   / Mouse<N> strings mapped to live key state), `env3d` as the query surface with
   sane defaults, and a deep no-op Proxy for fields not yet implemented so nothing
-  crashes. Only the 4 three/DOM modules (light, the motion-matching driver (not in the public build), debugmenu,
+  crashes. Only the 4 three/DOM modules (light, the motion-matching driver †, debugmenu,
   video) stay stubbed; every other element type (model3d, thirdperson, npc,
   hitbox, projectile, …) loads FOR REAL and drives the render through the real
   interface. Verified: 18/18 onTick handlers run, 0 threw.

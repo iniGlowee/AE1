@@ -115,13 +115,13 @@ engine dat defaults, which the exporter's reference sweep cannot see —
 builds silently lose them while the editor looks fine. Name every
 spawned-at-runtime file in a project script (dats are swept).
 
-## Particles (§18.52, the the reference action game sprite pipeline)
+## Particles (§18.52, the reference action game sprite pipeline)
 
 The fx system accepts a MEDIA image as the particle sprite: Particles
 dats `fxTexture` (media name) + `fxColor` (tint) ride the same emitters
-as the canvas presets. the reference game's own effect sprites extract cleanly:
-`data000.cpk → effect/texture/*.wtp`, slice by `DDS ` magic, PIL → PNG
-(the big combat sheets are in `core/coreeff.dtt`, still undug). The
+as the canvas presets. The reference game's own effect sprites extract cleanly:
+`<pack>.cpk → effect/texture/*.wtp`, slice by `DDS ` magic, PIL → PNG
+(the big combat sheets are in `core/<asset>`, still undug). The
 aircraft bursts named Particles elements at its seams — dats
 `thrusterFx` (loop, visible only while piloted), `seamFx` (every
 hide/reveal and fold), `strikeFx` (melee), `blastFx` (AOE),
@@ -156,6 +156,6 @@ Sixteen unit clips: Idle/Board/Unboard/Cockpit, Travel_Move (a01b),
 Travel_Boost (a01e), QB_L/R (a030/1), Attack_Melee (a02a), Attack_Shoot
 (a025), ToFlight (a508), ToTravel (a530), Cruise (a500), Bank_L/R
 (a532/3), Cruise_Attack (a501). Pilot pack `<pack>`: Board / Exit /
-Cockpit / Prone / Transform / TransformBack. The wider taxonomy (97 pl0010
+Cockpit / Prone / Transform / TransformBack. The wider taxonomy (97 <asset>
 mots, thumbnailed and classified — `aafx` is 16 riding attitudes, every
-one with a the player character pair) is §18.52's enrichment shelf.
+one with a player character pair) is §18.52's enrichment shelf.

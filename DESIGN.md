@@ -1,5 +1,7 @@
 # AE1 — Angel's Egg 1
 
+> † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
+
 A local, browser-based game creation engine. Point-and-click adventure games first;
 architected so that other project types slot in without rework.
 
@@ -1461,7 +1463,7 @@ problem (the glb was clean):
   cutoff is converted to an alpha CUTOUT (`transparent=false`, `alphaTest=0.5`, `depthWrite=true`):
   it writes depth (so it occludes) while still discarding fully-transparent texels (hair edges,
   eyelashes). True glass would want real blending — rare on a character, and the fix at source is
-  Blender's material Blend Mode. Verified on the the reference action game-style character: 7 materials converted, the
+  Blender's material Blend Mode. Verified on reference-game-style character: 7 materials converted, the
   see-through gone.
 
 The framing radius is also **capped** (~1.6 units): a 21-unit ground plane would otherwise push
@@ -2068,7 +2070,7 @@ the polite front door with its configured fade. Re-requesting the same track is 
 (AE1Audio's contract), so scene reloads never stutter it.
 
 Demo: element "Ambience" (`ambience.ags.txt`, def name "SceneMusic"). Verified live: loops at
-the music setting (0.6); a the companion character passive line played SIMULTANEOUSLY over it (caught live —
+the music setting (0.6); a companion character passive line played SIMULTANEOUSLY over it (caught live —
 both channels at once); `the player character.stopMusic()` (another element, the scripted-event case) killed
 it; `Ambience.setMusic(…)` brought it back looping. The 3D export inlines the mp3 like all
 audio (§18.18).
@@ -2298,7 +2300,7 @@ an .mp3 wired into his dialogue, no FL Studio session. Two backends, best-availa
   the media collection. Wiring stays dat: `(passiveLines …)`, `(deathSounds …)`, or
   `this.playSound("file.mp3")` from any script.
 - The proof: **"Hello world, from the forge!"** in the `ana` voice →
-  `9s_audio_005_idle_passive.mp3` (18.9 KB, 3.14 s) → uploaded → appended to the companion character's
+  `<asset>` (18.9 KB, 3.14 s) → uploaded → appended to the companion character's
   `(passiveLines …)` → verified resolving and playable in-world; his roll now picks it
   1-in-5. Known honest limits: neural needs internet (offline gets Zira); voice QUALITY
   work stays Austin's vocaloid/FL-Studio pipeline; fully-offline neural upgrade path if
@@ -2479,7 +2481,7 @@ angle, walk out at the mirrored angle; the view keeps pointing "forward through
 the portal" instead of cutting). Vertical portals (floor/ceiling) have no yaw
 and fall back to facing the exit normal.
 
-### 18.33 Near-plane fading (the the reference action game trick, by its right name)
+### 18.33 Near-plane fading (the reference action game trick, by its right name)
 
 A mesh close to the camera DITHERS OUT smoothly instead of slicing across the
 near plane — back the camera into a wall and the wall screen-doors away,
@@ -2674,7 +2676,7 @@ Three findings the second family bought:
   speed the table could not serve — full stick walked forever.
 - **A speed ramp belongs in the OUTPUT domain.** The matcher is calibrated
   to snapped requests; a swept request self-traps (walk pins the measured
-  speed, continuity wins). the reference game's gradual build-up is the authored
+  speed, continuity wins). The reference game's gradual build-up is the authored
   `_Walk_to_Run` clip plus a playback spin-up (`runUpT`, 70→100% over 0.7 s).
 - **Every family-conditional path needs the family bias, including
   fallbacks.** A weapon descent lives almost entirely in the air search's
@@ -2703,7 +2705,7 @@ axis point) took four sheets and minutes, after an hour of measuring.
 The first real combatant (docs/engine/09-enemy-system.md). Decisions:
 
 - **Enemies keep their native skeleton.** No retarget, no pose database —
-  `bake_enemy_glb.py` drives the the reference action game mot importer over the extracted model
+  `bake_enemy_glb.py` drives the reference action game mot importer over the extracted model
   blend and exports ONE glb whose named clips the renderer's mixer plays.
   The player pipeline's cost (weight paints, alignment poses, GAIT_RATE) is
   a per-CHARACTER cost; enemies sidestep all of it.
@@ -2720,10 +2722,10 @@ The first real combatant (docs/engine/09-enemy-system.md). Decisions:
   root-drift-locked, and the mixer stomped the element transform — the
   stubby walked in place at the origin while his element crossed the room.
   `strip_root_channels()` in the bake tool is the law now.
-- **em0000 was the right first enemy** because the game ships its own
+- **<asset> was the right first enemy** because the game ships its own
   labels: `AnimationTable.csv` maps state → motion id, so the 118-mot pack
   needed no triage gallery. The variants (em0002…, desert/forest/factory
-  stubbies) re-skin the same rig and reuse `em000f.dat` — the second enemy
+  stubbies) re-skin the same rig and reuse `<asset>` — the second enemy
   species costs one bake command.
 - **Known ceiling:** one ANIMATED instance per glb (render3d's
   one-glb-one-timeline rule) — "a bunch of enemies" needs per-instance glb
@@ -2812,7 +2814,7 @@ Decisions:
 - **Melee = mesh overlap** (Austin's rule) with a reach-scaled pad, because
   bind-pose AABBs don't swing and `Hitbox.intersects` can't see a Model —
   both traps recorded in docs 11.
-- **The flyer (em0030) rode in free**: hoverHeight floats the existing
+- **The flyer (<asset>) rode in free**: hoverHeight floats the existing
   brain, attackRange 9 makes it fire from distance, and its "shoot
   animation" is the hover pose — its mot pack ships no attack clips at all.
 
@@ -2821,8 +2823,8 @@ Decisions:
 The "at zero, deliberately nothing happens" note in thirdperson.js finally
 got its design conversation (docs/engine/10-combat-feel.md#2bs-death):
 
-- **the player character dies with her own animations** — pl0000_1065 (Self-Destruct
-  collapse) and pl0000_1092 (blown flat) in the Reaction set; both
+- **the player character dies with her own animations** — <asset> (Self-Destruct
+  collapse) and <asset> (blown flat) in the Reaction set; both
   weaponless, so one pair covers every weapon family. Picked by
   killing-blow size, the same `bigHitAt` threshold as hurt reactions.
 - **The corpse freezes honestly**: neutral-input driver steps through the
@@ -2910,13 +2912,13 @@ Decisions:
   onStart/onEnd are real RUN_INFO modes.
 - **Fishing is a script, not an engine state**: the whole enter/cast/wait/
   miss-recast/catch/present machine is one Hitbox script chaining
-  playAction on the new fishingPack pack (the player character's own e0cb-e0ce block,
+  playAction on the new fishingPack pack (the player character's own <asset> block,
   action-only set — the Ladder/Reaction precedent, third verse).
 - **The fish is data**: koi_carp.glb from the museum's etf roster (all 21
   fish + variants + junk already extracted — a fishing-game's whole
   bestiary one export call away).
 
-### 18.50 TriggerBox, bloom, and the the reference action game glow convention
+### 18.50 TriggerBox, bloom, and the reference action game glow convention
 
 The chair-under-her round (docs/engine/14, "TriggerBox, bloom..."):
 
@@ -2941,13 +2943,13 @@ The chair-under-her round (docs/engine/14, "TriggerBox, bloom..."):
 The flight1 round. Decisions and finds:
 
 - **Main-game map tiles are now routine**: nine city-ruins center tiles
-  pulled headlessly from Steam's data013/014 via LibCPK (the scripted
+  pulled headlessly from Steam's <pack>/014 via LibCPK (the scripted
   recipe), museum-converted per-process, art-only exported — and the center
   tile g10716 sits AT the world origin (the crater is the map's center), so
   the cluster needed zero re-homing. 121/121 ground probes walkable.
-- **The flight unit is pl0010** (already a museum blend), its 97-mot
-  library is pl001f.dat, and boarding is a SYNCED PAIR: the player character's pl0000_a005
-  and the unit's pl0010_a005 share an id — she climbs while it opens. The
+- **The flight unit is <asset>** (already a museum blend), its 97-mot
+  library is <asset>, and boarding is a SYNCED PAIR: the player character's <asset>
+  and the unit's <asset> share an id — she climbs while it opens. The
   unit baked through the enemy pipeline (Board/Idle/Unboard/Cockpit); her
   side rode a new flightPack pack (set Flight, action-only — fourth verse).
 - **The flight trigger is the fishing pattern verbatim**: an interactive
@@ -2985,7 +2987,7 @@ three engine-level finds:
 ### 18.52 Aircraft — the pilotable vehicle base element
 
 Request 12: fly the flight unit. `engine/aircraft.js` (builtin `Aircraft`,
-`(extends Aircraft)`) is the generic seam; the the flight unit is its first tenant
+`(extends Aircraft)`) is the generic seam; the flight unit is its first tenant
 (flight1's `flight-unit.ags.txt` is pure dat configuration).
 
 **The root-of-truth contract**: the third-person character stays the root —
@@ -2998,7 +3000,7 @@ while `_pilotCraft` is set she only advances her held riding pose and
 mirrors out — no interact, no combat, no locomotion (the fishing-state
 doctrine). Weapons sheathe automatically (ladder mode's existing edge).
 
-**Modes** (the the flight unit's own canon): TRAVEL = "Asura", upright hover, Armored
+**Modes** (the flight unit's own canon): TRAVEL = "Asura", upright hover, Armored
 Core hands — camera-relative inertial strafe, mech faces the camera aim,
 boost held / QUICK-BOOST on a sub-0.24 s tap (the a030/a031 spin evades),
 terrain-following hover that rises with ground but only ever DESCENDS
@@ -3047,8 +3049,8 @@ cockpit height), the exit's guaranteed drop above local ground, travel
 strafe handedness (right = aim MINUS 90), the YXZ `rotationOrder` opt-in
 (XYZ pitched a yawed craft into visible roll), stubby combat + the
 _friendly AoeWave, the export prune trap for runtime-spawned media, the
-looping-held-action frames-2 guard, and the the reference action game effect-sprite pipeline
-(fx `texture`/`color`, data000 effect/texture → DDS slice → PNG).
+looping-held-action frames-2 guard, and the reference action game effect-sprite pipeline
+(fx `texture`/`color`, <pack> effect/texture → DDS slice → PNG).
 
 Austin's first pilot playtest fixed three things: (1) the PARKED idle is
 a015 (the authored 361f upright cycle) — a010 is a 51f flight-family cycle
@@ -3062,12 +3064,12 @@ on the next tick. Trust nothing that "started together"; slave one clock
 to the other. (3) The mech faces the camera aim ONLY under movement
 input, and entering travel parks the ORBIT behind the craft's heading
 (`_acCamBehind`) — the camera adopts the craft, the craft never turns
-for the camera (Austin's rule). The animation taxonomy that fed the bake (97 pl0010 mots,
+for the camera (Austin's rule). The animation taxonomy that fed the bake (97 <asset> mots,
 rendered and classified): a01x upright hover cycles, a02x travel melee,
 a030/1 spin evades, a04x/a50x jet family (a500/1/2 cruise cycles), a508/
 a530 transforms (BOTH with the player character rider pairs), aa0x second upright family,
 aa30/1 65 m climbs, aafx = 16 riding-attitude cycles every one of which
-the player character pairs, e0xx cinematics (e072/3 long jet cruises). Sheets in the
+the player character pairs, e0xx cinematics (<asset>/3 long jet cruises). Sheets in the
 session scratchpad; re-bake candidates for later modes live there.
 
 ### 18.53 Performance doctrine (first pass, 2026-08-26)
@@ -3107,7 +3109,7 @@ bill. The refined version (join per material within ~25 m spatial cells,
 keeping culling granularity) is ROADMAP phase 3.
 
 Future levers: spatial-cell material join (above); THREE.InstancedMesh
-for repeated props; skinned mesh count on the 63 MB unit (the the flight unit
+for repeated props; skinned mesh count on the 63 MB unit (the flight unit
 renders every part always).
 
 The measurement kit that found all of this: a rAF delta sampler pushed
@@ -3186,7 +3188,7 @@ full flight round-trips; the idle GC spikes gone.
 
 **LOCAL PATCH in the vendored lib** (marked `AE1 LOCAL PATCH` in the
 file): three r166+ `Triangle.getInterpolation` returns null for a
-degenerate (zero-area) triangle — the the reference action game map meshes contain some, and
+degenerate (zero-area) triangle — the reference action game map meshes contain some, and
 mesh-bvh's unguarded `intersection.normal.dot(...)` threw from every
 enemy ground probe that grazed one (`_enemyTick ... reading 'dot'`). One
 null guard; re-apply it if the lib is ever re-vendored. Editor Build &
@@ -3217,15 +3219,15 @@ rule costs zero wiring**: the pod reads `host._pilotCraft` each tick —
 set on board, cleared on dismount by the aircraft already — and hides
 itself while piloting.
 
-Asset facts, hard-won: the the companion pod pod skin is **wp3011 in Steam
+Asset facts, hard-won: the companion pod skin is **<asset> in Steam
 data101.cpk** (DLC pod skins sit one per archive — 3012 cardboard/105,
-3014/107, 3017/108; Emil head = wp3020/data016; wp3020's "eyelash"
-material is the tell it is NOT the book). Pod MOTIONS live in data006
-`wp/wp300f.dat` — 45 `wp3000_*.mot`; **the DLC skins share the wp3000
+3014/107, 3017/108; a character head = <asset>/<pack>; <asset>'s "eyelash"
+material is the tell it is NOT the book). Pod MOTIONS live in <pack>
+`wp/<asset>` — 45 `<asset>`; **the DLC skins share the <asset>
 pod skeleton**, so the book plays pod motions unretargeted through
 bake_enemy_glb.py. Clip truth by inspection: 0000 = the 180 f idle
 hover, 0010 = the 25 f fire cycle (0011 is a 0-frame POSE, not the
-loop), e050 = a 33 f flourish (the special). Tooling grown for this:
+loop), <asset> = a 33 f flourish (the special). Tooling grown for this:
 `bulk_import_models.py` `cpkdlc` root; `bake_enemy_glb.py
 --emissive-lift F` (base-color → emission at F — companion props were
 silhouettes under the night City Ruins); the plugin `dat_unpacker`'s
@@ -3235,7 +3237,7 @@ special one-shot another, E in/out of the flight unit hides/reveals.
 
 ### 18.56 The Debug Menu (2026-08-26) — the flag wall
 
-The the reference action game-style debug menu as a base element (`engine/debugmenu.js`,
+The reference-game-style debug menu as a base element (`engine/debugmenu.js`,
 builtin `DebugMenu`; docs/engine/17-debug-menu.md is the full page; wired
 into flight1/pod1/tower1 as `DebugWall`). SELECT+START on a pad or tilde
 on the keyboard freezes the game AT THAT FRAME and drops a wall of white
@@ -3386,7 +3388,7 @@ that can appear in comments.
 
 ### 18.63 The GREEN Forest — wd1, world identities & the ga0001 atlas (2026-08-27)
 
-18.62's forest was built from the WRONG WORLD. the community docs settled the
+18.62's forest was built from the WRONG WORLD. The community docs settled the
 identities: **wd1 = the entire LIVING world map** (city, desert, forest,
 flooded city — one high-LOD grid), **wd2 = its authored low-LOD twins**,
 **wd3 = the world AFTER the Big Bang** (Route C's scorched twin), wd4 =
@@ -3398,7 +3400,7 @@ exists only post-bang). Rebuild = the 18.62 recipe re-run against wd1
 
 The new trap: the living ground TEXTURES aren't in the tile dtts. Grass/
 dirt/rock/asphalt splat albedos live in a global atlas — `wda/ga0001`
-(wta table in data003, 141 MB wtp in data004; ga0002 is a second one).
+(wta table in <pack>, 141 MB wtp in <pack>; ga0002 is a second one).
 The importer leaves those TEX_IMAGE nodes with NO image (labels
 g_AlbedoMap1..3 intact), and the glTF baker then exports flat white —
 the whole terrain renders as bone. Detection: diff the importer's
@@ -3416,7 +3418,7 @@ sunlit sandy shelf at (46,−24,−80) beside the river channel (walkable
 strip x 48–54, water x 56–62) is the fishing bank. Day sky retuned for
 the living palette: skyOpacity 0.08, envIntensity 0.5.
 
-### 18.64 The pause menu & the the reference series dial (2026-08-27)
+### 18.64 The pause menu & the reference series dial (2026-08-27)
 
 `forest1/pause-menu.ags.txt` — the first ACTIVE MENU, a pure-AGS
 element on the 18.56 pause surfaces, gated behind the debug wall's
@@ -3427,7 +3429,7 @@ own rAF + capture keydown — the debug wall's exact machinery.
 Styling is the open-source faction CSS framework (MIT), ported by hand
 into a scoped `<style>`: the sand parchment with the fine 0.3rem grid,
 ink #454138 on panel #dcd8c0, tab rows that invert to ink when active,
-the h1 hard-shadow title. THE DIAL is the the reference series-1 homage: a dark
+the h1 hard-shadow title. THE DIAL is the reference series' first-game homage: a dark
 disc floats over the panel's top-left corner, five ORIGINAL inline-SVG
 flower sprites ride its edge like a clock face. A/D, arrows, or d-pad
 LEFT/RIGHT (own gamepad poll, hold-repeat 350/160 ms) spin the disc via
@@ -3435,7 +3437,7 @@ one CSS transform transition (0.42 s settle curve); rotation
 accumulates so it always turns the way you pressed. The node that lands
 on the upper-right anchor notch illuminates (drop-shadow glow) and the
 tab it corresponds to activates — with N nodes at 360/N° the end state
-is rotationally identical, which is exactly the the reference series look: the
+is rotationally identical, which is exactly the reference series look: the
 disc spins, a new flower arrives lit, nothing else appears to move.
 Tabs are a dat (`tabs "MAP ITEMS WEAPONS SKILLS SYSTEM"`); panel bodies
 are placeholder content per tab.
@@ -3448,15 +3450,15 @@ dispatched KeyboardEvents, which exercise the same engine listeners.
 
 ### 18.65 The Bunker & the two model paths (2026-08-30)
 
-`bunker1`: the orbital Bunker, found the hard way. r550 (data012 st5) is
+`bunker1`: the orbital Bunker, found the hard way. r550 (<pack> st5) is
 AUDIO ONLY (sound banks + hap); the station is not in wd5 (g50100 = the
 Copied City, mesh names say "Copycity"); the community docs doesn't list it. A
 string-scan of every ba/bg/bh/et dat+dtt for "unker/angar" found it:
-**ba1200 (data015 ba, 80 MB dtt)** — hangar01/02, controlroom, the seven
+**<asset> (<pack>, 80 MB dtt)** — hangar01/02, controlroom, the seven
 singlerooms, four corridor-ring floors, handrails, the station shell,
 and a 16 km `universe` starfield sphere: the level ships with its own
-space backdrop. ba1001/2/3 are the bunker doors, ba1110/ba1000 props,
-**ba1210 = the companion character's ARMED flight unit (missiles) — the enemy stock for the
+space backdrop. <asset>/2/3 are the bunker doors, <asset>/<asset> props,
+**<asset> = the companion character's ARMED flight unit (missiles) — the enemy stock for the
 space battles**. Texture audit: self-sufficient except the known
 LightMap/EnvMap aux ids and one glass albedo that exists nowhere.
 
@@ -3478,7 +3480,7 @@ is UNBOUND — and build() hides unclaimed top nodes, so the model
 vanishes from render AND rays. Factory/Tower/forest tiles all bind
 (node name == glb root name). Corollary: ORIENTATION FIXES GO ON THE
 ELEMENT, never on the bake stamp — and VERIFY orientation by the
-FURNITURE, not by mesh-family bounding boxes. The ba1200 postscript
+FURNITURE, not by mesh-family bounding boxes. The <asset> postscript
 (Austin's "we are standing on the wall"): the identity orientation was
 CORRECT ALL ALONG — the ±90 "fixes" were built on the skinned-mesh
 nulls plus a misreading ("floorNN" = deck names, and the corridor ring
@@ -3501,21 +3503,21 @@ the corridor.
 ### 18.79 Live materials for animated surfaces (2026-08-30)
 
 `env3d.materialsOf(el, pattern)` hands AGS scripts the live three.js
-materials of an element''s bound object by name-regex — the shared
-originals, so a map''s whole screen bank changes at once. First user:
-bunker1''s `bunker-screens.ags.txt` flips the map''s own the reference action game screen
+materials of an element's bound object by name-regex — the shared
+originals, so a map's whole screen bank changes at once. First user:
+bunker1's `bunker-screens.ags.txt` flips the map's own the reference action game screen
 materials emissive (emissiveMap = map, RepeatWrapping) and animates
-offsets: the code-column crawl, the Earth display''s scan sweep, the
-2x3 operator-dashboard atlas hopping pages, the the faction emblem breathing.
-No rebake — the game''s baked textures ARE the screen content. Facade
+offsets: the code-column crawl, the Earth display's scan sweep, the
+2x3 operator-dashboard atlas hopping pages, the faction emblem breathing.
+No rebake — the game's baked textures ARE the screen content. Facade
 note: world.env3d in game3d.js is a hand-built forward list; a new
 render3d capability does nothing until forwarded there.
 
 ### 18.80 The ring gravity stabilizer (2026-08-30)
 
-the reference action game''s bunker ring keeps the player upright by rotating camera+gravity.
-AE1''s physics is y-down to the bone, so bunker1 rotates the WORLD
-instead (Austin''s call: no forced camera — a "fixed camera box" comes
+the reference action game's bunker ring keeps the player upright by rotating camera+gravity.
+AE1's physics is y-down to the bone, so bunker1 rotates the WORLD
+instead (Austin's call: no forced camera — a "fixed camera box" comes
 later): `ring-stability.ags.txt` samples the floor normal under the
 player each tick (groundInfo now returns the world-space hit normal `n`)
 and feedback-rotates the MAP ELEMENT about the contact point under her
@@ -3525,7 +3527,7 @@ element origin — apply the Euler delta, then shift the map by
 omega x (mapPos - feet); (2) on authored-flat floors leveling IS
 unwinding (measured tilt == map rotation), so no separate homing mode
 for rotation — only the accumulated translation needs reeling home once
-rotation settles, gated to when she''s moving so her own walk masks the
+rotation settles, gated to when she's moving so her own walk masks the
 drift; (3) deadband is a completion epsilon, not a target-zeroing band —
 zeroing the target inside a wide deadband parks the map meters off pose.
 Verified: 10 deg tilt levels to 0 with max 4.4 cm/tick floor motion and
@@ -3541,7 +3543,7 @@ v2 composes the correction as ONE world quaternion (setFromUnitVectors
 all three Euler fields; pivot compensation went exact too
 (newPos = P + qStep*(oldPos-P)). AGS scripts reach THREE math classes
 through env3d.objectFor(el) — borrow constructors from the bound
-object''s own quaternion/rotation/position. Verified: levels through 90
+object's own quaternion/rotation/position. Verified: levels through 90
 deg accumulated pitch and a 40 deg compound tilt to <0.5 deg underfoot.
 
 **18.80 addendum 2 — holonomy and the arming gate (same day):** walking
@@ -3552,7 +3554,7 @@ and translated vs the door/elevator elements). Yaw never changes a floor
 normal, so v3 strips the accumulated world-y twist relative to home
 EVERY tick (twist/swing decomposition of qNew*qHomeInv about +y) —
 invisible increments, and the loop closes back onto the authored pose.
-Plus Austin''s region gate as an armed state machine: leveling can only
+Plus Austin's region gate as an armed state machine: leveling can only
 START on floor banked past (engage 3) degrees — the outer ring — and
 once armed it stays authoritative until the map is exactly home (snap
 within 5 cm / 0.05 deg), then disarms. Interior slopes can never nudge
@@ -3570,44 +3572,44 @@ debug-menu pattern — 3D projects have no 2D HUD canvas): speaker name,
 line, FF-style options with a white &#9656; cursor; up/down or
 dpad/stick to move, E / pad-X to confirm; an option with no `next`
 closes (two-tick unlock tail so the confirming E cannot re-open). It
-parks the NPC''s wander and faces him at the player; NPC dat
+parks the NPC's wander and faces him at the player; NPC dat
 (displayName "the companion character") names the header. Trees are plain objects passed by
-the NPC''s own onInteract — per-NPC dialogue is ~15 dat-file lines.
+the NPC's own onInteract — per-NPC dialogue is ~15 dat-file lines.
 (3) THE FONT: kind-"other" media rides data.bins into exports, so
-`ps2_helvetica.ttf` (Austin''s PS2 Helvetica) is project media,
+`ps2_helvetica.ttf` (Austin's PS2 Helvetica) is project media,
 registered as a FontFace ("PS2Helvetica") by the DialogueUI boot —
 canvas and DOM both see it once loaded. The onInteract dispatch already
 existed (§18.12): E near a non-pickable Hitbox reaches the NPC script.
 
 ### 18.82 Possession, autopilot, and the pilotable the companion character (2026-08-30)
 
-Austin''s seamless character switching. ENGINE: (1) `(autopilot true)` on
-a the motion-matching character (not in the public build) turns it into a simple NPC — synthetic world-space
+Austin's seamless character switching. ENGINE: (1) `(autopilot true)` on
+a motion-matching character † turns it into a simple NPC — synthetic world-space
 intent through the same matcher (same databases, physics, wall
 collision): wander goals near home, vetted BOTH WAYS ("can I path back"),
 idle pauses, stuck detection; an in-flight action (the dialogue-fired
-mocap clip) freezes the wander like an attack does. (2) The camera''s
+mocap clip) freezes the wander like an attack does. (2) The camera's
 _target() prefers the character NOT on autopilot; parked bodies are
-scenery. (3) The controlled character''s E also reaches parked
+scenery. (3) The controlled character's E also reaches parked
 characters by radius (they carry no Hitbox volume). SWITCHING: a dialogue
 option with (action "possess") — the parked speaker wakes, the
 interactor parks, camera and controls follow automatically.
 
-the companion character''s body: pl0200 cleaned (no DLC/serious-face/broken-coat dupes; the
+the companion character's body: <asset> cleaned (no DLC/serious-face/broken-coat dupes; the
 clean coat is es0200.001/.003/.004 — the tatters are separate Broken*
 meshes) and TRANSPLANTED onto the canonical MM skeleton (uniform 1.156
 height scale, per-chain minimal-twist rest alignment T-pose -> A-pose,
-vgroups pl->manny via the the retarget script the bone map composition; unmapped
+vgroups pl->manny via the retarget script's bone-map composition; unmapped
 physics/twist bones merge into their mapped ANCESTOR, geometric
 nearest-mapped fallback for orphans, unweighted verts pinned). His
-proportions stretch to the player character''s — the cost of sharing her rig; the real fix
+proportions stretch to the player character's — the cost of sharing her rig; the real fix
 is a native-skeleton pack bake, future work.
 
 Traps paid for: AGS files use ";" comments ONLY before the first
 function — "//" after (a ";" in the methods section fails the WHOLE
 compile and the element silently falls back to AE1Element); runInfo
 event names are a fixed whitelist — route custom dialogue events through
-onCall(eventName, from); Blender 4.2''s glTF exporter ignores
+onCall(eventName, from); Blender 4.2's glTF exporter ignores
 blend_method and ships every material alphaMode BLEND (the commander
 disease — body parts ghost/vanish by angle): patch the glb JSON after
 export (scratchpad patch_glb_alpha.py). Dialogue cinematography rides
@@ -3618,15 +3620,15 @@ OTS/two-shot/low angles, LOS-checked, slow dolly per cut).
 ### 18.83 The native the companion character pack pipeline (2026-08-30)
 
 "9s only skeleton, 9s only motion matching, 9s only animations" — the
-transplant experiment is retired. New pieces: (1) the companion character''s complete personal
-animation archive: pl020f.dat (data006) -> 483 native pl0200 mots,
+transplant experiment is retired. New pieces: (1) the companion character's complete personal
+animation archive: <asset> (<pack>) -> 483 native <asset> mots,
 triaged by the standalone mot-extractor into a gallery, 393 auto-named
 from the community the player character/A2 sheet by SHARED INDEX (the faction androids share the
 moveset layout) with per-clip metric validation. (2) The Curator grew
 multi-source triage (?src=9s, serve.py TRIAGE_SOURCES) — browse, name,
-set, select any character''s gallery. (3) tools/bake_9s_native.py: bakes
-curator-selected pl0200 clips STRAIGHT from the gallery blends into the
-standard pack format — no retarget. the reference action game mots root travel on the ARMATURE
+set, select any character's gallery. (3) tools/bake_9s_native.py: bakes
+curator-selected <asset> clips STRAIGHT from the gallery blends into the
+standard pack format — no retarget. The reference action game mots root travel on the ARMATURE
 OBJECT (action channel "location"), so sampling must be world-space; the
 bake synthesizes the canonical root (smoothed hips ground path + yaw-only
 quat — built EXPLICITLY about Z, rotation_difference degenerates at yaw
@@ -3637,7 +3639,7 @@ canonical role names (pelvis/foot_l/LEG_RE), so pack bone list AND the
 runtime body (9s_native.glb, a pure node-name patch of npc_9s_clean.glb)
 wear canonical labels on his untouched native skeleton — renaming, not
 retargeting. (5) serve.py /convert?src=9s runs the native bake and pushes
-the pack into bunker1 media as mm_<pack>_* — the curator''s one button
+the pack into bunker1 media as mm_<pack>_* — the curator's one button
 does gallery -> database -> game media. Verified on idle/walk/dash:
 travel 11.37 m, forward vel +0.97 m/s in the fwd slot, pelvis residuals
 in centimetres, quats normalized.
@@ -3645,7 +3647,7 @@ in centimetres, quats normalized.
 ## 18.85 FIRST_PERSON on the debug wall (one negative number)
 
 The wall (SS18.56) grew a FIRST_PERSON wired flag: the camera parks ~0.3 m
-ahead of the active character''s face, looking their own forward. The whole
+ahead of the active character's face, looking their own forward. The whole
 feature is ONE substitution in the orbit math: the ThirdPersonCamera sets
 rotation from _yaw/_pitch INDEPENDENT of position, so distance = -fpAhead
 (default 0.3, dat-tunable) moves the eye in front of the face while the
@@ -3653,7 +3655,7 @@ view keeps pointing forward -- head and hair land BEHIND the near plane,
 nothing is hidden or clipped, mouse look and character steering are
 untouched. Two side rules: shoulder framing zeroes (an offset eye reads
 as a broken neck) and the Fox chase-lag snaps every frame (the
-cameraman''s drag reads as your head swimming loose at 0 m). _target()''s
+cameraman's drag reads as your head swimming loose at 0 m). _target()'s
 possession rule (SS18.82) means the flag follows whoever you''re playing:
 possess the companion character and the eyes are his. Toggle it mid-frame on the frozen
 wall; it applies the instant play resumes.
@@ -3669,7 +3671,7 @@ ARRIVES with alphaTest > 0 (an authored MASK) keeps its cut value --
 the asset chose its look, the engine stops overriding; hair that arrives
 BLEND still gets hashed exactly as SS18.84 prescribed. Practical split:
 the player character ships MASK (cut value 0.4, tunable per ship in the alpha patch);
-the companion character/Commander/6O ship BLEND and keep their hashed look untouched. The
+the companion character/Commander/the operator ship BLEND and keep their hashed look untouched. The
 per-frame alphaTest=0 invariant only fires on hashed materials, so a
 masked cut value survives it.
 
@@ -3740,7 +3742,7 @@ needs a deliberate re-tune), KTX2/BasisU GPU-compressed textures (the VRAM
 half; needs an inlined transcoder), meshopt/quantization for geometry,
 int16 mm pose streams (~160 MB, lab-side change), the .aepack sidecar
 container (the shared artifact with the native runtime), audio transcode,
-InstancedMesh scatter, the motion-matching core (not in the public build) micro-passes (lab-side re-carve),
+InstancedMesh scatter, the motion-matching core † micro-passes (lab-side re-carve),
 half-res DOF.
 
 ## 18.88 The tonemapping fix and the AEPACK (phase two of the break-out)
@@ -3749,7 +3751,7 @@ TONEMAPPING, finally correct: three forces NoToneMapping + linear output on
 render-target passes, so with PostFX live the shipped frame NEVER received
 AgX or the sRGB encode -- raw linear light hit the canvas (why FX_OFF looked
 like a different game, and why the portal face carried a hand-rolled pow
-workaround). The uber-pass now ends with three''s own tonemapping_fragment +
+workaround). The uber-pass now ends with three's own tonemapping_fragment +
 colorspace_fragment chunks: the renderer injects its AgX define and binds
 toneMappingExposure because the composite material renders to screen, so
 the postfx path is finally bit-identical in grading to the plain path.
@@ -3757,7 +3759,7 @@ LOOK-AFFECTING by nature -- the old scenes were tuned against the broken
 pipeline (everything ran double-dark). The dev room was re-tuned to the
 correct pipeline: sun 1.5/0.35, skyOpacity 0.45, envIntensity 0.3,
 grainAmount 0.05. Any future scene resurrected from pre-18.88 dats will
-come in over-bright and wants the same pass. (Bloom''s threshold also became
+come in over-bright and wants the same pass. (Bloom's threshold also became
 honest: it now sees real HDR linear off the HalfFloat target.)
 
 THE AEPACK (the AGP container from docs/engine/20, realized): a 3D export
@@ -3768,7 +3770,7 @@ magic, u32 version, u32 tocLen, JSON toc {name, bag, offset, length}
 inline payload blocks). Served over http, the boot fetches the pack and
 hands Uint8Array views straight to the loaders -- no base64, no string
 copies, no 400 MB through the HTML parser. Measured on the dev room:
-play.html boots in a fraction of index.html''s time and the session heap
+play.html boots in a fraction of index.html's time and the session heap
 dropped ~1.5 GB -> ~0.9 GB. game3d accepts raw-bytes entries everywhere a
 b64 string was accepted (glbs, hdr/audio, mm-pack bins). The pack is the
 contract artifact for the native runtime: a C++ player mmaps the same file
@@ -3833,7 +3835,7 @@ below animation-visible. Reconstruction error is per-column-bounded, so the
 matcher's feature distances are preserved and search results are unchanged.
 
 THE NEAR-MISS, recorded so it never recurs: the doctrine was "fix in the
-lab (play.js), re-carve engine/the motion-matching core (not in the public build) via <pack>." I followed
+lab (play.js), re-carve engine/the motion-matching core † via <pack>." I followed
 it â€” and <pack> produced a 4261-line matcher that BOOTED FINE but had
 lost ~1150 lines: the entire action/weapon/ladder/combat API
 (playAction, setWeaponTag, setWeaponDashes, stopAction, inAction,
@@ -3908,8 +3910,8 @@ soft edges smoothly (no holes, no dither), while `depthWrite:true` + a low
 `alphaTest 0.05` keep the solid core sorting correctly (the sort trouble
 that drove §18.84 to hashing was pure blend with depthWrite OFF). Set in
 TWO places that must agree — render3d.conditionGltf AND the matcher's
-characterRoot conditioning (which runs LAST for a the motion-matching character (not in the public build) and
-had been forcing a 0.35 cutout back); <pack>.py template kept in sync.
+characterRoot conditioning (which runs LAST for a motion-matching character † and
+had been forcing a 0.35 cutout back); the surgery script template kept in sync.
 Keep hair PNG (§18.96): a blend uses the full alpha ramp, so a compressed
 ramp would band — PNG matters MORE under blending than under a cutout.
 Verified on the shipped build (not a live tweak): clean smooth bob, materials

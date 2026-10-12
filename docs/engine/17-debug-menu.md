@@ -1,6 +1,6 @@
 # 17 — The Debug Menu (§18.56)
 
-The the reference action game-style debug flag wall. Hold **SELECT+START** on a pad — or hit
+The reference-game-style debug flag wall. Hold **SELECT+START** on a pad — or hit
 **` / ~** on the keyboard — and the game freezes at that exact frame; a
 wall of white monospace flags drops over it. **WASD / d-pad** walks the
 wall, **SPACE / A** toggles the flag under the cursor, and the same combo
