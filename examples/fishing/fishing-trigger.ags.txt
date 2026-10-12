@@ -1,0 +1,139 @@
+<?dat
+; THE FISHING TRIGGER (§18.50, E-toggle rev): the pier-end volume ARMS the
+; E key — press E inside it to start fishing (the chair materializes under
+; her, exactly where she stands), press E again to reel in and stand up
+; (the Fishing_Exit animation plays out; no snap). Walking through the
+; volume without pressing E does nothing. While fishing, the action clips
+; own her body — no walking until she stands. Leaving the volume mid-
+; session (shouldn't happen, but physics is physics) still cleans up.
+(interactive true)
+(sizeX 4.5)
+(sizeY 3.5)
+(sizeZ 4.5)
+(castMin 2.5)
+(castMax 6)
+(catchChance 0.65)
+(chairName "FishingChair")
+(fishName "PresentFish")
+(courseName "PresentCourse")
+?>
+<?def
+(extends TriggerBox)
+(name "FishingTrigger")
+
+(runInfo poke onInteract)
+(runInfo left onEnd)
+(runInfo tick onTick)
+
+function poke(actor) {
+  // E is the toggle. Mid-presentation E is ignored — let the moment land.
+  if (this.phase === "present") return;
+  if (this.phase && this.phase !== "bail") {
+    // reel in and stand up — the graceful exit
+    this.phase = "bail";
+    const mm = this.actor._mm;
+    mm.playAction("Fishing_Exit");
+    console.log("[Fishing] enough for today.");
+    return;
+  }
+  if (this.phase) return; // already bailing
+  const mm = actor._mm;
+  if (!mm || !mm.grounded) return;
+  this.actor = actor;
+  // THE CHAIR SPAWNS WHERE SHE IS — her spot, her heading, a half-step back
+  const chair = this.find(String(this.chairName));
+  if (chair) {
+    const h = (actor._heading ?? 0) * Math.PI / 180;
+    chair.x = (actor.x ?? 0) - Math.sin(h) * 0.35;
+    chair.z = (actor.z ?? 0) - Math.cos(h) * 0.35;
+    chair.y = actor.y ?? 0;
+    chair.rotationY = actor._heading ?? 0;
+    chair.visible = true;
+  }
+  this.phase = "enter";
+  mm.playAction("Fishing_Enter");
+  console.log("[Fishing] she takes her seat...");
+}
+
+function cleanup() {
+  const chair = this.find(String(this.chairName));
+  if (chair) chair.visible = false;
+  const fish = this.find(String(this.fishName));
+  if (fish) fish.visible = false;
+  const course = this.find(String(this.courseName));
+  if (course && course.running) course.stopCourse();
+  this.phase = "";
+}
+
+function left(actor) {
+  // the safety net: out of the volume, the session ends however it stood
+  if (!this.phase) return;
+  const mm = this.actor ? this.actor._mm : null;
+  if (mm && mm.inAction) mm.stopAction();
+  this.cleanup();
+  console.log("[Fishing] the lake keeps its secrets.");
+}
+
+function tick(dt) {
+  const actor = this.actor;
+  if (!this.phase || !actor) return;
+  const mm = actor._mm;
+  const done = !mm.inAction;
+
+  if (this.phase === "bail" && done) {
+    this.cleanup();
+    console.log("[Fishing] rod down, feet free.");
+
+  } else if (this.phase === "enter" && done) {
+    this.phase = "cast";
+    mm.playAction("Fishing_Cast");
+
+  } else if (this.phase === "cast" && done) {
+    this.phase = "wait";
+    this.waitT = Number(this.castMin)
+      + Math.random() * (Number(this.castMax) - Number(this.castMin));
+    mm.playAction("Fishing_Idle");
+
+  } else if (this.phase === "wait") {
+    this.waitT -= dt;
+    if (done) mm.playAction("Fishing_Idle");
+    if (this.waitT <= 0) {
+      const caught = Math.random() < Number(this.catchChance);
+      this.phase = caught ? "land" : "recast";
+      mm.playAction("Fishing_Exit");
+      console.log(caught ? "[Fishing] something's on the line!"
+                         : "[Fishing] ...nothing. Again.");
+    }
+
+  } else if (this.phase === "recast" && done) {
+    this.phase = "cast";
+    mm.playAction("Fishing_Cast");
+
+  } else if (this.phase === "land" && done) {
+    this.phase = "present";
+    const fish = this.find(String(this.fishName));
+    if (fish) {
+      const h = (actor._heading ?? 0) * Math.PI / 180;
+      fish.x = (actor.x ?? 0) + Math.sin(h) * 1.5;
+      fish.z = (actor.z ?? 0) + Math.cos(h) * 1.5;
+      fish.y = (actor.y ?? 0) + 1.15;
+      fish.rotation = 0;
+      fish.visible = true;
+    }
+    const course = this.find(String(this.courseName));
+    if (course) course.playCourse();
+
+  } else if (this.phase === "present") {
+    const fish = this.find(String(this.fishName));
+    if (fish && fish.visible) fish.rotationY = ((fish.rotationY ?? 0) + 70 * dt) % 360;
+    const course = this.find(String(this.courseName));
+    if (!course || !course.running) {
+      if (fish) fish.visible = false;
+      // the line goes back out; E whenever she's had enough
+      this.phase = "cast";
+      mm.playAction("Fishing_Cast");
+      console.log("[Fishing] a fine koi. The line goes back out.");
+    }
+  }
+}
+ags?>

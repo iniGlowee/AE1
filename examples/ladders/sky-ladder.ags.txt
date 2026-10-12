@@ -1,0 +1,12 @@
+<?dat
+; The SKY TOWER ladder (engine/ladder.js) — the 80 m freefall test climb.
+; Same the reference action game protocol as wall_ladder: proximity mount, stick up/down, boost
+; on evade, jump lets go, random top exit. rung_00..rung_285, 0.28 m pitch.
+(climbOffset 0.32)
+; +1: approach from local +Z (the open, parapet-free side of the deck)
+(faceNormal 1)
+?>
+<?def
+(extends Ladder)
+(name "sky_ladder")
+ags?>

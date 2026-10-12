@@ -1,0 +1,49 @@
+<?dat
+; A DESTRUCTIBLE prop (SS18.25): hit it -- lance swing or missile -- and it
+; wobbles, gives way, and falls over. The clip is FORGED from English by
+; clipforge.py (whiteboard_topple.glb, 912 bytes); finished one-shots HOLD
+; their last frame, so it stays down. Extends Hitbox so weapons can find its
+; volume; takeDamage defined here is what makes it a target at all.
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends Hitbox)
+(name "Whiteboard")
+
+(runInfo setup onLoad)
+(runInfo settled onFinished)
+
+function setup() {
+  this.setComponent("model", "libs", ["whiteboard_topple.glb"]);
+  // Pin the REST pose: with a library attached, an EMPTY clip resolves to
+  // first-clip-anywhere -- the board looped its own topple at load (the
+  // walked-in-place trap, SS18.10). It stands until takeDamage says fall.
+  this.setComponent("model", "clip", "__bind__");
+}
+
+function takeDamage(amount, from) {
+  if (this.fallen) return;
+  this.fallen = true;
+  console.log("[Whiteboard] hit for " + amount + " -- down it goes");
+  this.playAnimation("whiteboard_topple.glb", { loop: false });
+}
+
+function settled() {
+  if (!this.fallen) return;
+  // FREEZE the fallen pose into the element's own transform: this glb is
+  // SHARED by the whole furniture set, and a sibling's rest restore stood
+  // the board back up the moment the held clip lost the mixer. Numbers are
+  // the clip's final key (91 deg about world X onto the -89.985 yaw).
+  this.rotationX = 91;
+  this.rotationY = -89.985;
+  this.rotation = 0;
+  this.stopAnimation();
+  console.log("[Whiteboard] settled -- staying down");
+}
+
+function containsPoint(x, y, z, pad) {
+  if (this.fallen) return false; // a felled board is scenery, not a target
+  return super.containsPoint(x, y, z, pad);
+}
+ags?>

@@ -1,0 +1,12 @@
+<?dat
+; An FX BOX (SS18.34): walking toward its CENTRE crossfades the live music
+; into a REDUX (bitcrushed) twin of itself -- same signal, two Web Audio
+; branches, equal-power mix, so nothing drifts and nothing phases. The
+; magenta translucent box is authoring ink; uncheck visible to hide it.
+(bits 6)
+(crushTone 2400)
+?>
+<?def
+(extends AudioFXVolume)
+(name "FxBox")
+ags?>

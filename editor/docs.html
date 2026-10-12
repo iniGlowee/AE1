@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AE1 — Docs</title>
+<style>
+  :root { --bg: #0f1114; --panel: #12151a; --line: #242a32; --text: #cfd3da;
+          --dim: #8b93a1; --accent: #7ec8e3; --green: #8fd39a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+               font: 14px/1.65 "Segoe UI", system-ui, sans-serif; }
+  #app { display: flex; height: 100%; }
+
+  #side { width: 270px; min-width: 270px; border-right: 1px solid var(--line);
+          background: var(--panel); overflow-y: auto; padding: 14px 0; }
+  #side .brand { padding: 0 16px 10px; font-weight: 600; color: var(--accent);
+                 border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+  #side .group { padding: 10px 16px 2px; color: var(--dim); font-size: 11px;
+                 text-transform: uppercase; letter-spacing: 0.08em; }
+  #side a.doc { display: block; padding: 4px 16px; color: var(--text);
+                text-decoration: none; font-size: 13px; }
+  #side a.doc:hover { background: #1a1f26; }
+  #side a.doc.active { color: var(--accent); background: #1a2530; }
+  #side .note { padding: 10px 16px; color: var(--dim); font-size: 11px; }
+
+  #main { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+  #content { max-width: 860px; margin: 0 auto; padding: 28px 36px 120px; }
+  #content h1, #content h2, #content h3, #content h4 {
+    line-height: 1.3; scroll-margin-top: 16px; }
+  #content h1 { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  #content h2 { border-bottom: 1px solid var(--line); padding-bottom: 6px;
+                margin-top: 2em; }
+  #content h2 a.anchor, #content h3 a.anchor, #content h1 a.anchor, #content h4 a.anchor {
+    color: var(--line); text-decoration: none; margin-left: 8px; font-size: 0.8em; }
+  #content h2:hover a.anchor, #content h3:hover a.anchor,
+  #content h1:hover a.anchor, #content h4:hover a.anchor { color: var(--accent); }
+  #content code { background: #1a1f26; border: 1px solid var(--line);
+    border-radius: 3px; padding: 1px 5px; font: 12.5px Consolas, monospace; }
+  #content pre { background: #14181e; border: 1px solid var(--line);
+    border-radius: 6px; padding: 12px 14px; overflow-x: auto; }
+  #content pre code { background: none; border: 0; padding: 0;
+    font: 12.5px/1.5 Consolas, monospace; color: #b8d0b8; }
+  #content blockquote { border-left: 3px solid var(--line); margin: 1em 0;
+    padding: 2px 16px; color: var(--dim); }
+  #content a { color: var(--accent); }
+  #content hr { border: 0; border-top: 1px solid var(--line); margin: 2em 0; }
+  #content table { border-collapse: collapse; margin: 1em 0; }
+  #content th, #content td { border: 1px solid var(--line); padding: 5px 10px;
+    text-align: left; font-size: 13px; }
+  #content th { background: #161a1f; }
+  #content li { margin: 3px 0; }
+  #content .flash { animation: flash 1.6s ease-out; }
+  @keyframes flash { from { background: #1a2530; } to { background: transparent; } }
+  #content .err { color: #e8b45a; }
+</style>
+</head>
+<body>
+<div id="app">
+  <nav id="side">
+    <!-- the way back, for SAME-TAB arrivals (embedded panes suppress new
+         tabs, so tools fall back to navigating here in place): browser-back
+         when there is history, else the editor. -->
+    <a id="back" href="/" style="display:block; padding:6px 16px; color:#8fd39a;
+       text-decoration:none; font-size:12px; border-bottom:1px solid var(--line);"
+       title="back to where you came from (or the AE1 editor)">← back</a>
+    <div class="brand" style="padding-top:10px">AE1 — Documentation</div>
+  </nav>
+  <div id="main"><article id="content">Pick a document.</article></div>
+</div>
+<script>
+/* ============================================================================
+   THE DOC REGISTRY — curated, ordered, grouped. AE1's docs are served by the
+   dev server ("docs" static root + the two root-level files); motion-matching's
+   come straight off the lab server (port 8010, which sends CORS for exactly
+   this page). Every tool that deep-links into the docs uses these KEYS:
+
+       /editor/docs.html?doc=<key>#<heading-slug>
+
+   Heading slugs are GitHub-style: lowercase, punctuation stripped, spaces
+   to hyphens ("## 2b. Adding a pack (the FBX import convention)" →
+   "2b-adding-a-pack-the-fbx-import-convention").
+============================================================================ */
+const REGISTRY = [
+  { group: 'Guide', docs: [
+    ['guide-start', 'Getting Started', '/docs/guide/01-getting-started.md'],
+    ['guide-editor', 'The Editor', '/docs/guide/02-the-editor.md'],
+    ['guide-elements', 'Elements', '/docs/guide/03-elements.md'],
+    ['guide-ags', 'Angel Script', '/docs/guide/04-angel-script.md'],
+    ['guide-stdlib', 'Standard Library', '/docs/guide/05-standard-library.md'],
+    ['guide-media', 'Media', '/docs/guide/06-media.md'],
+    ['guide-scenes', 'Scenes', '/docs/guide/07-scenes.md'],
+    ['guide-hud', 'HUD & Inventory', '/docs/guide/08-hud-and-inventory.md'],
+    ['guide-ship', 'Build & Ship', '/docs/guide/09-build-and-ship.md'],
+    ['guide-dialogue', 'Dialogue', '/docs/guide/10-dialogue.md'],
+  ]},
+  { group: 'Engine', docs: [
+    ['engine-arch', 'Architecture', '/docs/engine/01-architecture.md'],
+    ['engine-map', 'Code Map', '/docs/engine/02-code-map.md'],
+    ['engine-principles', 'Principles', '/docs/engine/03-principles.md'],
+    ['engine-extend', 'Extending', '/docs/engine/04-extending.md'],
+    ['engine-lessons', 'Lessons', '/docs/engine/05-lessons.md'],
+    ['engine-weapons', 'Weapon-Type Classes', '/docs/engine/07-weapon-archetypes.md'],
+    ['engine-movement', 'Movement Systems', '/docs/engine/08-movement-systems.md'],
+    ['engine-enemies', 'Enemy System', '/docs/engine/09-enemy-system.md'],
+    ['engine-combat-feel', 'Combat Feel', '/docs/engine/10-combat-feel.md'],
+    ['engine-attack-archetypes', 'Attack Archetypes', '/docs/engine/11-attack-archetypes.md'],
+    ['engine-instancing', 'Instancing', '/docs/engine/12-instancing.md'],
+    ['engine-fox-camera', 'Fox Camera & Shaders', '/docs/engine/13-fox-camera-and-shaders.md'],
+    ['engine-fishing', 'Fishing & Camera Courses', '/docs/engine/14-fishing-and-camera-courses.md'],
+    ['engine-aircraft', 'Aircraft', '/docs/engine/15-aircraft.md'],
+    ['engine-followerpod', 'Follower Pod', '/docs/engine/16-followerpod.md'],
+    ['engine-debugmenu', 'Debug Menu', '/docs/engine/17-debug-menu.md'],
+    ['docs-readme', 'Docs Index', '/docs/README.md'],
+  ]},
+  { group: 'Design & History', docs: [
+    ['design', 'DESIGN.md — the design doc', '/DESIGN.md'],
+    ['respawn', 'respawn.md — what happened', '/respawn.md'],
+  ]},
+  { group: 'motion-matching (lab on :8010)', docs: [
+  ]},
+];
+const DOCS = new Map(REGISTRY.flatMap((g) => g.docs.map(([k, t, u]) => [k, { title: t, url: u }])));
+
+/* -- github-style heading slugs --------------------------------------------- */
+const slug = (text) => text.toLowerCase()
+  .replace(/[`*_~[\]()]/g, '')
+  .replace(/[^\wÀ-￿\s-]/g, '')
+  .trim().replace(/\s+/g, '-');
+
+/* -- a small markdown renderer ----------------------------------------------
+   Headings, fenced code, lists (one nesting level), blockquotes, tables,
+   hr, links, bold/italic/inline code. Hand-written docs only — this is a
+   READER for our own files, not a general markdown engine. */
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function inline(s) {
+  s = esc(s);
+  s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+  s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => {
+    // .md links route through the viewer when the target is registered;
+    // externals open in a new tab; #anchors stay in-page.
+    if (href.startsWith('#')) return `<a href="${href}" data-anchor="1">${t}</a>`;
+    const base = href.split('#')[0].split('/').pop();
+    for (const [key, d] of DOCS) {
+      if (d.url.split('/').pop() === base) {
+        const frag = href.includes('#') ? '#' + href.split('#')[1] : '';
+        return `<a href="?doc=${key}${frag}" data-doc="${key}" data-frag="${frag.slice(1)}">${t}</a>`;
+      }
+    }
+    return `<a href="${href}" target="_blank" rel="noopener">${t}</a>`;
+  });
+  return s;
+}
+
+function render(md) {
+  const lines = md.split('\n');
+  const out = [];
+  let i = 0;
+  const para = [];
+  const flushPara = () => {
+    if (para.length) { out.push(`<p>${inline(para.join(' '))}</p>`); para.length = 0; }
+  };
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^```/.test(line)) {
+      flushPara();
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+      i++;
+      out.push(`<pre><code>${esc(buf.join('\n'))}</code></pre>`);
+      continue;
+    }
+    const h = line.match(/^(#{1,4})\s+(.*)/);
+    if (h) {
+      flushPara();
+      const id = slug(h[2]);
+      out.push(`<h${h[1].length} id="${id}">${inline(h[2])}<a class="anchor" href="#${id}" data-anchor="1">#</a></h${h[1].length}>`);
+      i++; continue;
+    }
+    if (/^(-{3,}|\*{3,})\s*$/.test(line)) { flushPara(); out.push('<hr>'); i++; continue; }
+    if (/^\s*>/.test(line)) {
+      flushPara();
+      const buf = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) buf.push(lines[i++].replace(/^\s*>\s?/, ''));
+      out.push(`<blockquote><p>${inline(buf.join(' '))}</p></blockquote>`);
+      continue;
+    }
+    if (/^\s*\|.*\|\s*$/.test(line) && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i + 1] ?? '')) {
+      flushPara();
+      const cells = (l) => l.trim().replace(/^\||\|$/g, '').split('|').map((c) => inline(c.trim()));
+      const head = cells(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])) rows.push(cells(lines[i++]));
+      out.push('<table><tr>' + head.map((c) => `<th>${c}</th>`).join('')
+        + '</tr>' + rows.map((r) => '<tr>' + r.map((c) => `<td>${c}</td>`).join('') + '</tr>').join('') + '</table>');
+      continue;
+    }
+    const li = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)/);
+    if (li) {
+      flushPara();
+      const ordered = /\d/.test(li[2]);
+      const tag = ordered ? 'ol' : 'ul';
+      const items = [];
+      while (i < lines.length) {
+        const m = lines[i].match(/^(\s*)([-*]|\d+\.)\s+(.*)/);
+        if (!m) {
+          // continuation line of the previous item (indented, non-blank)
+          if (/^\s{2,}\S/.test(lines[i]) && items.length) { items[items.length - 1] += ' ' + lines[i].trim(); i++; continue; }
+          break;
+        }
+        items.push(m[3]);
+        i++;
+      }
+      out.push(`<${tag}>` + items.map((t) => `<li>${inline(t)}</li>`).join('') + `</${tag}>`);
+      continue;
+    }
+    // INDENTED code blocks (4 spaces / tab) — the older docs use these as
+    // much as fences. Blank lines stay inside while more indented code follows.
+    if (/^( {4}|\t)/.test(line) && !para.length) {
+      const buf = [];
+      while (i < lines.length) {
+        if (/^( {4}|\t)/.test(lines[i])) { buf.push(lines[i].replace(/^( {4}|\t)/, '')); i++; }
+        else if (!lines[i].trim() && /^( {4}|\t)/.test(lines[i + 1] ?? '')) { buf.push(''); i++; }
+        else break;
+      }
+      out.push(`<pre><code>${esc(buf.join('\n'))}</code></pre>`);
+      continue;
+    }
+    if (!line.trim()) { flushPara(); i++; continue; }
+    para.push(line.trim());
+    i++;
+  }
+  flushPara();
+  return out.join('\n');
+}
+
+/* -- navigation -------------------------------------------------------------- */
+const side = document.getElementById('side');
+const content = document.getElementById('content');
+const main = document.getElementById('main');
+let current = null;
+
+// "← back" leaves the VIEWER for wherever the visit came from. The viewer
+// keeps exactly ONE history entry (doc switches replaceState, never push),
+// so history.back() is always the arrival page — referrer can't do this
+// (cross-origin navigation strips it to the origin or nothing). A directly
+// opened tab has no history to go back to → the editor.
+document.getElementById('back').onclick = (e) => {
+  e.preventDefault();
+  if (history.length > 1) history.back();
+  else location.href = '/';
+};
+
+for (const g of REGISTRY) {
+  const gh = document.createElement('div');
+  gh.className = 'group';
+  gh.textContent = g.group;
+  side.append(gh);
+  for (const [key, title] of g.docs) {
+    const a = document.createElement('a');
+    a.className = 'doc';
+    a.id = 'nav-' + key;
+    a.href = '?doc=' + key;
+    a.textContent = title;
+    a.onclick = (e) => { e.preventDefault(); open(key); };
+    side.append(a);
+  }
+}
+const foot = document.createElement('div');
+foot.className = 'note';
+foot.textContent = 'motion-matching docs need the lab server (serve.bat, port 8010).';
+side.append(foot);
+
+async function open(key, frag = '', replace = false) {
+  const d = DOCS.get(key);
+  if (!d) { content.innerHTML = `<p class="err">Unknown document: ${esc(key)}</p>`; return; }
+  document.querySelectorAll('#side a.doc.active').forEach((a) => a.classList.remove('active'));
+  document.getElementById('nav-' + key)?.classList.add('active');
+  if (current !== key) {
+    content.innerHTML = '<p class="dim">loading…</p>';
+    try {
+      const r = await fetch(d.url);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      content.innerHTML = render(await r.text());
+      current = key;
+    } catch (e) {
+      content.innerHTML = `<p class="err">Could not load ${esc(d.url)} — ${esc(e.message)}.`
+        + (d.url.includes('8010') ? ' Is the motion-matching lab server running (serve.bat)?' : '') + '</p>';
+      current = null;
+      return;
+    }
+  }
+  // ALWAYS replaceState: the viewer owns one history entry, so the browser's
+  // back button (and the ← back link) exits to the ARRIVAL page in one step
+  // instead of unwinding every doc read here. The sidebar is the navigation.
+  history.replaceState(null, '', '?doc=' + key + (frag ? '#' + frag : ''));
+  jump(frag);
+  document.title = `AE1 Docs — ${d.title}`;
+}
+
+function jump(frag) {
+  if (!frag) { main.scrollTop = 0; return; }
+  const el = document.getElementById(frag);
+  if (el) {
+    el.scrollIntoView();
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }
+}
+
+content.addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  if (a.dataset.doc) { e.preventDefault(); open(a.dataset.doc, a.dataset.frag || ''); }
+  else if (a.dataset.anchor) { e.preventDefault(); jump(a.getAttribute('href').slice(1)); history.replaceState(null, '', `?doc=${current}${a.getAttribute('href')}`); }
+});
+
+window.addEventListener('popstate', () => boot(true));
+
+function boot(replace = false) {
+  const q = new URLSearchParams(location.search);
+  const key = q.get('doc') || 'guide-start';
+  open(key, location.hash.slice(1), replace);
+}
+boot(true);
+</script>
+</body>
+</html>

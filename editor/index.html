@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AE1 — Angel's Egg</title>
+
+  <!-- Local only. No CDN, ever (DESIGN.md, Principle 5). -->
+  <link rel="stylesheet" href="/editor/css/theme.css">
+  <link rel="stylesheet" href="/editor/css/app.css">
+  <link rel="stylesheet" href="/editor/css/workspace.css">
+</head>
+<body>
+  <div id="app">
+    <header id="topbar"></header>
+
+    <main id="view"></main>
+
+    <footer id="statusbar">
+      <span>
+        <span class="status-dot" id="status-server" data-state="offline"></span>
+        <span id="status-context">Starting…</span>
+      </span>
+    </footer>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+
+  <!-- three.js is VENDORED (engine/vendor/three), never a CDN — Principle 5.
+       The map lets the addon files resolve their bare `three` / `three/addons/`
+       imports to our local copies. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/engine/vendor/three/three.module.js",
+      "three/addons/": "/engine/vendor/three/addons/"
+    }
+  }
+  </script>
+
+  <script type="module" src="/editor/js/main.js"></script>
+</body>
+</html>

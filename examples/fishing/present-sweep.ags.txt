@@ -1,0 +1,20 @@
+<?dat
+; PRESENTATION, shot one (§18.49): from over her shoulder, sweeping around
+; to face her and the caught fish. Character-relative rows:
+; (t  posX posY posZ  lookX lookY lookZ) — +z ahead of her, +x her right.
+(curvePoints (
+  (0    1.7 2.1 -2.4   0 1.3 1.0)
+  (1.5  2.4 1.3  2.4   0 1.15 1.4)
+  (2.3  0   1.2  3.0   0 1.1  1.5)))
+(holdAtEnd true)
+?>
+<?def
+(extends CharacterCameraCurve)
+(name "PresentSweep")
+
+(runInfo began onStart)
+
+function began() {
+  console.log("[PresentSweep] and here she is —");
+}
+ags?>

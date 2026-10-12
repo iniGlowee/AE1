@@ -1,0 +1,95 @@
+{
+  "theme": "dark",
+  "layouts": {
+    "point-click-adventure": {
+      "t": "split",
+      "dir": "row",
+      "ratio": 0.140625,
+      "a": {
+        "t": "leaf",
+        "id": "0f456415-7a20-45c0-b9b8-df3cff6e45fb",
+        "editor": "outliner"
+      },
+      "b": {
+        "t": "split",
+        "dir": "row",
+        "ratio": 0.78,
+        "a": {
+          "t": "split",
+          "dir": "col",
+          "ratio": 0.6689342403628118,
+          "a": {
+            "t": "leaf",
+            "id": "322eec9e-545c-4647-a738-464c0179be9c",
+            "editor": "viewport"
+          },
+          "b": {
+            "t": "split",
+            "dir": "row",
+            "ratio": 0.62,
+            "a": {
+              "t": "leaf",
+              "id": "042489cb-c12d-4171-bb02-cceb0fc6db1e",
+              "editor": "script"
+            },
+            "b": {
+              "t": "leaf",
+              "id": "b22e38e6-3536-4128-a254-7c25fcf21cfd",
+              "editor": "media"
+            }
+          }
+        },
+        "b": {
+          "t": "leaf",
+          "id": "975a83d1-dac1-4843-9455-0fb0458ac77b",
+          "editor": "properties"
+        }
+      }
+    },
+    "game-3d": {
+      "t": "split",
+      "dir": "row",
+      "ratio": 0.19375,
+      "a": {
+        "t": "leaf",
+        "id": "c8eb3586-2eb3-4b0a-b252-e7ce2f30ceeb",
+        "editor": "outliner"
+      },
+      "b": {
+        "t": "split",
+        "dir": "row",
+        "ratio": 0.7059405940594059,
+        "a": {
+          "t": "split",
+          "dir": "col",
+          "ratio": 0.6,
+          "a": {
+            "t": "leaf",
+            "id": "882746f1-4d2c-4cd2-8c70-5af9e4cce7ba",
+            "editor": "viewport"
+          },
+          "b": {
+            "t": "split",
+            "dir": "row",
+            "ratio": 0.5511921458625526,
+            "a": {
+              "t": "leaf",
+              "id": "884b9b8f-0529-4b61-affa-160c1e0b8d15",
+              "editor": "script"
+            },
+            "b": {
+              "t": "leaf",
+              "id": "ac941155-f68a-49bd-af57-6a727d9a9c11",
+              "editor": "media"
+            }
+          }
+        },
+        "b": {
+          "t": "leaf",
+          "id": "1f7e7150-6c39-4269-9b7d-4328192f1eec",
+          "editor": "properties"
+        }
+      }
+    }
+  }
+}

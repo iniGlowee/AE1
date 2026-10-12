@@ -1,0 +1,49 @@
+<?dat
+; THE GOOBER (SS18.28): Scene 2's entire population. 300 health, wanders,
+; swipes for 5 when you stand in reach, growls at passers-by, and dies with
+; dignity (see deathSounds). Everything here is forged: the mesh, both
+; clips, both voice lines.
+(health 300)
+(wanderSpeed 1.2)
+(wanderRange 6)
+(idleChance 0.3)
+(idleTime 2)
+(attackRange 1.4)
+(attackDamage 5)
+(attackRate 1.2)
+(animLibs ("goober_move.glb" "goober_idle.glb"))
+(move "goober_move.glb")
+(idle "goober_idle.glb")
+(passiveLines ("goober_growl.mp3"))
+(senseRange 4)
+(hearRange 14)
+(passiveChance 0.5)
+(passiveCooldown 7)
+(deathSounds ("goober_death.mp3"))
+(vanishAfter 4)
+(drawPaths false)
+(wander true)
+?>
+<?def
+(extends NPC)
+(name "Goober")
+
+(runInfo hurt onHit)
+(runInfo countdown onTick)
+
+function hurt(attacker, amount) {
+  console.log("[Goober] " + amount + " damage?! health: " + this.health);
+}
+
+function countdown(dt) {
+  // Victory warp (SS18.30): give the death cry and the topple their moment,
+  // then the room of white awaits.
+  if (!this._dead || this.warped) return;
+  this.warpT = (this.warpT || 0) + dt;
+  if (this.warpT >= 3) {
+    this.warped = true;
+    console.log("[Goober] you win. enjoy the void.");
+    this.goToScene("Scene 3");
+  }
+}
+ags?>

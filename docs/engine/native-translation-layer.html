@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AE1 Translation Layer</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1a1d21; --muted:#5b6470; --line:#e2e6ea;
+    --accent:#2f6f4f; --accent2:#8a5a2b; --code:#eef1f4; --codeink:#243;
+    --browser:#1f6feb; --native:#8957e5; --ok:#2f8f4f; --warn:#b8860b; --tbd:#8a8f98; --untested:#9aa0a8;
+    --thead:#f0f2f5; --rowalt:#fafbfc; --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#0f1216; --panel:#161a20; --ink:#e6e9ee; --muted:#9aa4b0; --line:#262c34;
+    --accent:#5fd39b; --accent2:#e0a866; --code:#1b2027; --codeink:#c9d3de;
+    --browser:#6cb0ff; --native:#c39bff; --ok:#5fd39b; --warn:#e6c169; --tbd:#7d858f; --untested:#6b7280;
+    --thead:#1b2129; --rowalt:#12161b; --shadow:0 1px 3px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0f1216; --panel:#161a20; --ink:#e6e9ee; --muted:#9aa4b0; --line:#262c34;
+    --accent:#5fd39b; --accent2:#e0a866; --code:#1b2027; --codeink:#c9d3de;
+    --browser:#6cb0ff; --native:#c39bff; --ok:#5fd39b; --warn:#e6c169; --tbd:#7d858f; --untested:#6b7280;
+    --thead:#1b2129; --rowalt:#12161b; --shadow:0 1px 3px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);margin:0;
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 96px;}
+  header.top{padding:56px 0 28px;border-bottom:1px solid var(--line);margin-bottom:8px;}
+  h1{font-size:30px;letter-spacing:-.02em;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:15px;max-width:820px;}
+  .pill{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;}
+  .meta{margin-top:16px;color:var(--muted);font-size:13px;}
+  .meta b{color:var(--ink);font-weight:600;}
+  nav.toc{position:sticky;top:0;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);
+    margin-bottom:32px;z-index:5;display:flex;gap:6px;flex-wrap:wrap;}
+  nav.toc a{color:var(--muted);text-decoration:none;font-size:13px;padding:5px 11px;border-radius:7px;border:1px solid transparent;}
+  nav.toc a:hover{color:var(--ink);background:var(--panel);border-color:var(--line);}
+  h2{font-size:21px;letter-spacing:-.01em;margin:48px 0 6px;padding-top:8px;}
+  h2 .n{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:10px;font-weight:700;}
+  .lead{color:var(--muted);margin:0 0 18px;max-width:900px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+    overflow:hidden;margin:18px 0;}
+  .card .hd{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:600;display:flex;align-items:center;gap:10px;}
+  .tablewrap{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  thead th{background:var(--thead);position:sticky;top:0;font-size:12px;letter-spacing:.03em;
+    text-transform:uppercase;color:var(--muted);font-weight:600;}
+  tbody tr:nth-child(even){background:var(--rowalt);}
+  td.concept{font-weight:600;white-space:nowrap;}
+  code,.mono{font-family:"SF Mono",ui-monospace,"Cascadia Code",Consolas,monospace;font-size:.92em;
+    background:var(--code);color:var(--codeink);padding:1px 5px;border-radius:5px;}
+  td code{white-space:nowrap;}
+  .b{color:var(--browser);font-weight:600;} .nv{color:var(--native);font-weight:600;}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:5px;border:1px solid;}
+  .tag.ok{color:var(--ok);border-color:var(--ok);} .tag.warn{color:var(--warn);border-color:var(--warn);}
+  .tag.tbd{color:var(--tbd);border-color:var(--tbd);} .tag.untested{color:var(--untested);border-color:var(--untested);}
+  .tag.same{color:var(--accent);border-color:var(--accent);}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12.5px;margin:10px 2px 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+  .kv{font-size:13.5px;} .kv div{padding:7px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;}
+  .kv div:last-child{border-bottom:0;} .kv .k{color:var(--muted);} .kv .v{text-align:right;font-weight:500;}
+  .note{background:var(--code);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;
+    color:var(--muted);font-size:13.5px;margin:14px 0;}
+  .toggle{position:fixed;top:14px;right:16px;z-index:10;background:var(--panel);border:1px solid var(--line);
+    color:var(--muted);border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;}
+  footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+  .small{font-size:12.5px;color:var(--muted);}
+</style>
+</head>
+<body>
+<button class="toggle" onclick="(function(){var r=document.documentElement,c=r.getAttribute('data-theme');r.setAttribute('data-theme',c==='dark'?'light':'dark');})()">◐ theme</button>
+<div class="wrap">
+
+<header class="top">
+  <span class="pill">Official reference</span>
+  <span class="pill">System documentation</span>
+  <h1>AE1 Translation Layer</h1>
+  <p class="sub">The canonical map from AE1 engine terminology, libraries, methods and strategies to how each
+  is <em>manifested</em> in the two build targets — the <b class="b">browser</b> build and the
+  <b class="nv">Windows desktop</b> build. Its purpose: to rapidly diagnose destabilised or incompatible
+  regions of the pipeline, and to know exactly which layer a symptom belongs to.</p>
+  <div class="meta">
+    <b>Doctrine.</b> The AE1 engine is one codebase — never forked. Portability lives entirely in four
+    <b>seams</b>: <code>gfx</code> (renderer), <code>platform</code> (window/input/time), <code>input3d</code>
+    &amp; <code>env3d</code> (engine-facing bridges). The browser and native targets are two implementations
+    behind those seams; the game logic, scene, scheduler and the guarded motion-matching core run identically on both.
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#target">Manifested target</a>
+  <a href="#render">Render layer</a>
+  <a href="#game">Game layer</a>
+  <a href="#strategies">Strategies</a>
+  <a href="#hardware">Hardware inventory</a>
+  <a href="#specs">Target specs</a>
+</nav>
+
+<div class="legend">
+  <span><span class="tag same">same</span> identical code/asset on both</span>
+  <span><span class="tag ok">ported</span> re-implemented behind a seam</span>
+  <span><span class="tag warn">reduced</span> present but simplified natively</span>
+  <span><span class="tag tbd">TBD</span> not yet built</span>
+</div>
+
+<!-- ============================ MANIFESTED TARGET ============================ -->
+<h2 id="target"><span class="n">01</span>The manifested target</h2>
+<p class="lead">Both targets consume the same <b>AGP</b> (AE1 Game Package): a target-neutral container of
+<code>manifest.json</code> + <code>data.json</code> + <code>game.aepack</code>. They differ only in the shell
+wrapped around it.</p>
+
+<div class="grid2">
+  <div class="card">
+    <div class="hd"><span class="b">■</span> Browser build &nbsp;<span class="small">exports/&lt;slug&gt;/</span></div>
+    <div style="padding:14px 18px" class="kv">
+      <div><span class="k">Entry</span><span class="v"><code>index.html</code> / <code>play.html</code></span></div>
+      <div><span class="k">Runtime</span><span class="v">browser + WebGL2</span></div>
+      <div><span class="k">Renderer</span><span class="v">three.js (vendored, inlined)</span></div>
+      <div><span class="k">JS engine</span><span class="v">V8 / SpiderMonkey / JSC</span></div>
+      <div><span class="k">Artifacts</span><span class="v"><code>index.html</code> (fat, file://) · <code>play.html</code> (slim, http) · <code>game.aepack</code></span></div>
+      <div><span class="k">Payload</span><span class="v">inlined base64 (fat) or fetched (slim)</span></div>
+      <div><span class="k">Distribution</span><span class="v">any browser / static host</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="hd"><span class="nv">■</span> Windows desktop build &nbsp;<span class="small">exports/&lt;slug&gt;-windows/</span></div>
+    <div style="padding:14px 18px" class="kv">
+      <div><span class="k">Entry</span><span class="v"><code>AE1Player.exe</code> (auto-locates)</span></div>
+      <div><span class="k">Runtime</span><span class="v">native (QuickJS + D3D11)</span></div>
+      <div><span class="k">Renderer</span><span class="v"><code>gfx</code> seam → Direct3D 11</span></div>
+      <div><span class="k">JS engine</span><span class="v">QuickJS-ng 0.16.2</span></div>
+      <div><span class="k">Artifacts</span><span class="v"><code>AE1Player.exe</code> · <code>engine/</code> (67 .js) · <code>game.aepack</code> · <code>manifest.json</code> · <code>data.json</code> · <code>.mmcache/</code></span></div>
+      <div><span class="k">Payload</span><span class="v"><code>game.aepack</code> read by name from disk</span></div>
+      <div><span class="k">Distribution</span><span class="v">self-contained folder, double-click</span></div>
+    </div>
+  </div>
+</div>
+<div class="note">The native runtime is a <b>Build &amp; Ship target only</b>. The editor, tools and the
+motion-matching lab stay in the browser forever. The <code>.mmcache/</code> is generated on first launch (or
+pre-warmed by the exporter) and holds the motion-matching gait tables so later launches skip the ~6&nbsp;s build.</div>
+
+<!-- ============================ RENDER LAYER ============================ -->
+<h2 id="render"><span class="n">02</span>Render layer translations</h2>
+<p class="lead">three.js / WebGL on the browser side; the hand-written D3D11 forward renderer behind
+<code>gfx.hpp</code> natively. bgfx remains the documented future backend that drops in behind the same header.</p>
+<div class="card"><div class="tablewrap"><table>
+  <thead><tr><th>AE1 / three.js concept</th><th>Browser build</th><th>Windows native build</th><th>Status &amp; notes</th></tr></thead>
+  <tbody>
+    <tr><td class="concept">Renderer</td><td>three.js <code>WebGLRenderer</code> (WebGL2)</td><td>D3D11 forward renderer — <code>gfx_d3d11.cpp</code> behind <code>gfx.hpp</code></td><td><span class="tag ok">ported</span> the <code>gfx</code> seam; bgfx is the future drop-in</td></tr>
+    <tr><td class="concept">Math library</td><td><code>THREE.Vector3/Quaternion/Matrix4/Object3D/Bone</code></td><td><code>kThreeShim</code> — pure-JS math, no WebGL, registered as bare <code>"three"</code></td><td><span class="tag ok">ported</span> un-stubs <code>the motion-matching core (not in the public build)</code>/<code>light.js</code> in QuickJS</td></tr>
+    <tr><td class="concept">Material / shading</td><td><code>MeshStandardMaterial</code> (PBR metallic-roughness)</td><td>HLSL forward Cook-Torrance: GGX + Smith-Schlick + Fresnel-Schlick, driven by glTF <code>metallicFactor</code>/<code>roughnessFactor</code>; sRGB→linear, shadowed, image-based ambient approx (diffuse fill + Fresnel grazing)</td><td><span class="tag ok">ported</span> metals reflect/tint, rough surfaces matte, real form shading. <span class="tag warn">reduced</span> metallic-roughness + normal MAPS not sampled (factors only); specular IBL is approximate, not PMREM</td></tr>
+    <tr><td class="concept">Base colour</td><td>sRGB texture + <code>baseColorFactor</code> + vertex colour</td><td>same, factor folded into vertex colour; sRGB linearised in-shader</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Tonemap</td><td><code>renderer.toneMapping = AgX</code></td><td>AgX (Minimal fit) in the composite pass (<code>kFxHLSL</code>)</td><td><span class="tag ok">ported</span> matches §18.88 grade</td></tr>
+    <tr><td class="concept">Skybox / background</td><td><code>scene.background</code> equirect via <code>RGBELoader</code></td><td>equirect Radiance <code>.hdr</code> (<code>stbi_loadf</code>) → fullscreen view-ray sky pass</td><td><span class="tag ok">ported</span> <code>.hdr</code> shared, not KTX2'd</td></tr>
+    <tr><td class="concept">Image-based light</td><td>PMREM env from the HDR</td><td>average sky radiance × <code>envIntensity</code> → ambient tint</td><td><span class="tag warn">reduced</span> a "whisper", not full IBL/PMREM</td></tr>
+    <tr><td class="concept">Shadows</td><td>three shadow maps</td><td>2048² sun depth pass + 3×3 PCF (<code>setShadowBounds</code>)</td><td><span class="tag ok">ported</span> ortho fitted to scene sphere</td></tr>
+    <tr><td class="concept">Depth of field</td><td>half-res CoC gather (§18.94)</td><td>depth → CoC → disc blur in composite (<code>setDOF</code>)</td><td><span class="tag warn">reduced</span> single-pass; focuses the player</td></tr>
+    <tr><td class="concept">Film grain</td><td>post grain</td><td>animated luminance noise in composite</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Transparency</td><td>three sorted transparency</td><td>opaque pass + sorted back-to-front blend pass</td><td><span class="tag ok">ported</span> hair/FX; cutout via alpha-test</td></tr>
+    <tr><td class="concept">HDR pipeline</td><td>float render targets</td><td>RGBA16F offscreen scene target → tonemap composite → 8-bit backbuffer</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Base-colour textures</td><td><code>KTX2Loader</code> + Basis wasm transcoder</td><td>vendored Basis Universal transcoder — <code>tex.cpp</code></td><td><span class="tag ok">ported</span> ETC1S / UASTC → RGBA8</td></tr>
+    <tr><td class="concept">Mesh compression</td><td>meshopt decoder (wasm)</td><td>vendored <code>meshoptimizer</code> decoder</td><td><span class="tag ok">ported</span> <code>EXT_meshopt_compression</code></td></tr>
+    <tr><td class="concept">glTF loading</td><td><code>GLTFLoader</code></td><td><code>gltf.cpp</code> — GLB parse, meshopt, <code>KHR_mesh_quantization</code>, RH→LH</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Skinning</td><td>GPU (<code>SkinnedMesh</code>)</td><td>CPU skinning (<code>poseRigFromWorlds</code>) → dynamic vertex buffers</td><td><span class="tag ok">ported</span> matcher poses a bone graph; verts world-space</td></tr>
+    <tr><td class="concept">glTF clip animation</td><td>three <code>AnimationMixer</code></td><td><code>poseRig</code> (TRS sampling in <code>gltf.cpp</code>)</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Bone physics (spring / "kawaii")</td><td><code>bonephys.js</code> verlet spring chains, driven per-element by <code>render3d</code> (<code>components.model.bonePhys</code>)</td><td>same <code>bonephys.js</code>, driven natively: a glTF-anim NPC carrying <code>bonePhys</code> is routed through a JS bone graph — <code>rigPoseLocals</code> samples the clip to per-node local TRS, <code>__bonePhysStep</code> poses the graph + runs the verlet sim, <code>jsRigWorlds</code> reads the physicked worlds back for CPU skinning (drawn with the element model — graph is glb-local, unlike MM's world-space)</td><td><span class="tag ok">ported</span> the Commander's sash/veil/dress hang under gravity (bind pose has the sash straight out at 68&nbsp;cm; the sim folds it down). Needed shim <code>Quaternion.identity()</code> + hasMatrix decompose in <code>rigPoseLocals</code>. Rest pose falls back to the captured clip pose (no skeleton/inverse-bind in the native graph), which is fine for gravity-owned chains (stiffness≈0)</td></tr>
+    <tr><td class="concept">Third-person camera</td><td><code>AE1ThirdPersonCamera</code> → three camera</td><td><code>AE1ThirdPersonCamera</code> (same JS) → <code>__camView</code> → native view/proj</td><td><span class="tag same">same</span> native reads eye/forward/fov</td></tr>
+    <tr><td class="concept">Dialogue / HUD text</td><td>DOM overlay + <code>FontFace</code> (PS2 Helvetica)</td><td><code>stb_truetype</code> glyph atlas + 2D screen-space overlay pass</td><td><span class="tag ok">ported</span> <code>drawOverlay</code>, emitText/Wrapped/Rect</td></tr>
+    <tr><td class="concept">Anti-aliasing</td><td>WebGL MSAA</td><td>FXAA post pass (compact Lottes), after tonemap</td><td><span class="tag ok">ported</span> MSAA fights the DOF depth-SRV; FXAA fits the composite; UI drawn after AA stays crisp</td></tr>
+  </tbody>
+</table></div></div>
+
+<!-- ============================ GAME LAYER ============================ -->
+<h2 id="game"><span class="n">03</span>Game layer translations</h2>
+<p class="lead">The scene, scripts, scheduler and motion-matching core are <b>the same code</b> on both targets. What
+changes is the host: the JS engine, and the platform bridges the engine reaches through
+(<code>input3d</code>, <code>env3d</code>, media, audio, the loop).</p>
+<div class="card"><div class="tablewrap"><table>
+  <thead><tr><th>AE1 concept</th><th>Browser build</th><th>Windows native build</th><th>Status &amp; notes</th></tr></thead>
+  <tbody>
+    <tr><td class="concept">JS engine</td><td>V8 (Chromium) / browser JS</td><td>QuickJS-ng 0.16.2</td><td><span class="tag ok">ported</span> patch: <code>AE1_NO_ATOMICS</code></td></tr>
+    <tr><td class="concept">Scene &amp; scripts</td><td><code>AE1Scene</code>, <code>compileAll</code>/<code>rehydrate</code>/<code>dispatch</code></td><td>identical (runs in QuickJS)</td><td><span class="tag same">same</span></td></tr>
+    <tr><td class="concept">motion-matching core</td><td><code>the motion-matching core (not in the public build)</code> in V8</td><td><code>the motion-matching core (not in the public build)</code> in QuickJS — unchanged</td><td><span class="tag same">same</span> guarded; never forked</td></tr>
+    <tr><td class="concept">MM character</td><td><code>the motion-matching character (not in the public build)</code> (<code>_mmTick</code>)</td><td>identical; skeleton bridged via <code>objectFor</code></td><td><span class="tag same">same</span></td></tr>
+    <tr><td class="concept">Renderer bridge</td><td><code>env3d</code> → render3d (three)</td><td>native <code>env3d</code> shim: <code>groundAt</code>→ray, <code>objectFor</code>→bone graph, <code>mediaUrlFor</code>→<code>ae1://</code></td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Input</td><td><code>input3d</code> — <code>KeyboardEvent.code</code> + Gamepad API</td><td>Win32 virtual-keys (<code>codeToVK</code>) + XInput (<code>Pad*</code>, sticks)</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Mouse-look</td><td>Pointer Lock API</td><td><code>Platform::captureMouse</code> (hide + recentre)</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Audio</td><td>WebAudio + music/sfx buses</td><td>miniaudio 0.11.25 (from-memory); a MUSIC bus (looping voices) + an SFX bus (one-shots); <code>settings.js</code> drives them via <code>world.audio</code> (<code>__setMusicVolume</code>/<code>__setSoundVolume</code>/<code>__setMuted</code>)</td><td><span class="tag ok">ported</span> volume sliders move the real mix; mute gates the master, per-bus levels preserved. <span class="tag warn">reduced</span> no 3D-positional audio; <code>playSound</code> opts (fade/per-sound volume) dropped</td></tr>
+    <tr><td class="concept">Runtime spawns (<code>loop.rescan</code>)</td><td>spawn → <code>scene.add</code> → <code>loop.rescan()</code> rebuilds the schedule; render3d clones a mesh</td><td><code>scene.setWorld</code> gives spawns a real world; native <code>loop.rescan</code> rebuilds the tick table + bumps a generation; the renderer reconciles its draw list against the live model elements (adds/hides), identical static media sharing one GPU upload</td><td><span class="tag ok">ported</span> was a no-op + a fixed draw list — the blocker for ALL runtime content (projectiles, enemy AoE waves, pod fire, spawned props): they now tick <b>and</b> draw. Verified by cloning an NPC live</td></tr>
+    <tr><td class="concept">Scene transitions</td><td><code>goToScene</code> / doors / portals; unload old → build target → onLoad</td><td>mirrors <code>world.js</code>: unload old, build the target from <code>data.scenes</code>, rehydrate, rebuild the tick schedule, fire onLoad, bump an epoch. Native reconciles instances (old erased, new built) + re-runs <code>applySceneVisuals</code> (camera framing, ids, ground tris, light, shadow, skybox)</td><td><span class="tag ok">ported</span> doors/portals/level changes work; cross-scene save-load too; GPU meshes + rigs freed on teardown (<code>destroyMesh</code> + slot recycling — memory bounded across level changes). <span class="tag warn">reduced</span> inventory-carry across scenes + <code>pendingSceneState</code> restore pending</td></tr>
+    <tr><td class="concept">Particle FX (<code>*Fx</code> elements)</td><td><code>particles.js</code> state → render3d <code>applyFx</code>/<code>stepFx</code> simulates + draws <code>THREE.Points</code></td><td>same <code>Particles</code> element writes the <code>fx</code> component; the native renderer OWNS the sim + draw (as render3d does): C++ mirrors <code>FX_PRESETS</code> + <code>stepFx</code>, driven by <code>__fxElements()</code>, drawn via <code>gfx.drawParticles</code> — world-space camera-facing billboards into the HDR target, premultiplied (additive glows + alpha smoke), a procedural soft radial sprite</td><td><span class="tag ok">ported</span> flame/smoke/splash/explosion, loop-trickle + burst, <code>fxColor</code> tint, depth-tested; <code>fxNode</code> rides a host BONE/socket (muzzle flashes, thrusters) — offset in the node's frame. <span class="tag warn">reduced</span> the <code>fxTexture</code> media sprite is pending (procedural soft sprite for now)</td></tr>
+    <tr><td class="concept">Media fetch</td><td><code>fetch()</code> hash-addressed URLs</td><td>fetch shim: <code>ae1://</code> → <code>__asset</code> from the AGP pack</td><td><span class="tag ok">ported</span></td></tr>
+    <tr><td class="concept">Main loop</td><td><code>requestAnimationFrame</code></td><td>native variable-timestep loop (per-frame real dt)</td><td><span class="tag ok">ported</span> fixed step judders off-60Hz — use variable</td></tr>
+    <tr><td class="concept">DOM (document/window)</td><td>real</td><td><code>window</code>=<code>globalThis</code> (real, so <code>window.X</code> is undefined); <code>document</code> is undefined (unguarded <code>document.X</code> throws); only <code>world.X</code> uses the deep no-op <code>Proxy</code></td><td><span class="tag warn">reduced</span> <b>truthiness trap</b> (world only): any unknown <code>world.X</code> returns a truthy proxy and silently fires code gated on it. Real falsy/real fields required — known: <code>debugFlags</code>, <code>_camCurveActive</code>, <code>loop</code>, <code>find</code>, <code>hud</code>, <code>debugFlag</code>, <code>voices</code>, <code>inventory</code></td></tr>
+    <tr><td class="concept">Element lookup (<code>find</code>)</td><td><code>element.find(name)</code> → <code>world.find</code>/<code>scene.findByName</code></td><td><code>world.find</code> = <code>scene.findByName</code>; <code>world.hud</code>=null so misses return null not the proxy</td><td><span class="tag ok">ported</span> <b>was the critical trap</b>: element.js tries <code>world.find</code> FIRST — absent, it resolved to the truthy proxy, so EVERY <code>element.find()</code> engine-wide returned the proxy (killed <code>this.find("DialogueUI")</code> → NPC interaction)</td></tr>
+    <tr><td class="concept">Interaction dispatch</td><td><code>world.loop.dispatchTo(el, mode, …)</code> → one element's handler</td><td>mirrors <code>engine/loop.js</code>: dispatch <code>mode</code> to <code>el</code> via the same schedule the native tick uses</td><td><span class="tag ok">ported</span> was a no-op — restores <code>onInteract</code> (talk to NPCs), <code>onHit</code>, <code>onCall</code>, <code>onClick</code>, pickups</td></tr>
+    <tr><td class="concept">Dialogue UI</td><td>DOM-overlay <code>DialogueUI</code>; option select via DOM clicks</td><td>same element; <code>tick()</code> drives nav/confirm from <code>input3d</code> (no clicks needed), <code>_dlg</code> read via <code>__dlgInfo</code>, drawn by the 2D overlay; cinematic camera via <code>_ccSample</code> (thirdperson → <code>__camView</code>)</td><td><span class="tag ok">ported</span> fully functional once <code>loop.dispatchTo</code> + <code>find</code> were fixed: talk to the companion character → FF-style box, arrow/WASD/pad nav, E/Enter/pad-X confirm</td></tr>
+    <tr><td class="concept">Saves / persistence</td><td><code>save.js</code> (<code>AE1Save</code>) + <code>settings.js</code> (<code>AE1Settings</code>); durable file + <code>localStorage</code> "continue" slot; option select via download/pick (DOM)</td><td><b>same</b> <code>save.js</code>/<code>settings.js</code> run natively; durable slot files under <code>&lt;agp&gt;/saves/*.ae1save.json</code> written by the <code>platform</code> seam's <b>atomic</b> writer; <code>localStorage</code> = file-backed KV (<code>.localstore.json</code>). No DOM: <code>saveGame</code> writes the slot file directly (no download/picker)</td><td><span class="tag ok">ported</span> industry-standard: atomic temp→flush→rename (crash-safe) + <code>.bak</code> of the prior save; identical JSON envelope both targets (moddable, cross-loadable); slot API <code>saveToSlot</code>/<code>loadSlot</code>/<code>listSaves</code>/<code>deleteSlot</code>, plus <code>continueGame</code>. Measured: write ≈5–9&nbsp;ms (JSON capture-bound), load from disk <b>≈0.2&nbsp;ms</b>, survives process restarts</td></tr>
+    <tr><td class="concept">Save/Load UI</td><td>DOM buttons / browser download+picker</td><td>native 2D overlay: F6 opens a slot list (time · scene · chapter) + "New save"; Up/Down + Enter + Del; F5 quicksave, F9 quickload; a fading toast</td><td><span class="tag ok">ported</span> native immediate-mode menu (the browser's DOM save UI has no native analogue); player uiLocked while open</td></tr>
+    <tr><td class="concept">Debug menu / video</td><td>DOM modules</td><td>stubbed (blocked at load)</td><td><span class="tag warn">reduced</span> not needed on ship target</td></tr>
+  </tbody>
+</table></div></div>
+
+<!-- ============================ STRATEGIES ============================ -->
+<h2 id="strategies"><span class="n">04</span>Pipeline strategies</h2>
+<p class="lead">Cross-cutting techniques and where they run.</p>
+<div class="card"><div class="tablewrap"><table>
+  <thead><tr><th>Strategy</th><th>Browser build</th><th>Windows native build</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="concept">Media addressing</td><td>content-hash URLs</td><td>AGP pack, name→bytes (<code>findAsset</code>)</td><td><span class="tag ok">ported</span> aepack: "AEPK" magic + JSON TOC + 8-aligned payloads</td></tr>
+    <tr><td class="concept">MM pose/feature dequant</td><td>JS int16→float32 at load</td><td>native <code>__dequantAsset</code> (C++)</td><td><span class="tag ok">ported</span> ~11 s → ~0.14 s</td></tr>
+    <tr><td class="concept">MM gait tables</td><td>computed every load (~6 s)</td><td>warm-cached to <code>&lt;agp&gt;/.mmcache</code>; exporter pre-warms</td><td><span class="tag ok">ported</span> byte-identical to the computed tables</td></tr>
+    <tr><td class="concept">Coordinate space</td><td>three right-handed</td><td>render left-handed (z-flip at the <code>gfx</code> boundary)</td><td><span class="tag ok">ported</span> eye / forward / light-dir / centre all flip</td></tr>
+    <tr><td class="concept">Texture diet</td><td colspan="2">Offline: <code>toktx</code> → KTX2 (shared pack)</td><td><span class="tag same">same</span> build-time; both consume the pack</td></tr>
+    <tr><td class="concept">Mesh diet</td><td colspan="2">Offline: <code>gltfpack -cc -kn -km -ke</code> (shared pack)</td><td><span class="tag same">same</span></td></tr>
+    <tr><td class="concept">Scatter / draw batching</td><td>Scatter archetype → <code>InstancedMesh</code> per mesh (§18.93, 25→1 draw call)</td><td>native reads <code>__scatterElements()</code> and appends the archetype's meshes at each copy transform (rotation+yaw, scale·k, ground snap) — copies share the archetype's mesh handles, go through the shadow+main passes</td><td><span class="tag ok">ported</span> the copies draw as TRUE GPU instances — one <code>DrawIndexedInstanced</code> per archetype mesh for all its copies (per-instance model matrix via instance-rate inputs), in both the shadow and main passes. <span class="tag warn">reduced</span> opaque instances only; a skinned archetype's copies share its live pose</td></tr>
+    <tr><td class="concept">Frame structure</td><td>rAF → render</td><td>skin-once → shadow pass → main pass → overlay → present</td><td><span class="tag ok">ported</span></td></tr>
+  </tbody>
+</table></div></div>
+
+<!-- ============================ HARDWARE ============================ -->
+<h2 id="hardware"><span class="n">05</span>Hardware inventory</h2>
+<p class="lead">What each target has actually been <em>run</em> on. Machines we have but haven't tested are
+<span class="tag untested">untested</span>; platforms with no build target are <span class="tag tbd">TBD</span>.</p>
+<div class="card"><div class="tablewrap"><table>
+  <thead><tr><th>System / class</th><th>Spec</th><th class="b">Browser</th><th class="nv">Windows native</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="concept">Primary workstation <span class="small">(this machine)</span></td>
+        <td>i7-14700K · RTX 4070 SUPER (12 GB) · 32 GB · Win 11 build 26200 · 1080p 60/74 Hz</td>
+        <td><span class="tag ok">tested</span></td><td><span class="tag ok">tested</span></td>
+        <td>reference target; all measurements below taken here</td></tr>
+    <tr><td class="concept">Integrated GPU (Intel UHD 770)</td>
+        <td>present on this machine as secondary adapter</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag untested">untested</span></td>
+        <td>native uses the discrete adapter; D3D11 WARP software path exists as fallback</td></tr>
+    <tr><td class="concept">Other NVIDIA (30/20/16-series)</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag untested">untested</span></td><td>no unit on hand</td></tr>
+    <tr><td class="concept">AMD Radeon (RDNA)</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag untested">untested</span></td><td>no unit on hand</td></tr>
+    <tr><td class="concept">Intel Arc (discrete)</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag untested">untested</span></td><td>no unit on hand</td></tr>
+    <tr><td class="concept">Windows laptop / low-power</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag untested">untested</span></td><td>thermal / iGPU behaviour unknown</td></tr>
+    <tr><td class="concept">Handheld (Steam Deck / ROG Ally)</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag untested">untested</span></td><td>Deck would run native via Proton — untested</td></tr>
+    <tr><td class="concept">Linux (x86-64)</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag tbd">TBD</span></td><td>no native build target (needs SDL3/Vulkan behind the seams)</td></tr>
+    <tr><td class="concept">macOS (Apple Silicon / Intel)</td><td>—</td>
+        <td><span class="tag untested">untested</span></td><td><span class="tag tbd">TBD</span></td><td>no native build target (needs Metal behind the <code>gfx</code> seam)</td></tr>
+  </tbody>
+</table></div></div>
+<div class="note">Browser "untested" rows mean we simply haven't sat at that machine — the browser build is
+inherently portable to any WebGL2 browser, so those are low-risk. Native "untested" rows carry real risk
+(driver, adapter selection, refresh-rate, thermals) until run. <b>TBD</b> = the build target does not exist yet.</div>
+
+<!-- ============================ SPECS ============================ -->
+<h2 id="specs"><span class="n">06</span>Target specifications</h2>
+<p class="lead">Measured on the reference workstation, devroom scene. Native figures are direct measurements from
+this session; browser figures are from the §18.88–94 optimisation wave.</p>
+
+<div class="grid2">
+  <div class="card">
+    <div class="hd"><span class="b">■</span> Browser build</div>
+    <div style="padding:6px 18px 14px" class="kv">
+      <div><span class="k">Frame rate</span><span class="v">vsync-bound; p99 ≈ 13.7 ms (§18.94)</span></div>
+      <div><span class="k">Boot / load</span><span class="v">pack fetch + decode; heap 1.5 → 0.87 GB after aepack</span></div>
+      <div><span class="k">Memory (heap)</span><span class="v">≈ 0.87 GB</span></div>
+      <div><span class="k">VRAM</span><span class="v">≈ 120 MB (KTX2, was ~800 MB)</span></div>
+      <div><span class="k">MM matcher build</span><span class="v">fast (V8)</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="hd"><span class="nv">■</span> Windows native build</div>
+    <div style="padding:6px 18px 14px" class="kv">
+      <div><span class="k">Frame rate</span><span class="v"><b>75 fps locked</b> (74 Hz panel), 13.34 ms ±0.5 ms</span></div>
+      <div><span class="k">Tick / draw</span><span class="v">tick ~3–6 ms, well under vsync budget</span></div>
+      <div><span class="k">Boot — cold</span><span class="v">~13 s (first-run MM gait build)</span></div>
+      <div><span class="k">Boot — warm</span><span class="v"><b>~6 s</b> (gait cache hit); pre-warmed in the export</span></div>
+      <div><span class="k">Memory (working set)</span><span class="v">≈ 736 MB (pack + decoded assets + MM float arrays)</span></div>
+      <div><span class="k">Exe size</span><span class="v">≈ 3.5 MB (static, zero DLLs)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="hd">Compression techniques</div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Technique</th><th>What</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td class="concept">KTX2 / Basis</td><td>ETC1S (color/data, qlevel 160), UASTC + zstd (normals), mips, sRGB/linear by slot</td><td>VRAM ~800 → ~120 MB; the player character's set BC7-class</td></tr>
+      <tr><td class="concept">meshopt</td><td><code>EXT_meshopt_compression</code> (<code>gltfpack -cc -kn -km -ke</code>), decoder inlined/vendored</td><td>flight_unit 50 → 11 MB</td></tr>
+      <tr><td class="concept">MM int16 quant</td><td>pose/feature streams int16 + per-column scales; dequant at load</td><td>pose pack 137 → 68 MB; net packs −80 MB</td></tr>
+      <tr><td class="concept">aepack</td><td>offset-indexed binary, sha256 de-dup of identical blobs</td><td>HDR packed once; boot heap 1.5 → 0.87 GB</td></tr>
+      <tr><td class="concept">HDR</td><td>Radiance <code>.hdr</code> kept as-is (equirect), decoded to float at load</td><td>skybox + IBL from one 2048×1024 asset</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="card">
+  <div class="hd">Optimisation techniques</div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Technique</th><th>Target</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td class="concept">Native dequant</td><td class="nv">native</td><td>MM load ~11 s → 0.14 s (C++ vs interpreted)</td></tr>
+      <tr><td class="concept">Gait warm-cache</td><td class="nv">native</td><td>build 26 s → ~6 s on later launches; export pre-warms</td></tr>
+      <tr><td class="concept">Skin-once draw-list</td><td class="nv">native</td><td>rigs posed once/frame, reused by shadow + main pass</td></tr>
+      <tr><td class="concept">Variable timestep</td><td class="nv">native</td><td>removes fixed-60-vs-75 Hz animation judder</td></tr>
+      <tr><td class="concept">Instanced scatter</td><td class="b">browser</td><td>one <code>InstancedMesh</code> per archetype; 25 → 1 draw call (§18.93)</td></tr>
+      <tr><td class="concept">Half-res DOF</td><td class="b">browser</td><td>12-tap gather at half res, CoC composite (§18.94)</td></tr>
+      <tr><td class="concept">Phase tally §18.87–94</td><td class="b">browser</td><td>devroom 667 → 362 MB, p99 21.5 → 13.7 ms</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<footer>
+  <p><b>AE1 Translation Layer</b> — official system documentation. Diagnose from the layer down:
+  a symptom is either in shared code (same on both targets), a seam implementation
+  (<code>gfx</code>/<code>platform</code>/<code>input3d</code>/<code>env3d</code>), or the manifested shell.
+  Native measurements: reference workstation, devroom, this session. Keep this file in sync when a seam
+  gains or loses a translation.</p>
+  <p class="small">See also <code>docs/engine/20-native-build-architecture.md</code> and
+  <code>native/third_party/VENDORING.md</code>. Generated as a static, self-contained page (no external resources).</p>
+</footer>
+
+</div>
+</body>
+</html>

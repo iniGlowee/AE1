@@ -1,0 +1,14 @@
+<?dat
+; Scene 2's welcome sign. It is very proud of the population count.
+(passiveLines ("sign2_line.mp3"))
+(senseRange 2.5)
+(hearRange 10)
+(passiveChance 1)
+(passiveCooldown 10)
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends PassiveDialogue)
+(name "SignWelcome")
+ags?>

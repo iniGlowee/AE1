@@ -1,0 +1,10 @@
+<?dat
+; THE PRESENTATION COURSE (§18.49): sweep in, then push close — two curves
+; conducted in order, findable by name from any script
+; (this.find("PresentCourse").playCourse()).
+(courseCurves ("PresentSweep" "PresentPush"))
+?>
+<?def
+(extends CharacterCameraCourse)
+(name "PresentCourse")
+ags?>

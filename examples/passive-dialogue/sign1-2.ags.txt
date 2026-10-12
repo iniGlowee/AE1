@@ -1,0 +1,15 @@
+<?dat
+; A TALKING SIGN (SS18.28): walk close and it reads itself aloud. Chance 1 --
+; a sign that only sometimes works is a broken sign.
+(passiveLines ("sign1_line.mp3"))
+(senseRange 2.5)
+(hearRange 10)
+(passiveChance 1)
+(passiveCooldown 10)
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends PassiveDialogue)
+(name "SignHouse")
+ags?>

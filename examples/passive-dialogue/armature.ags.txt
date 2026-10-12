@@ -1,0 +1,29 @@
+<?dat
+; PASSIVE PROXIMITY DIALOGUE (SS18.18): wander near the companion character and he MAY say one of
+; these lines -- or nothing (passiveChance; silence is part of the design).
+; Volume follows your distance (hearRange); one voice world-wide; a line
+; never repeats twice running. His idle animation is the scene's model
+; component clip -- no Model script needed for that.
+(passiveLines (
+  "9s_audio_001_idle_passive.mp3"
+  "9s_audio_002_idle_passive.mp3"
+  "9s_audio_003_idle_passive.mp3"
+  "9s_audio_004_idle_passive.mp3"
+  "9s_audio_005_idle_passive.mp3"))  ; FORGED: audioforge.py, voice "ana"
+(senseRange 3)
+(hearRange 12)
+(passiveChance 0.6)
+(passiveCooldown 8)
+(passiveVolume 1)
+(pickable false)
+?>
+<?def
+(extends PassiveDialogue)
+(name "Hero")
+
+(runInfo spoke onSpeak)
+
+function spoke(line) {
+  console.log("[the companion character] " + line);
+}
+ags?>

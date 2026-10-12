@@ -1,0 +1,42 @@
+<?dat
+; A two-handed weapon. The grip is AUTHORED IN THE GLB: SocketRightHand (a
+; Blender Empty parented to the mesh) lands exactly on her hand bone --
+; mountOffset numbers are fine-tune on top, not the whole grip.
+(socket "rightHand")
+(gripNode "SocketRightHand")
+; Where a round leaves from: the muzzle arrow authored in the glb (§18.16).
+(muzzleNode "SocketMuzzel")
+; AIM ASSIST: the mesh pivots about the right-hand grip so the barrel tracks
+; the focal point. Grip anchors position, muzzle steers, left hand cosmetic.
+; Weight is how much of the full correction applies (subtle beats robotic);
+; MaxDeg caps the swing off the animated pose. All live-tunable in play.
+(aimAssist true)
+(aimWeight 0.75)
+(aimMaxDeg 30)
+(mountX 0) (mountY 0) (mountZ 0)
+(mountOffsetX 0) (mountOffsetY 180) (mountOffsetZ 0)
+(mountScale 1)
+(pickable true)
+(isWeapon true)
+; THIS weapon's firing animation -- overrides the character's (attack ...)
+; while wielded. Uninterruptible while it plays, like every attack.
+(attack "2b_actions.glb#fire_bazooka")
+; The AMMUNITION: a Projectile element in the scene is the template; a fresh
+; round spawns at this fraction of the firing clip (mid-animation, not at
+; the click). The round carries its own speed/range/damage (missile-2.ags.txt).
+(projectile "MIssile")
+(projectileAt 0.5)
+; Tune when it should hurt things (melee sweep -- the missile has its own):
+(damage 90)
+(hasPhysics true)
+?>
+<?def
+(extends Hitbox)
+(name "Bazooka")
+
+(runInfo fired onPrimary)
+
+function fired(actor) {
+  console.log("[Bazooka] BOOM");
+}
+ags?>

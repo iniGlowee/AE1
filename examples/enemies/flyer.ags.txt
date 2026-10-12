@@ -1,0 +1,54 @@
+<?dat
+; THE SMALL FLYER (§18.44): em0030, the reference game's hovering gun platform — the
+; game's first RANGED enemy, and the archetype system's proof. It has no
+; attack animation because it never needed one: the guns fire from the
+; hover pose (Attack_Shoot is the idle mot under an attack name), which is
+; exactly how it behaves in the reference action game. Death is the game's own 5-frame pop —
+; the explosion flourish arrives with the particle round.
+;
+; Hostile on sight, keeps its distance: (attackRange 9) means the brain
+; stops closing at ~7 m and shoots from there — a ranged enemy without a
+; single new line of brain code.
+(health 40)
+(aiType "melee")
+(friendlyUntilAttacked false)
+(aggroRange 12)
+(leashRange 0)
+(chaseSpeed 2.5)
+(hoverHeight 2.2)
+
+(wander true)
+(wanderSpeed 1.2)
+(wanderRange 5)
+(idleChance 0.3)
+(idleTime 1.5)
+
+(idle "Idle")
+(move "Walk")
+(hit "Hit")
+(hitBig "Hit_Big")
+(bigHitDamage 20)
+(hurtTime 0.8)
+(hurtTimeBig 1.2)
+(death "Death")
+
+; THE CLASSIFIED ATTACK: ranged, 5 damage, slow orange orb (4 m/s, 30 m).
+(attacks ("Attack_Shoot"))
+(attackSpecs (("Attack_Shoot" "ranged" 5 "speed" 4 "range" 30 "windup" 0.6)))
+(attackRange 9)
+(attackRate 2.4)
+(attackWindup 0.6)
+
+(vanishAfter 4)
+(hasPhysics false)
+?>
+<?def
+(extends Enemy)
+(name "SmallFlyer")
+
+(runInfo hurt onHit)
+
+function hurt(attacker, amount) {
+  console.log("[Flyer] hit for " + amount + " — health " + this.health);
+}
+ags?>

@@ -1,0 +1,152 @@
+/* AE1 - theme tokens.
+ *
+ * The register is Blender / a commercial engine / Godot: dark, dense, quiet. Chrome recedes so
+ * the work is the only thing with contrast. Nothing in the UI competes with the
+ * canvas for attention.
+ *
+ * Every colour, size, and duration in AE1 comes from this file. If a component
+ * hardcodes a hex value, that is a bug -- theming and future light mode both
+ * depend on this staying the single source.
+ */
+
+:root {
+  /* Surfaces, deepest to raised. Blender's trick is a very narrow value range
+   * with near-black outlines doing the separation, rather than big contrast
+   * jumps between panels. */
+  --bg-0: #131313;   /* window chrome, deepest wells */
+  --bg-1: #1d1d1d;   /* app background */
+  --bg-2: #282828;   /* panels */
+  --bg-3: #333333;   /* inputs, raised controls */
+  --bg-4: #3f3f3f;   /* hover */
+  --bg-5: #4a4a4a;   /* active / pressed */
+
+  --line:      #0e0e0e;  /* structural outline */
+  --line-soft: #3a3a3a;  /* internal dividers */
+
+  --text-0: #e6e6e6;  /* primary */
+  --text-1: #a6a6a6;  /* secondary */
+  --text-2: #6b6b6b;  /* tertiary, hints */
+  --text-on-accent: #ffffff;
+
+  --accent:     #4772b3;
+  --accent-hi:  #5b8ad4;
+  --accent-dim: #35547f;
+
+  --danger:  #c0524f;
+  --warning: #c08a3e;
+  --ok:      #5a9e5a;
+
+  /* Element type colours. Desaturated on purpose: the viewport shows many at
+   * once, and saturated fills would fight the artwork they stand in for. */
+  --type-element:    #6b7f9e;
+  --type-background: #5f8a5f;
+  --type-character:  #a06b83;
+  --type-object:     #a08a55;
+  --type-region:     #5590a0;
+  --type-audio:      #8465a5;
+
+  /* Type. System stacks only -- a webfont would mean either a CDN or a payload,
+   * and AE1 ships neither. */
+  --font-ui:   "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+
+  --fs-xs: 10px;
+  --fs-sm: 11px;
+  --fs-md: 12px;   /* the default; DCC tools run small and dense */
+  --fs-lg: 14px;
+  --fs-xl: 18px;
+
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+  --sp-8: 48px;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  --topbar-h: 30px;
+  --statusbar-h: 22px;
+
+  /* Fast enough to feel instant, slow enough to read as motion. Anything over
+   * ~150ms in a tool this dense reads as lag. */
+  --t-fast: 90ms;
+  --t-med: 140ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.65);
+
+  --z-modal: 100;
+  --z-toast: 200;
+}
+
+/* Reset ------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-1);
+  color: var(--text-0);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  overflow: hidden;               /* the app owns scrolling, not the page */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A design tool is a click-and-drag surface. Stray text selection while
+ * dragging elements feels broken, so selection is opt-in per component. */
+body {
+  user-select: none;
+}
+
+input,
+textarea,
+[data-selectable] {
+  user-select: text;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent-hi);
+  outline-offset: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-4);
+  border: 2px solid var(--bg-1);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-5);
+}

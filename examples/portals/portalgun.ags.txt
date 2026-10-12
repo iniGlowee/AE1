@@ -1,0 +1,104 @@
+<?dat
+; THE PORTAL GUN (§18.30): wield it, LEFT click paints the ORANGE portal on
+; whatever wall the camera centre is looking at, RIGHT click paints the BLUE
+; one. One of each, ever — a new shot MOVES that colour. Both open -> each
+; oval shows its partner's EYE (a PortalEye PerspectiveCamera parked at the
+; oval centre, aimed along the wall normal — what you'll see after stepping
+; through), and stepping into one walks you out of the other.
+(pickable true)
+; NOT a weapon: clicks must never swing an attack clip. The gun aims like the
+; bazooka anyway — declaring a muzzle is what arms the focal raycast + assist.
+(isWeapon false)
+(gripNode "SocketRightHand")
+(muzzleNode "SocketMuzzel")
+(aimAssist true)
+(aimWeight 0.75)
+(aimMaxDeg 30)
+(mountX 0) (mountY 0) (mountZ 0)
+(mountOffsetX 0) (mountOffsetY 180) (mountOffsetZ 0)
+(mountScale 1)
+(portalRange 60)
+?>
+<?def
+(extends Hitbox)
+(name "PortalGun")
+
+(runInfo shootA onPrimary)
+(runInfo shootB onSecondary)
+(runInfo warpTick onTick)
+
+function place(slot, actor) {
+  this.holder = actor;
+  var env = this.world ? this.world.env3d : null;
+  var hit = env && env.aimPoint ? env.aimPoint(actor, Number(this.portalRange) || 60) : null;
+  // No wall, no portal: a miss into open air paints nothing (and says so).
+  if (!hit || !hit.hit || hit.nx === undefined) {
+    console.log("[PortalGun] " + slot + ": nothing there to stick to.");
+    return;
+  }
+  this.setComponent("portal", slot, [hit.x, hit.y, hit.z, hit.nx, hit.ny, hit.nz]);
+  // Park this portal's EYE at the oval centre, looking straight out of the
+  // wall — the partner face displays its capture.
+  var eye = this.find(slot === "a" ? "PortalEyeA" : "PortalEyeB");
+  if (eye) {
+    eye.x = hit.x + hit.nx * 0.1;
+    eye.y = hit.y + hit.ny * 0.1;
+    eye.z = hit.z + hit.nz * 0.1;
+    eye.aimAlong(hit.nx, hit.ny, hit.nz);
+    this.setComponent("portal", slot + "Cam", eye.name);
+  }
+  console.log("[PortalGun] " + slot + " portal @ " + hit.x.toFixed(1) + ", " +
+    hit.y.toFixed(1) + ", " + hit.z.toFixed(1));
+}
+
+function shootA(actor) { this.place("a", actor); }
+function shootB(actor) { this.place("b", actor); }
+
+function warpTick(dt) {
+  var bag = this.components ? this.components.portal : null;
+  var p = this.holder;
+  if (!p || !bag || !bag.a || !bag.b) return;
+  // ARMED is the anti-ping-pong: a warp lands you INSIDE the exit portal's
+  // trigger (a floor portal especially — you stand on it), so the gun only
+  // fires again after you have stepped clear of BOTH ovals once.
+  var pairs = [[bag.a, bag.b], [bag.b, bag.a]];
+  var inside = null;
+  for (var i = 0; i < 2; i++) {
+    var from = pairs[i][0];
+    // The player's CHEST against the oval centre — inside ~1 metre counts as
+    // stepping in. Wall collision stops her ~0.4m out, well inside that.
+    var dx = (p.x || 0) - from[0];
+    var dy = ((p.y || 0) + 1) - from[1];
+    var dz = (p.z || 0) - from[2];
+    if (dx * dx + dy * dy + dz * dz <= 1.1) { inside = i; break; }
+  }
+  if (inside === null) { this.armed = true; return; }
+  if (!this.armed) return;
+  this.armed = false;
+  // Out of the OTHER portal: pushed clear along its normal, height offset
+  // carried over for continuity.
+  var to = pairs[inside][1];
+  var from2 = pairs[inside][0];
+  p.x = to[0] + to[3] * 1.2;
+  p.z = to[2] + to[5] * 1.2;
+  p.y = Math.max(0, to[1] + ((p.y || 0) - from2[1]));
+  // CONTINUITY (SS18.32): rotate heading AND camera by the pair's relative
+  // yaw — walking in at an angle walks OUT at the mirrored angle, and the
+  // view keeps pointing "forward through the portal" instead of cutting.
+  // Vertical portals (floor/ceiling) have no yaw; fall back to the exit
+  // normal there.
+  var wallish = Math.abs(from2[4]) < 0.7 && Math.abs(to[4]) < 0.7;
+  if (wallish) {
+    var inYaw = Math.atan2(-from2[3], -from2[5]);
+    var outYaw = Math.atan2(to[3], to[5]);
+    var delta = (outYaw - inYaw) * 180 / Math.PI;
+    p._heading = (p._heading || 0) + delta;
+    var camEl = this.find("Camera");
+    if (camEl && camEl._yaw !== undefined) camEl._yaw = camEl._yaw + delta;
+  } else {
+    p._heading = Math.atan2(to[3], to[5]) * 180 / Math.PI;
+  }
+  if (p._applyHeading) p._applyHeading();
+  console.log("[PortalGun] whoosh.");
+}
+ags?>

@@ -1,0 +1,53 @@
+<?dat
+; THE HORDE SPAWNER (§18.46): the instancing + instance-overriding demo,
+; written entirely in Angel Script — the point of the whole feature. On
+; scene load it spawns (hordeCount) stubbies from the parked, invisible
+; StubbyProto, each with ITS OWN position, health, tint, and punch damage:
+;
+;   const inst = this.spawnInstance("StubbyProto", { x, z, health, ... });
+;   inst.setTint("#ff5050");
+;   inst.setAttackDamage("Attack_1", 3 + ring * 2);
+;
+; One glb download, one animation package, twenty timelines. Tune the
+; count/palette here or in Properties; a higher-order system (an event, an
+; area buff) can later reach every member via this.instancesOf("StubbyProto").
+(hordeCount 20)
+(hordePalette ("#ff5050" "#50ff70" "#5080ff" "#ffe050" "#ff9040" "#d070ff" "#70fff0" "#ffffff"))
+?>
+<?def
+(extends Element)
+(name "HordeSpawner")
+
+(runInfo begin onLoad)
+
+function begin() {
+  const v = this.hordePalette;
+  const palette = typeof v === "string" ? [v] : v;
+  const n = Number(this.hordeCount) || 20;
+  for (let i = 0; i < n; i++) {
+    const ring = i % 3;                       // three rings of machines
+    const a = (i / n) * Math.PI * 2 + ring * 0.35;
+    const r = 3.5 + ring * 2.4;
+    const inst = this.spawnInstance("StubbyProto", {
+      x: Math.sin(a) * r,
+      z: Math.cos(a) * r,
+      y: 0.01,
+      rotationY: (a * 180) / Math.PI + 180,
+      // INSTANCE-OVERRIDING: outer rings are tougher...
+      health: 30 + ring * 25,
+      // ...and every stubby fights (the parked prototype is a pacifist)
+      aiType: "melee",
+      friendlyUntilAttacked: false,
+      wander: true,
+      aggroRange: 6,
+    });
+    if (!inst) continue;
+    // ...with a ring-scaled punch and its own coat of paint
+    inst.setAttackDamage("Attack_1", 3 + ring * 2);
+    inst.setAttackDamage("Attack_2", 3 + ring * 2);
+    inst.setTint(palette[i % palette.length]);
+  }
+  console.log("[HordeSpawner] " + this.instancesOf("StubbyProto").length
+    + " stubbies live from one prototype.");
+}
+ags?>

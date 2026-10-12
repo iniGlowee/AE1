@@ -1,0 +1,14 @@
+<?dat
+; A MUSIC BOX (SS18.34): while the player stands inside this region, the
+; named track plays on the world's MUSIC BUS -- separate from the ambience
+; bed and from voices, so all three layer. Shape the region with the normal
+; transform tools (x/y/z centre, scaleX/Y/Z metres, rotationY yaw); the teal
+; translucent box in the viewport is authoring ink -- uncheck visible to
+; hide it, the music keeps working.
+(music "backgroundMusic_scene_001.mp3")
+(musicVolume 1)
+?>
+<?def
+(extends AudioBackgroundMusicVolume)
+(name "MusicBox")
+ags?>

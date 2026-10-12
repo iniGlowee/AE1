@@ -1,0 +1,13 @@
+<?dat
+; the reference action game-style climbable ladder (engine/ladder.js). The glb carries indexed
+; rung sockets rung_00..rung_NN (meshforge "sockets"); the class publishes
+; climb geometry and the character's ladder protocol does the climbing --
+; proximity mount, stick up/down climbs, jump lets go, climb-over at the top.
+(climbOffset 0.32)
+; +1: approach from local +Z (the office side as placed), -1: local -Z
+(faceNormal 1)
+?>
+<?def
+(extends Ladder)
+(name "wall_ladder")
+ags?>

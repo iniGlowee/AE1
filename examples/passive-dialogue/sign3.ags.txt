@@ -1,0 +1,14 @@
+<?dat
+; The goober-adjacent warning sign. He says he is not on a diet. He is.
+(passiveLines ("sign3_line.mp3"))
+(senseRange 2.5)
+(hearRange 10)
+(passiveChance 1)
+(passiveCooldown 10)
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends PassiveDialogue)
+(name "SignDiet")
+ags?>

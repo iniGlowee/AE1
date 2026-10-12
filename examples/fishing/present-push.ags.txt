@@ -1,0 +1,18 @@
+<?dat
+; PRESENTATION, shot two (§18.49): a slow push-in drifting right, eyes on
+; the fish the whole way. Ends by releasing the camera back to the orbit.
+(curvePoints (
+  (0    0   1.2  3.0   0 1.1 1.5)
+  (2.8  0.9 1.05 2.2   0 1.1 1.5)))
+(holdAtEnd false)
+?>
+<?def
+(extends CharacterCameraCurve)
+(name "PresentPush")
+
+(runInfo finished onEnd)
+
+function finished() {
+  console.log("[PresentPush] — the catch of the day.");
+}
+ags?>

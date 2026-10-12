@@ -1,0 +1,21 @@
+<?dat
+; ARENA FIXTURE LIGHTS (18.57): point lights auto-derived from the map's
+; own emissive fixtures -- meshes wearing CNS glow materials (g_Intensity
+; > 1) ARE the authored lamps, so each light sits at a real fixture with
+; the fixture's color. No runtime light data exists in the map files (the
+; game's map lighting is baked); this is the honest reconstruction.
+; Per-element overrides in the scene carry position and color.
+(lightType "point")
+(color "#e8f0ff")
+; three r180 physical units: point lights want HUNDREDS (candela) — 45
+; was invisible; 1500 over a 55 m falloff gives real pools without
+; flattening the factory's gloom (A/B tuned live)
+(intensity 1500)
+(distance 55)
+(fill 0)
+(follow false)
+?>
+<?def
+(extends Light)
+(name "ArenaLight")
+ags?>

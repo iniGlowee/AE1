@@ -1,0 +1,90 @@
+<?dat
+; THE FISHING SPOT (§18.49): E at the pier's end starts the the reference action game fishing
+; loop on the real extracted animations — enter (e0cb), cast (e0cc), the
+; long waiting cycle (e0cd), and the rise (e0ce). A roll decides the bite:
+; nothing = she recasts; a CATCH = the koi surfaces at her focus point and
+; the PresentCourse camera sweep admires it. No inventory, no UI — the
+; rough system, exactly.
+(castMin 2.5)
+(castMax 6)
+(catchChance 0.65)
+(fishName "PresentFish")
+(courseName "PresentCourse")
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends Hitbox)
+(name "FishingSpot")
+
+(runInfo poke onInteract)
+(runInfo tick onTick)
+
+function poke(actor) {
+  if (this.phase) return; // already fishing
+  const mm = actor._mm;
+  if (!mm || !mm.grounded) return;
+  this.actor = actor;
+  this.phase = "enter";
+  mm.playAction("Fishing_Enter");
+  console.log("[Fishing] line in the water...");
+}
+
+function tick(dt) {
+  const actor = this.actor;
+  if (!this.phase || !actor) return;
+  const mm = actor._mm;
+  const done = !mm.inAction;
+
+  if (this.phase === "enter" && done) {
+    this.phase = "cast";
+    mm.playAction("Fishing_Cast");
+
+  } else if (this.phase === "cast" && done) {
+    this.phase = "wait";
+    this.waitT = Number(this.castMin)
+      + Math.random() * (Number(this.castMax) - Number(this.castMin));
+    mm.playAction("Fishing_Idle");
+
+  } else if (this.phase === "wait") {
+    this.waitT -= dt;
+    if (done) mm.playAction("Fishing_Idle"); // the 7.4 s cycle relinks
+    if (this.waitT <= 0) {
+      const caught = Math.random() < Number(this.catchChance);
+      this.phase = caught ? "land" : "recast";
+      mm.playAction("Fishing_Exit");
+      console.log(caught ? "[Fishing] something's on the line!"
+                         : "[Fishing] ...nothing. Again.");
+    }
+
+  } else if (this.phase === "recast" && done) {
+    this.phase = "cast";
+    mm.playAction("Fishing_Cast");
+
+  } else if (this.phase === "land" && done) {
+    // THE CATCH: the koi surfaces at her focus point, the camera admires it
+    this.phase = "present";
+    const fish = this.find(String(this.fishName));
+    if (fish) {
+      const h = (actor._heading ?? 0) * Math.PI / 180;
+      fish.x = (actor.x ?? 0) + Math.sin(h) * 1.5;
+      fish.z = (actor.z ?? 0) + Math.cos(h) * 1.5;
+      fish.y = (actor.y ?? 0) + 1.15;
+      fish.rotation = 0;
+      fish.visible = true;
+    }
+    const course = this.find(String(this.courseName));
+    if (course) course.playCourse();
+
+  } else if (this.phase === "present") {
+    const fish = this.find(String(this.fishName));
+    if (fish && fish.visible) fish.rotationY = ((fish.rotationY ?? 0) + 70 * dt) % 360;
+    const course = this.find(String(this.courseName));
+    if (!course || !course.running) {
+      if (fish) fish.visible = false;
+      this.phase = "";
+      console.log("[Fishing] a fine koi. The lake awaits another cast.");
+    }
+  }
+}
+ags?>

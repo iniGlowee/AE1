@@ -1,0 +1,880 @@
+/* AE1 - workspace: areas, panes, dividers.
+ * Tokens only. No literal colours (see theme.css).
+ */
+
+#workspace {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-0);
+}
+
+/* Splits ------------------------------------------------------------------ */
+
+.split {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.split[data-dir='row'] { flex-direction: row; }
+.split[data-dir='col'] { flex-direction: column; }
+
+/* Panes ------------------------------------------------------------------- */
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;   /* without these a flex child refuses to shrink below its */
+  min-height: 0;  /* content, and dragging a divider silently does nothing  */
+  overflow: hidden;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+/* A pane mounted directly under #workspace has no flex parent to size it, so it
+ * falls back to height:auto -- and .pane-body's `flex: 1 1 0` then resolves a 0
+ * basis against nothing and collapses to zero height. Happens in exactly two
+ * cases: a maximized pane, and a layout closed down to a single root leaf.
+ * Sizing it explicitly covers both. */
+#workspace > .pane {
+  width: 100%;
+  height: 100%;
+}
+
+.pane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex: 0 0 24px;
+  padding: 0 var(--sp-2);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+}
+
+.pane-head-spacer { flex: 1; }
+
+.pane-select {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  padding: 1px var(--sp-2) 1px var(--sp-1);
+  cursor: pointer;
+  max-width: 150px;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.pane-select:hover {
+  background: var(--bg-3);
+  color: var(--text-0);
+}
+
+.pane-btn {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  line-height: 1;
+  cursor: pointer;
+  /* Pane controls are chrome. They stay quiet until the pane is under the
+   * pointer, so a six-pane workspace isn't a wall of buttons. */
+  opacity: 0;
+  transition: background var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease),
+              opacity var(--t-fast) var(--ease);
+}
+
+.pane:hover .pane-btn { opacity: 1; }
+
+.pane-btn:hover {
+  background: var(--bg-4);
+  color: var(--text-0);
+}
+
+.pane-btn:focus-visible { opacity: 1; }
+
+.pane-body {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Dividers ---------------------------------------------------------------- */
+
+.divider {
+  flex: 0 0 4px;
+  position: relative;
+  background: var(--bg-0);
+  transition: background var(--t-fast) var(--ease);
+}
+
+.divider[data-dir='row'] { cursor: col-resize; }
+.divider[data-dir='col'] { cursor: row-resize; }
+
+.divider:hover,
+.divider[data-dragging='true'] {
+  background: var(--accent);
+}
+
+/* A 4px target is correct visually and far too small to hit reliably, so the
+ * hit area is widened invisibly past the visual edge. This is the difference
+ * between dividers that feel precise and dividers that feel broken. */
+.divider::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+}
+
+/* While dragging, the cursor must not flicker as it crosses panes, and text
+ * must not select underneath. */
+body[data-dragging] * {
+  user-select: none !important;
+}
+body[data-dragging='row'] * { cursor: col-resize !important; }
+body[data-dragging='col'] * { cursor: row-resize !important; }
+
+/* Viewport ---------------------------------------------------------------- */
+
+.viewport-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pane-body:has(.viewport-canvas) { overflow: hidden; }
+
+/* 3D viewport overlay — status text floating over the three.js canvas. */
+.v3d-overlay {
+  position: absolute;
+  left: var(--sp-3);
+  bottom: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  pointer-events: none;
+}
+
+.v3d-msg {
+  padding: 2px var(--sp-2);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+}
+
+.v3d-msg--info { color: var(--text-1); }
+.v3d-msg--err { color: var(--danger); border-color: var(--danger); }
+
+/* Video transport.
+ *
+ * Floats over the canvas rather than sitting in the pane toolbar: it belongs to
+ * the video you are looking at, and it appears only while one is selected. The
+ * pane-body it sits in is `position: relative`. */
+.pane-body:has(.viewport-canvas) { position: relative; }
+
+.vt {
+  position: absolute;
+  left: 50%;
+  bottom: var(--sp-3);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: min(560px, calc(100% - var(--sp-6)));
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.vt[hidden] { display: none; }
+
+.vt-btn {
+  flex: none;
+  min-width: 28px;
+  padding: 2px var(--sp-2);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-0);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.vt-btn:hover { border-color: var(--accent); }
+.vt-btn--wide { white-space: nowrap; }
+
+.vt-scrub {
+  flex: 1 1 auto;
+  min-width: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.vt-time {
+  flex: none;
+  min-width: 74px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+}
+
+/* Pane toolbar / shared ---------------------------------------------------- */
+
+.pane-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--line-soft);
+  position: sticky;
+  top: 0;
+  background: var(--bg-2);
+  z-index: 1;
+}
+
+/* The substring filter (Outliner, Media Collection): display-only — it hides
+   non-matching rows/tiles, it never touches selection or the scene. */
+.pane-search {
+  width: 90px;
+  min-width: 60px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 11px;
+  color: var(--fg-1);
+  background: var(--bg-1);
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  outline: none;
+}
+.pane-search:focus {
+  border-color: var(--line-strong, var(--line-soft));
+}
+
+.pane-count {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+  padding-right: var(--sp-2);
+}
+
+.pane-empty {
+  padding: var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* Outliner ---------------------------------------------------------------- */
+
+.outliner {
+  padding: var(--sp-1) 0;
+}
+
+.outliner-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 22px;
+  padding-right: var(--sp-2);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  color: var(--text-1);
+}
+
+.outliner-row:hover {
+  background: var(--bg-3);
+  color: var(--text-0);
+}
+
+.outliner-row[data-selected='true'] {
+  background: var(--accent-dim);
+  color: var(--text-0);
+}
+
+.outliner-dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+
+.outliner-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.outliner-eye,
+.outliner-del {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: 9px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* The eye stays visible when it is OFF -- a hidden element must advertise that
+ * it is hidden, or the user hunts for an element that is right there. */
+.outliner-eye[data-off='true'] {
+  opacity: 1;
+  color: var(--warning);
+}
+
+.outliner-row:hover .outliner-eye,
+.outliner-row:hover .outliner-del,
+.outliner-row[data-selected='true'] .outliner-eye,
+.outliner-row[data-selected='true'] .outliner-del {
+  opacity: 1;
+}
+
+.outliner-eye:hover { color: var(--text-0); background: var(--bg-4); }
+.outliner-del:hover { color: var(--text-on-accent); background: var(--danger); }
+
+/* Properties -------------------------------------------------------------- */
+
+.properties {
+  padding-bottom: var(--sp-5);
+}
+
+.prop-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.prop-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prop-id {
+  padding: var(--sp-1) var(--sp-3) var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--line-soft);
+  overflow-wrap: anywhere;
+}
+
+.prop-group {
+  padding: var(--sp-2) var(--sp-3) var(--sp-3);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.prop-group-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-2);
+  margin: var(--sp-2) 0;
+}
+
+.prop-row {
+  display: grid;
+  grid-template-columns: minmax(52px, 40%) 1fr;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+  min-height: 20px;
+}
+
+.prop-label {
+  font-size: var(--fs-sm);
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prop-input {
+  width: 100%;
+  min-width: 0;
+  padding: 2px var(--sp-2);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-0);
+  font-size: var(--fs-sm);
+}
+
+.prop-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.prop-check {
+  justify-self: start;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.prop-note {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.prop-label--dat {
+  font-family: var(--font-mono);
+  color: var(--accent-hi);
+}
+
+/* Add a component the element does not have yet. */
+.prop-add {
+  width: 100%;
+  padding: 2px var(--sp-2);
+  background: var(--bg-3);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.prop-add:hover {
+  border-color: var(--accent);
+  color: var(--text-0);
+}
+
+.prop-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.prop-remove:hover {
+  color: var(--danger);
+}
+
+/* Model sub-mesh show/hide list. */
+.prop-parts {
+  margin-top: var(--sp-2);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line-soft);
+}
+
+.prop-parts-title {
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+  margin-bottom: var(--sp-1);
+}
+
+.prop-part {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 1px 0;
+  cursor: pointer;
+}
+
+.prop-part-name {
+  font-size: var(--fs-sm);
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Media Collection -------------------------------------------------------- */
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  align-content: start;
+}
+
+.pane-body[data-dropping='true'] {
+  outline: 2px dashed var(--accent);
+  outline-offset: -4px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.media-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: grab;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+
+.media-tile:hover {
+  background: var(--bg-4);
+  border-color: var(--accent-dim);
+}
+
+.media-tile:active { cursor: grabbing; }
+
+.media-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  /* A checker under transparent sprites -- otherwise alpha reads as "black
+   * rectangle" and authors think the import broke. */
+  background-color: var(--bg-1);
+  background-image:
+    linear-gradient(45deg, var(--bg-2) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--bg-2) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--bg-2) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--bg-2) 75%);
+  background-size: 10px 10px;
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0;
+}
+
+.media-thumb--glyph {
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  color: var(--text-2);
+  background-image: none;
+}
+
+.media-name {
+  font-size: var(--fs-xs);
+  color: var(--text-0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.media-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-2);
+}
+
+.media-used { color: var(--accent-hi); }
+
+/* The anim-only pill: a glb flagged as a clip library (DESIGN.md §18.10). */
+.media-anim {
+  border: 1px solid var(--line-1);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 0 var(--sp-1);
+  cursor: pointer;
+}
+.media-anim--on {
+  border-color: var(--accent-hi);
+  color: var(--accent-hi);
+}
+
+.media-del {
+  position: absolute;
+  top: var(--sp-1);
+  right: var(--sp-1);
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-0);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-size: 9px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.media-tile:hover .media-del { opacity: 1; }
+.media-del:hover { background: var(--danger); color: var(--text-on-accent); }
+
+/* Angel Script editor ------------------------------------------------------ */
+
+.ags-file {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-1);
+  padding-left: var(--sp-2);
+}
+
+.ags-status {
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono);
+  padding-right: var(--sp-2);
+}
+
+.ags-status[data-state='ok']    { color: var(--ok); }
+.ags-status[data-state='warn']  { color: var(--warning); }
+.ags-status[data-state='error'] { color: var(--danger); }
+
+.ags-editor {
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 28px);
+  padding: var(--sp-3);
+  background: var(--bg-1);
+  border: none;
+  color: var(--text-0);
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  resize: none;
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+}
+
+.ags-editor:focus { outline: none; }
+
+/* Console ----------------------------------------------------------------- */
+
+.console {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  padding: var(--sp-1) 0;
+}
+
+.console-line {
+  display: flex;
+  gap: var(--sp-3);
+  padding: 2px var(--sp-3);
+  border-left: 2px solid transparent;
+  line-height: 1.5;
+}
+
+.console-line:hover { background: var(--bg-3); }
+
+.console-sev {
+  flex: 0 0 46px;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-top: 2px;
+  color: var(--text-2);
+}
+
+.console-msg {
+  flex: 1;
+  color: var(--text-1);
+  overflow-wrap: anywhere;
+}
+
+.console-file { color: var(--text-2); }
+
+.console-line[data-severity='error']   { border-left-color: var(--danger); }
+.console-line[data-severity='error'] .console-sev { color: var(--danger); }
+.console-line[data-severity='error'] .console-msg { color: var(--text-0); }
+
+.console-line[data-severity='warning'] { border-left-color: var(--warning); }
+.console-line[data-severity='warning'] .console-sev { color: var(--warning); }
+
+.console-line[data-severity='say']     { border-left-color: var(--accent); }
+.console-line[data-severity='say'] .console-sev { color: var(--accent-hi); }
+.console-line[data-severity='say'] .console-msg { color: var(--text-0); font-style: italic; }
+
+.console-line[data-severity='info'] .console-sev { color: var(--ok); }
+
+/* Stubs ------------------------------------------------------------------- */
+
+.pane-stub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  color: var(--text-2);
+}
+
+.pane-stub-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: var(--sp-1);
+}
+
+.pane-stub-line {
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+/* Workspace top strip ----------------------------------------------------- */
+
+.ws-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex: 0 0 26px;
+  padding: 0 var(--sp-3);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+}
+
+.ws-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+.ws-path {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+}
+
+.ws-spacer { flex: 1; }
+
+.ws-scene {
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-0);
+  font-size: var(--fs-sm);
+  padding: 1px var(--sp-2);
+  cursor: pointer;
+  max-width: 190px;
+}
+
+.ws-scene:disabled { opacity: 0.5; cursor: default; }
+
+.ws-hist {
+  min-width: 24px;
+  padding: 1px var(--sp-2);
+  font-size: var(--fs-md);
+}
+
+.ws-hist:disabled { opacity: 0.3; cursor: default; }
+
+/* Outliner sections -------------------------------------------------------- */
+
+.outliner-section {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3) var(--sp-1);
+  margin-top: var(--sp-1);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--bg-1);
+  position: sticky;
+  top: 0;
+}
+
+.outliner-action {
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0;
+  padding: 1px var(--sp-2);
+  margin-left: var(--sp-1);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.outliner-action:hover {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+}
+
+.outliner-section-hint {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-2);
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ws-save {
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono);
+  color: var(--text-2);
+  transition: color var(--t-med) var(--ease);
+}
+
+.ws-save[data-state='saved'] { color: var(--ok); }
+.ws-save[data-state='dirty'] { color: var(--text-2); }
+.ws-save[data-state='error'] { color: var(--danger); }
+.ws-save[data-state='playing'] { color: var(--warning); }
+
+/* Play ------------------------------------------------------------------- */
+
+.ws-play {
+  min-width: 74px;
+  font-size: var(--fs-sm);
+  padding: 1px var(--sp-3);
+}
+
+.ws-play[data-playing='true'] {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: var(--text-on-accent);
+}
+
+/* Play mode has to be unmistakable at a glance. Nothing is being saved, and
+ * everything on screen is about to be thrown away -- an author who forgets which
+ * mode they are in loses work. A green rail around the whole workspace is cheap
+ * and impossible to miss. */
+#workspace-root[data-playing='true'] {
+  box-shadow: inset 0 0 0 2px var(--ok);
+}
+
+#workspace-root[data-playing='true'] .ws-bar {
+  background: color-mix(in srgb, var(--ok) 14%, var(--bg-1));
+}
+
+#workspace-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#workspace {
+  flex: 1 1 0;
+  min-height: 0;
+}

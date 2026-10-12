@@ -1,0 +1,41 @@
+<?dat
+; THE QUEST DOOR (SS18.28): E with the KEY wielded -> creak, swing open
+; (the clip is BAKED in door1.glb, forged; pinned at load so it doesn't
+; auto-play), and the open's onFinished walks the player to Scene 2.
+; E without the key gets a firm no.
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends Hitbox)
+(name "QuestDoor")
+
+(runInfo setup onLoad)
+(runInfo tryOpen onInteract)
+(runInfo opened onFinished)
+
+function setup() {
+  this.setComponent("model", "clip", "__bind__");
+}
+
+function tryOpen(actor) {
+  if (this.opening) return;
+  var held = actor ? actor.equipped : null;
+  if (!held || held.name !== "key") {
+    console.log("[Door] Locked. It is thinking about the key. Are you?");
+    return;
+  }
+  this.opening = true;
+  console.log("[Door] The key fits. Obviously. It is the only door.");
+  // voiceLine, not playSound: the creak is the DOOR TALKING -- it registers
+  // in the voice channel so a nearby sign waits instead of talking over it.
+  this.voiceLine("door1_creak.mp3");
+  this.playAnimation("door1.glb", { loop: false });
+}
+
+function opened() {
+  if (!this.opening || this.went) return;
+  this.went = true;
+  this.goToScene("Scene 2");
+}
+ags?>

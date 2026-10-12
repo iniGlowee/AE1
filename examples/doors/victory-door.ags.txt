@@ -1,0 +1,35 @@
+<?dat
+; THE DOOR THAT APPEARS (Playtest 1, Level 2): invisible until both duel
+; stubbies are dead, then it simply IS there — and E leads to the gauntlet.
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends Hitbox)
+(name "VictoryDoor")
+
+(runInfo setup onLoad)
+(runInfo check onTick)
+(runInfo enter onInteract)
+
+function setup() {
+  this.setComponent("model", "clip", "__bind__");
+}
+
+function check(dt) {
+  if (this.revealed) return;
+  const g = this.find("GreenStubby");
+  const r = this.find("RedStubby");
+  if (g && r && g._dead && r._dead) {
+    this.revealed = true;
+    this.visible = true;
+    console.log("[VictoryDoor] The duel is won. A door appears.");
+  }
+}
+
+function enter(actor) {
+  if (!this.revealed) return;
+  console.log("[VictoryDoor] Onward to the gauntlet. Good luck.");
+  this.goToScene("Level 3");
+}
+ags?>

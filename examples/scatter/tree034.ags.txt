@@ -1,0 +1,21 @@
+<?dat
+; SCATTER (SS18.23): this palm is an ARCHETYPE -- it renders where it stands,
+; and each row below places a render COPY sharing its mesh. Row format:
+;   (x y z yaw scale)   yaw/scale optional
+; With (spawnSnap true) the copy drops to the GROUND under x,z and the row's
+; y rides ON TOP as an offset -- y 0 sits on the grass, y 2 floats 2m up.
+; x = east/west, z = north/south (toward/away from the plaza edge), yaw in
+; degrees about up. Edit rows live in Properties.
+(spawns (
+  (6 15 7 4 1)
+  (8 0 5 140 1)
+  (10 0 5 80 1)
+  (9 50 8 1)
+  (4 0 5 310 1)
+  (3 0 5 60 1)))
+(spawnSnap true)
+?>
+<?def
+(extends Scatter)
+(name "PalmGrove")
+ags?>

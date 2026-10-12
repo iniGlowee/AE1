@@ -1,0 +1,17 @@
+<?dat
+; PARTICLES (SS18.22): a smoke puff at the BACK of the bazooka, slightly
+; behind the right-hand grip socket (the offset is in the SOCKET'S frame --
+; tune the numbers live in Properties while firing). Bursts with the shot.
+(fx "smoke")
+(fxLoop false)
+(fxHost "Bazooka")
+(fxNode "SocketRightHand")
+(fxOffsetX -0.35)
+(fxOffsetY 0)
+(fxOffsetZ 0)
+(fxScale 0.8)
+?>
+<?def
+(extends Particles)
+(name "BreechSmoke")
+ags?>

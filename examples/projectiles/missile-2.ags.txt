@@ -1,0 +1,27 @@
+<?dat
+; The bazooka's round. This element is a TEMPLATE: it hides itself on load,
+; leaves the Outliner while a weapon names it, and every shot is a fresh
+; clone launched from the muzzle mid-firing-animation (DESIGN.md §18.15).
+; Flight numbers -- all live-tunable in Properties:
+(speed 14)          ; meters/second at launch
+(acceleration 22)   ; m/s^2 along the flight line (a rocket gains speed)
+(range 40)          ; meters travelled before it expires and vanishes
+(damage 90)         ; what a hit takes off a health pool
+; DEBUG TOGGLE: true draws the flight line muzzle -> focal (the "beam").
+; The trajectory maths run regardless -- this is ink only. Flip here or in
+; Properties during play.
+(drawPaths false)
+(faceOffset 0)      ; degrees: correct the model's nose around the flight axis
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends Projectile)
+(name "MIssile")
+
+(runInfo boom onHit)
+
+function boom(target) {
+  console.log("[Missile] hit " + target.name);
+}
+ags?>

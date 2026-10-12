@@ -1,0 +1,14 @@
+<?dat
+; PARTICLES (SS18.22): a small explosion AT THE MUZZLE, fired automatically
+; the instant the missile spawns -- a non-looping effect hosted on a weapon
+; bursts with it, zero code. Any script can also call burst() directly.
+(fx "explosion")
+(fxLoop false)
+(fxHost "Bazooka")
+(fxNode "SocketMuzzel")
+(fxScale 1)
+?>
+<?def
+(extends Particles)
+(name "MuzzleFlash")
+ags?>

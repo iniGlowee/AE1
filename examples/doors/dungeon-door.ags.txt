@@ -1,0 +1,28 @@
+<?dat
+; THE LOCKED DOOR (Playtest 1, Level 1): sits by the spawn, refuses everyone
+; without the KEY — which waits at the top of the 80 m tower, so the only
+; way to open this door is climb, grab, and DIVE. Equipped key + E = Level 2.
+(pickable false)
+(hasPhysics false)
+?>
+<?def
+(extends Hitbox)
+(name "DungeonDoor")
+
+(runInfo setup onLoad)
+(runInfo enter onInteract)
+
+function setup() {
+  this.setComponent("model", "clip", "__bind__");
+}
+
+function enter(actor) {
+  const held = actor.equipped;
+  if (!held || held.name !== "key") {
+    console.log("[DungeonDoor] Locked. Something glints at the top of the tower...");
+    return;
+  }
+  console.log("[DungeonDoor] The key turns. Level 2 awaits.");
+  this.goToScene("Level 2");
+}
+ags?>

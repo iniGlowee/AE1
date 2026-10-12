@@ -1,0 +1,309 @@
+<?dat
+; THE PAUSE MENU (prototype -- gated behind the debug wall's MENU_PROTO flag,
+; default OFF). With the flag on, ESC or the pad's START freezes the frame
+; (the 18.56 pause surfaces) and drops a the faction-styled menu: sand parchment,
+; the fine grid, ink-on-parchment tabs. Styles ported from the open-source
+; faction CSS framework (MIT -- metakirby5/faction), palette #d1cdb7/#dcd8c0/
+; #bab5a1/#454138.
+;
+; THE DIAL (the the reference series 1 weapon-select homage): a dark disc floats over
+; the panel's top-left corner, flower sprite nodes around its edge like a
+; clock face. D-pad LEFT/RIGHT -- or A/D / arrow keys -- spin the disc; the
+; node that settles at the upper-right anchor illuminates, and the tab it
+; corresponds to becomes the active one. The disc is a plain DOM element
+; animated with a CSS transform transition; the flowers are inline SVG
+; drawn here (original art, not game rips).
+;
+; While open the loop is hard-paused, so the menu runs its own rAF for
+; gamepad polling and its own capture-phase keydown listener -- the same
+; machinery as the engine's debug wall. ESC quirk: when the pointer is
+; locked, the browser spends the first ESC on releasing the lock; the
+; second one reaches us. START always works.
+(tabs "MAP ITEMS WEAPONS SKILLS SYSTEM")
+?>
+<?def
+(extends Element)
+(name "PauseMenu")
+
+(runInfo tick onTick)
+
+function tick(dt) {
+  if (this._menuOpen) return; // own listeners drive it while open
+  const w = this.world;
+  if (!w || !w.debugFlag || !w.debugFlag("MENU_PROTO")) return;
+  const input = w.input3d;
+  if (!input) return;
+  if (input.pressed("Escape") || input.pressed("PadStart")) this.menuOpen();
+}
+
+function tabNames() {
+  return String(this.tabs || "MAP ITEMS SYSTEM").split(/\s+/).filter(Boolean);
+}
+
+// ---- open / close ---------------------------------------------------------
+
+function menuOpen() {
+  const w = this.world;
+  if (!w || !w.loop) return;
+  this._menuOpen = true;
+  this._menuTab = this._menuTab || 0;
+  this._menuAngle = this._menuAngle || 0;
+  w.loop.paused = true;
+  w.env3d && w.env3d.setPaused && w.env3d.setPaused(true);
+  document.exitPointerLock && document.exitPointerLock();
+
+  this.menuBuildDom();
+
+  const self = this;
+  this._menuKeys = function (e) {
+    const c = e.code;
+    if (c === "KeyA" || c === "ArrowLeft") self.menuSpin(-1);
+    else if (c === "KeyD" || c === "ArrowRight") self.menuSpin(1);
+    else if ((c === "Escape") && !e.repeat) self.menuClose();
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  window.addEventListener("keydown", this._menuKeys, true);
+
+  // gamepad: own rAF poll (the paused loop cannot do it). dpad 14/15 spins
+  // with hold-repeat; START (9) closes once released-then-pressed.
+  this._menuPad = { armStart: false };
+  const poll = function () {
+    if (!self._menuOpen) return;
+    self.menuPadPoll();
+    self._menuRaf = requestAnimationFrame(poll);
+  };
+  this._menuRaf = requestAnimationFrame(poll);
+}
+
+function menuClose() {
+  const w = this.world;
+  this._menuOpen = false;
+  cancelAnimationFrame(this._menuRaf);
+  window.removeEventListener("keydown", this._menuKeys, true);
+  this._menuKeys = null;
+  if (this._menuDom) this._menuDom.remove();
+  this._menuDom = null;
+  if (w && w.loop) w.loop.paused = false;
+  if (w && w.env3d && w.env3d.setPaused) w.env3d.setPaused(false);
+}
+
+function menuPadPoll() {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  let gp = null;
+  for (let i = 0; i < pads.length; i++) if (pads[i] && pads[i].connected) { gp = pads[i]; break; }
+  if (!gp) return;
+  const now = performance.now();
+  const st = this._menuPad;
+  const b = function (i) { return !!(gp.buttons[i] && gp.buttons[i].pressed); };
+  // dpad left/right with hold-repeat (first 350ms, then 160ms)
+  const nav = [[14, -1], [15, 1]];
+  for (let k = 0; k < nav.length; k++) {
+    const i = nav[k][0], dir = nav[k][1];
+    const s = st[i] || (st[i] = { down: false, next: 0 });
+    if (b(i)) {
+      if (!s.down || now >= s.next) {
+        this.menuSpin(dir);
+        s.next = now + (s.down ? 160 : 350);
+      }
+      s.down = true;
+    } else s.down = false;
+  }
+  // START closes -- but only after the opening press has been released once
+  if (!b(9)) st.armStart = true;
+  else if (st.armStart) this.menuClose();
+}
+
+// ---- the dial -------------------------------------------------------------
+
+function menuSpin(dir) {
+  const names = this.tabNames();
+  const n = names.length;
+  if (!n) return;
+  this._menuTab = ((this._menuTab + dir) % n + n) % n;
+  // cumulative angle so the disc always turns the way you pressed,
+  // never unwinding the long way round
+  this._menuAngle = (this._menuAngle || 0) - dir * (360 / n);
+  this.menuPaint();
+}
+
+function menuFlowerSvg(size) {
+  // original 5-petal flower sprite (inline SVG, currentColor petals)
+  return '<svg width="' + size + '" height="' + size + '" viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg">' +
+    '<g fill="currentColor">' +
+    '<ellipse cx="0" cy="-26" rx="13" ry="22"/>' +
+    '<ellipse cx="0" cy="-26" rx="13" ry="22" transform="rotate(72)"/>' +
+    '<ellipse cx="0" cy="-26" rx="13" ry="22" transform="rotate(144)"/>' +
+    '<ellipse cx="0" cy="-26" rx="13" ry="22" transform="rotate(216)"/>' +
+    '<ellipse cx="0" cy="-26" rx="13" ry="22" transform="rotate(288)"/>' +
+    '</g><circle r="9" fill="#454138" stroke="currentColor" stroke-width="2.5"/></svg>';
+}
+
+function menuBuildDom() {
+  const names = this.tabNames();
+  const root = document.createElement("div");
+  root.className = "faction-menu";
+
+  const css = document.createElement("style");
+  css.textContent =
+    // -- faction base, scoped (ported from faction/dist/faction.css, MIT) --------
+    ".faction-menu{position:fixed;inset:0;z-index:99990;user-select:none;cursor:default;" +
+    "background-color:#d1cdb7;background-size:.3rem .3rem;" +
+    "background-image:linear-gradient(to right,#ccc8b1 1px,rgba(204,200,177,0) 1px)," +
+    "linear-gradient(to bottom,#ccc8b1 1px,rgba(204,200,177,0) 1px);" +
+    "font-family:helvetica,arial,sans-serif;letter-spacing:.03rem;font-weight:lighter;color:#454138;}" +
+    ".faction-menu .ym-title{position:absolute;top:5vh;left:300px;font-size:26px;text-transform:uppercase;" +
+    "letter-spacing:.5rem;text-shadow:.3rem .3rem 0 #bab5a1;font-weight:normal;}" +
+    // tabs row -- sits right of the dial's footprint
+    ".faction-menu .ym-tabs{position:absolute;top:calc(5vh + 64px);left:300px;right:56px;" +
+    "display:flex;gap:2px;}" +
+    ".faction-menu .ym-tab{padding:.45rem 1.6rem;background:#bab5a1;font-size:14px;" +
+    "letter-spacing:.15rem;transition:background-color .2s,color .2s;}" +
+    ".faction-menu .ym-tab.on{background:#454138;color:#dcd8c0;}" +
+    // the panel window
+    ".faction-menu .ym-panel{position:absolute;top:calc(5vh + 104px);left:150px;right:56px;bottom:9vh;" +
+    "background:#dcd8c0;box-shadow:.35rem .35rem 0 rgba(69,65,56,.25);}" +
+    ".faction-menu .ym-panel-head{background:#454138;color:#bab5a1;padding:.5rem 1rem .5rem 180px;" +
+    "font-size:16px;letter-spacing:.2rem;}" +
+    ".faction-menu .ym-panel-body{padding:1.2rem 1.5rem 1.2rem 200px;font-size:14px;line-height:1.9;}" +
+    ".faction-menu .ym-panel-body h3{font-weight:lighter;letter-spacing:.1rem;margin:0 0 .6rem 0;" +
+    "border-bottom:.1rem solid #454138;display:inline-block;padding-right:2rem;}" +
+    ".faction-menu .ym-row{display:flex;justify-content:space-between;max-width:420px;" +
+    "border-bottom:1px solid #ccc8b1;padding:.15rem 0;}" +
+    ".faction-menu .ym-dim{color:#bab5a1;}" +
+    ".faction-menu .ym-hint{position:absolute;bottom:4vh;left:56px;right:56px;font-size:11px;" +
+    "letter-spacing:.15rem;color:#8a8571;display:flex;gap:2.5rem;}" +
+    // -- THE DIAL: floats over the panel's top-left corner ------------------
+    ".faction-menu .ym-dial-wrap{position:absolute;top:calc(5vh + 24px);left:34px;width:260px;height:260px;" +
+    "filter:drop-shadow(6px 8px 0 rgba(69,65,56,.25));}" +
+    ".faction-menu .ym-dial{position:absolute;inset:0;border-radius:50%;" +
+    "background:radial-gradient(circle at 38% 32%,#4e4a40 0%,#3a372f 55%,#2c2a24 100%);" +
+    "border:3px solid #454138;box-shadow:inset 0 0 0 6px rgba(220,216,192,.12),inset 0 0 34px rgba(0,0,0,.55);" +
+    "transition:transform .42s cubic-bezier(.22,.85,.3,1.02);}" +
+    ".faction-menu .ym-dial::after{content:'';position:absolute;inset:34px;border-radius:50%;" +
+    "border:1px dashed rgba(220,216,192,.28);}" +
+    ".faction-menu .ym-node{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;" +
+    "color:#7d7867;transition:color .3s,filter .3s;}" +
+    ".faction-menu .ym-node.on{color:#f0ead2;filter:drop-shadow(0 0 7px rgba(240,234,210,.9));}" +
+    // the fixed anchor mark: a small notch at the upper-right rim
+    ".faction-menu .ym-notch{position:absolute;width:0;height:0;left:50%;top:50%;" +
+    "border-left:8px solid transparent;border-right:8px solid transparent;" +
+    "border-top:14px solid #dcd8c0;" +
+    "transform:translate(-50%,-50%) rotate(45deg) translateY(-142px);}";
+  root.appendChild(css);
+
+  const title = document.createElement("div");
+  title.className = "ym-title";
+  title.textContent = "The Forest";
+  root.appendChild(title);
+
+  const tabsRow = document.createElement("div");
+  tabsRow.className = "ym-tabs";
+  this._menuTabEls = [];
+  for (let i = 0; i < names.length; i++) {
+    const t = document.createElement("div");
+    t.className = "ym-tab";
+    t.textContent = names[i];
+    tabsRow.appendChild(t);
+    this._menuTabEls.push(t);
+  }
+  root.appendChild(tabsRow);
+
+  const panel = document.createElement("div");
+  panel.className = "ym-panel";
+  const head = document.createElement("div");
+  head.className = "ym-panel-head";
+  const body = document.createElement("div");
+  body.className = "ym-panel-body";
+  panel.append(head, body);
+  root.appendChild(panel);
+  this._menuHead = head;
+  this._menuBody = body;
+
+  // the dial, floating over the panel corner
+  const wrap = document.createElement("div");
+  wrap.className = "ym-dial-wrap";
+  const dial = document.createElement("div");
+  dial.className = "ym-dial";
+  const R = 96; // node ring radius inside the 260px disc
+  this._menuNodeEls = [];
+  for (let i = 0; i < names.length; i++) {
+    const node = document.createElement("div");
+    node.className = "ym-node";
+    node.innerHTML = this.menuFlowerSvg(52);
+    // ride the disc: place at this node's clock angle. Anchor is 45deg
+    // (upper-right, pointing at the panel); node i sits at anchor + i*step,
+    // so spinning the disc by -step per press walks the next node onto it.
+    const a = 45 + i * (360 / names.length);
+    node.style.transform = "rotate(" + a + "deg) translateY(-" + R + "px)";
+    dial.appendChild(node);
+    this._menuNodeEls.push(node);
+  }
+  wrap.appendChild(dial);
+  const notch = document.createElement("div");
+  notch.className = "ym-notch";
+  wrap.appendChild(notch);
+  root.appendChild(wrap);
+  this._menuDial = dial;
+
+  const hint = document.createElement("div");
+  hint.className = "ym-hint";
+  hint.innerHTML = "<span>&#9668; &#9658; / A D &mdash; TURN DIAL</span>" +
+    "<span>ESC / START &mdash; RESUME</span>";
+  root.appendChild(hint);
+
+  document.body.appendChild(root);
+  this._menuDom = root;
+  this.menuPaint();
+}
+
+function menuContent(name) {
+  // placeholder panel bodies -- enough to make each tab feel distinct
+  if (name === "MAP") {
+    return "<h3>Forest Zone</h3>" +
+      "<div class='ym-row'><span>Region</span><span>River gorge</span></div>" +
+      "<div class='ym-row'><span>Grid</span><span>g11418</span></div>" +
+      "<div class='ym-row ym-dim'><span>Waypoints</span><span>&mdash;</span></div>";
+  }
+  if (name === "ITEMS") {
+    return "<h3>Consumables</h3>" +
+      "<div class='ym-row'><span>Small Recovery</span><span>3</span></div>" +
+      "<div class='ym-row'><span>Medium Recovery</span><span>1</span></div>" +
+      "<div class='ym-row ym-dim'><span>Bait (fishing)</span><span>0</span></div>";
+  }
+  if (name === "WEAPONS") {
+    return "<h3>Equipped</h3>" +
+      "<div class='ym-row'><span>Slot I</span><span>Small Sword</span></div>" +
+      "<div class='ym-row ym-dim'><span>Slot II</span><span>&mdash;</span></div>";
+  }
+  if (name === "SKILLS") {
+    return "<h3>Pod Programs</h3>" +
+      "<div class='ym-row'><span>R010: Laser</span><span>Lv. 1</span></div>" +
+      "<div class='ym-row ym-dim'><span>R020: Mirage</span><span>locked</span></div>";
+  }
+  if (name === "SYSTEM") {
+    return "<h3>System</h3>" +
+      "<div class='ym-row'><span>Resume</span><span>ESC / START</span></div>" +
+      "<div class='ym-row ym-dim'><span>Save</span><span>&mdash;</span></div>";
+  }
+  return "<h3>" + name + "</h3>";
+}
+
+function menuPaint() {
+  const names = this.tabNames();
+  const i = this._menuTab || 0;
+  if (this._menuDial) this._menuDial.style.transform = "rotate(" + (this._menuAngle || 0) + "deg)";
+  if (this._menuTabEls) {
+    for (let k = 0; k < this._menuTabEls.length; k++) {
+      this._menuTabEls[k].className = "ym-tab" + (k === i ? " on" : "");
+    }
+  }
+  if (this._menuNodeEls) {
+    for (let k = 0; k < this._menuNodeEls.length; k++) {
+      this._menuNodeEls[k].className = "ym-node" + (k === i ? " on" : "");
+    }
+  }
+  if (this._menuHead) this._menuHead.textContent = names[i] || "";
+  if (this._menuBody) this._menuBody.innerHTML = this.menuContent(names[i] || "");
+}
+ags?>

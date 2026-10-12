@@ -1,0 +1,12 @@
+# AE1 dependencies.
+#
+# Everything here is OPTIONAL by design. The server runs on the standard library
+# alone; these packages only improve export quality (DESIGN.md 8.4). If an install
+# fails, AE1 still launches, still authors, and still exports correct games --
+# they are simply larger. Never make a dependency load-bearing.
+
+# Image recompression at export.
+Pillow>=10.0.0
+
+# Audio transcoding at export is handled by ffmpeg if it is found on PATH.
+# Not a pip package, not required, detected at runtime.

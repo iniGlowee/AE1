@@ -1,0 +1,32 @@
+# AE1 — version control the SOURCE, not generated/binary heaps.
+exports/
+.dietcache/
+.venv/
+__pycache__/
+*.pyc
+# Per-project media blobs (content-addressed; manifest.json IS tracked)
+projects/*/media/*.glb
+projects/*/media/*.bin
+projects/*/media/*.hdr
+projects/*/media/*.png
+projects/*/media/*.jpg
+projects/*/media/*.jpeg
+projects/*/media/*.webp
+projects/*/media/*.mp3
+projects/*/media/*.wav
+projects/*/media/*.ogg
+projects/*/media/*.m4a
+projects/*/media/*.mp4
+projects/*/media/*.ttf
+projects/*/media/*.otf
+# Encoder binaries (download from official sources — see docs/guide/09-build-and-ship.md)
+tools/ktx/*.exe
+tools/ktx/*.dll
+tools/*/gltfpack.exe
+# Native build artifacts (rebuild with native/build.bat)
+native/build/
+native/third_party/*.zip
+# OS / editor noise
+Thumbs.db
+.DS_Store
+*.blend1

@@ -1,0 +1,35 @@
+﻿<?dat
+; THE SHADER LAYER (Â§18.47): drop this element in a scene and every frame
+; composites through the filmic uber-pass â€” cinematic DOF focused on the
+; character (the CinematicDOF autofocus feel), animated film grain,
+; vignette, chromatic aberration. Every dat is a live slider in Properties.
+(dofEnabled true)
+(dofAperture 0.2)
+(dofMaxBlur 5)
+; 18.60: everything within 14m of the focal plane is PERFECTLY sharp --
+; only the distant walls and ceilings soften (Austin: the thin focus ring
+; around the player character blurred the whole arena). Console: blur.range
+(dofSharpRange 14)
+(dofFocusLag 0.2)
+(grainAmount 0.1)
+(vignette 0.22)
+; 18.53/18.57: fullscreen 1440p was FILL-RATE bound (27.6ms; rooms/lights/
+; geometry all measured FREE) -- renderScale is the lever: 0.75 = 47fps,
+; 0.55 = 54fps. Tune live: ALT+C 'render.scale = 0.6'
+(renderScale 0.75)
+; 18.59: dynamic resolution -- walks renderScale each second to hold
+; targetFps on ANY machine (falls fast, rises slow). Console: render.dynamic,
+; render.fps, render.scale (the start/manual value).
+(dynamicRes true)
+(targetFps 60)
+(minScale 0.5)
+(maxScale 1)
+(caAmount 0.12)
+?>
+<?def
+(extends PostFX)
+(name "ScenePostFX")
+ags?>
+
+
+

@@ -1,0 +1,14 @@
+<?dat
+; A PORTAL'S EYE (SS18.30): an invisible PerspectiveCamera the portal gun
+; parks at each oval's centre, aimed along the wall's surface normal — the
+; perpendicular view OUT of that portal. The renderer fills its capture
+; target every frame; the partner portal's face displays it.
+; aspect matches the oval (0.72 wide x 1.15 tall) so the view isn't squashed.
+(fov 75)
+(aspect 0.63)
+(captureSize 512)
+?>
+<?def
+(extends PerspectiveCamera)
+(name "PortalEye")
+ags?>

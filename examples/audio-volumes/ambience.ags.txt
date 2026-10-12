@@ -1,0 +1,14 @@
+<?dat
+; The scene's AMBIENT BED (SS18.34): starts with the scene, LOOPS, and rides
+; the ambience channel. One of THREE deliberate audio layers -- this bed,
+; the music bus (AudioBackgroundMusicVolume boxes), and voices/effects --
+; all allowed to sound at once. Any element's script may stop or swap it
+; (this.stopMusic() / this.playMusic("other.mp3")); setMusic("") here stops
+; with this element's fade.
+(music "backgroundAudio.mp3")
+(musicFade 400)
+?>
+<?def
+(extends BackgroundAudioAmbience)
+(name "SceneAmbience")
+ags?>

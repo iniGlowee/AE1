@@ -1,0 +1,65 @@
+<?dat
+; THE MEDIUM BIPED (§18.40): em0010, the lanky humanoid machine — the second
+; enemy species, and proof the pipeline is now one bake command
+; (bake_enemy_glb.py, 12 clips from em001f.dat, native 64-bone skeleton).
+;
+; The TANK next to the stubby's skirmisher: more than twice the health,
+; half the sting — slow, committed swings you can see coming. HOSTILE ON
+; SIGHT (friendlyUntilAttacked false), so the room holds one of each
+; temperament: the biped comes at you, the stubby holds his grudge policy.
+(health 150)
+(aiType "melee")
+(friendlyUntilAttacked false)
+(aggroRange 8)
+(leashRange 0)
+(chaseSpeed 3)
+
+(wander true)
+(wanderSpeed 1)
+(wanderRange 5)
+(idleChance 0.35)
+(idleTime 2)
+(drawPaths false)
+
+; The state machine: clip names straight from biped.glb.
+(idle "Idle")
+(move "Walk")
+(run "Run")
+(attacks ("Attack_1" "Attack_2" "Attack_3"))
+; §18.44 CLASSIFIED: the two swings are plain melee; Attack_3 (the big
+; overhead slam) is AOE TYPE 1 — the red ring racing outward from the
+; stomp. Its ring hits harder than his hands, lands at the slam moment
+; (windup 1.2 into the 4 s clip), and runs 8 m at 4.5 m/s.
+(attackSpecs (
+  ("Attack_1" "melee" 4)
+  ("Attack_2" "melee" 4)
+  ("Attack_3" "aoe1" 8 "speed" 4.5 "radius" 8 "windup" 1.2)))
+(hit "Hit")
+(hitBig "Hit_Big")
+(bigHitDamage 20)
+(hurtTime 0.9)
+(hurtTimeBig 2.1)
+(death "Death")
+
+; Melee: long reach, LOW damage (Austin's spec — tankier, gentler), slow
+; telegraphed swings (the clips run 3-4 s; timeout must outlast the longest).
+(attackRange 2)
+(attackDamage 4)
+(attackRate 2.2)
+(attackWindup 0.9)
+(attackArc 85)
+(attackTimeout 5)
+
+(vanishAfter 10)
+(hasPhysics true)
+?>
+<?def
+(extends Enemy)
+(name "MediumBiped")
+
+(runInfo hurt onHit)
+
+function hurt(attacker, amount) {
+  console.log("[Biped] hit for " + amount + " — health " + this.health);
+}
+ags?>

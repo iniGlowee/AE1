@@ -1,0 +1,43 @@
+<?dat
+; THE GAUNTLET SPAWNER (Playtest 1, Level 3): twenty stubbies from one
+; parked prototype — every color, ring-scaled difficulty, and deliberately
+; TOO MANY. This level is supposed to kill you; dying restarts the run at
+; Level 1 (the player's restartScene dat). §18.46 instancing throughout.
+(hordeCount 20)
+(hordePalette ("#ff5050" "#50ff70" "#5080ff" "#ffe050" "#ff9040" "#d070ff" "#70fff0" "#ffffff"))
+?>
+<?def
+(extends Element)
+(name "GauntletSpawner")
+
+(runInfo begin onLoad)
+
+function begin() {
+  const v = this.hordePalette;
+  const palette = typeof v === "string" ? [v] : v;
+  const n = Number(this.hordeCount) || 20;
+  for (let i = 0; i < n; i++) {
+    const ring = i % 3;
+    const a = (i / n) * Math.PI * 2 + ring * 0.35;
+    const r = 3.5 + ring * 2.4;
+    const inst = this.spawnInstance("StubbyProto", {
+      x: Math.sin(a) * r,
+      z: Math.cos(a) * r,
+      y: 0.01,
+      rotationY: (a * 180) / Math.PI + 180,
+      health: 40 + ring * 30,
+      aiType: "melee",
+      friendlyUntilAttacked: false,
+      wander: true,
+      aggroRange: 12,
+      chaseSpeed: 2.6 + ring * 0.3,
+    });
+    if (!inst) continue;
+    inst.setAttackDamage("Attack_1", 4 + ring * 3);
+    inst.setAttackDamage("Attack_2", 4 + ring * 3);
+    inst.setTint(palette[i % palette.length]);
+  }
+  console.log("[Gauntlet] " + this.instancesOf("StubbyProto").length
+    + " machines. It was nice knowing you.");
+}
+ags?>
