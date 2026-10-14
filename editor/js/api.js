@@ -58,6 +58,8 @@ export const api = {
   createProject: (payload) => request('POST', '/api/projects', payload),
   updateProject: (slug, patch) => request('PATCH', `/api/projects/${slug}`, patch),
   deleteProject: (slug) => request('DELETE', `/api/projects/${slug}`),
+  /** MANAGER-PROJECT-01 W4: copy to a new name and slug; the original is untouched. */
+  copyProject: (slug, name) => request('POST', `/api/projects/${slug}/copy`, { name }),
 
   /** Mark a project as most-recently-opened. Drives the project list ordering. */
   touchProject: (slug) => request('PATCH', `/api/projects/${slug}`, { opened: true }),

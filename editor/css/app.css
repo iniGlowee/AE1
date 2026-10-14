@@ -668,3 +668,20 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Dialog notes (MANAGER-PROJECT-01 W4/W5) ---------------------------------- */
+
+.modal-note {
+  margin-top: var(--sp-3);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+.modal-error {
+  margin-top: var(--sp-2);
+  color: var(--danger);
+  font-size: var(--fs-sm);
+}
+
+.modal-error:empty { display: none; }

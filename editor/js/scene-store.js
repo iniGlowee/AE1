@@ -1300,6 +1300,22 @@ ags?>
     await this._write();
   }
 
+  /** Everything on disk NOW (MANAGER-PROJECT-01 W4/W5): the scene + HUD journal
+   *  AND every script still waiting on its save timer, and no write in flight.
+   *  A copy or a comparison taken while a script timer is pending would miss
+   *  the newest text — the last thing the user typed. */
+  async flushAll() {
+    if (!this.project) return;
+    await this.flush();
+    while (this._saving) await new Promise((r) => setTimeout(r, 20));
+    const slug = this.project.slug;
+    const pending = [...this._scriptTimers.keys()];
+    for (const file of pending) clearTimeout(this._scriptTimers.get(file));
+    this._scriptTimers.clear();
+    await Promise.all(pending.map((file) => api.putScript(slug, file, this.scripts[file] ?? '')));
+    this.emit('dirty', false);
+  }
+
   async _write() {
     // Saves must not overlap. Two in flight can land out of order and write an
     // older state last, silently reverting the newest edit.

@@ -45,6 +45,7 @@ function showWorkspace(project) {
     mount: view,
     project,
     onBack: showProjects,
+    onOpen: showWorkspace, // save-as switches to the copy (MANAGER-PROJECT-01 W4)
   });
 }
 

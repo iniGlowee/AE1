@@ -363,6 +363,39 @@ def _tree_files(root: Path) -> dict[str, Path]:  # used by W5
     return out
 
 
+def copy_project(slug: str, body: dict) -> dict:
+    """Save-as (W4): copy a project to a new name and slug; the original is untouched."""
+    name = (body.get("name") or "").strip()
+    if not name:
+        raise ApiError(400, "A name for the copy is required.")
+    project, src = _project_dir_of(slug)
+    new_slug = slugify(name)
+    if PATHS.project_file(new_slug).exists() or PATHS.project_dir(new_slug).exists():
+        raise ApiError(409, f"A project named '{name}' already exists.")
+    dst = PATHS.project_dir(new_slug)
+    shutil.copytree(src, dst, ignore=shutil.ignore_patterns("*.tmp"))
+
+    copy = json.loads(json.dumps(project))
+    copy.update({
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "slug": new_slug,
+        "folder": new_slug,
+        "created": now_iso(),
+        "modified": now_iso(),
+        "opened": now_iso(),
+        "copiedFrom": project.get("slug", slug),
+    })
+    # A copy of a sample (or of a copy of one) can still restore a shipped SCRIPT,
+    # but is never itself a sample: restore-the-sample stays on the original.
+    based = sample_of(project)
+    copy.pop("basedOn", None)
+    if based:
+        copy["basedOn"] = based
+    write_json(PATHS.project_file(new_slug), copy)
+    return copy
+
+
 # --------------------------------------------------------------------------- #
 # Scenes
 # --------------------------------------------------------------------------- #
@@ -704,6 +737,11 @@ def api_update(body, slug):
 @route("DELETE", r"/api/projects/([\w-]+)")
 def api_delete(_body, slug):
     return delete_project(slug)
+
+
+@route("POST", r"/api/projects/([\w-]+)/copy")
+def api_project_copy(body, slug):
+    return copy_project(slug, body)
 
 
 @route("GET", r"/api/projects/([\w-]+)/sample")

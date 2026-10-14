@@ -7,6 +7,7 @@
 import { h, clear, toast, modal } from '../ui.js';
 import { settings } from '../settings.js';
 import { store } from '../scene-store.js';
+import { api } from '../api.js';
 import { createWorkspace } from '../workspace/area.js';
 import { defaultLayout } from '../workspace/layouts.js';
 import { openShip } from './ship.js';
@@ -24,7 +25,7 @@ let onKey = null;
  * @param {object} opts.project
  * @param {() => void} opts.onBack
  */
-export async function renderWorkspace({ mount, project, onBack }) {
+export async function renderWorkspace({ mount, project, onBack, onOpen }) {
   destroyWorkspace();
   clear(mount);
 
@@ -68,6 +69,16 @@ export async function renderWorkspace({ mount, project, onBack }) {
       { class: 'ws-bar' },
       h('button', { class: 'btn btn--ghost', onClick: onBack }, '←'),
       h('span', { class: 'ws-title' }, project.name),
+      // MANAGER-PROJECT-01 W4: move the work out from under the sample
+      h(
+        'button',
+        {
+          class: 'btn btn--ghost',
+          title: 'Save this project under a new name and keep working in the copy',
+          onClick: () => saveAsDialog(project, { onOpen }),
+        },
+        'Save as…',
+      ),
       sceneSelect,
       undoBtn,
       redoBtn,
@@ -253,4 +264,60 @@ export function destroyWorkspace() {
   if (onKey) document.removeEventListener('keydown', onKey);
   onKey = null;
   store.close(); // stops play, then flushes, before dropping the scene
+}
+
+/* Save as (MANAGER-PROJECT-01 W4) ------------------------------------------- */
+
+/**
+ * Copy the open project to a new name and switch to the copy; the original
+ * stays exactly as it was. `then` = 'open' (default) switches to the copy;
+ * 'stay' keeps the current project open (W5's "save a copy first"). Resolves
+ * to the new project, or null when the user cancels.
+ */
+export function saveAsDialog(project, { onOpen, then = 'open', title = 'Save as a new project' } = {}) {
+  return new Promise((resolve) => {
+    let settled = false;
+    const settle = (v) => { if (!settled) { settled = true; resolve(v); } };
+    const input = h('input', {
+      class: 'input',
+      value: `${project.name} copy`,
+      maxLength: 80,
+      onKeydown: (e) => { if (e.key === 'Enter') go(); },
+    });
+    const note = h('p', { class: 'modal-note' },
+      then === 'open'
+        ? `A new project with everything in “${project.name}” as it is now. You will continue in the copy; “${project.name}” is left unchanged.`
+        : `A new project with everything in “${project.name}” as it is now, so nothing is lost by what you do next.`);
+    const err = h('p', { class: 'modal-error' });
+    const saveBtn = h('button', { class: 'btn btn--primary', onClick: () => go() }, 'Save copy');
+    const m = modal({
+      title,
+      body: h('div', {}, h('label', { class: 'field-label' }, 'Name of the copy'), input, note, err),
+      footRight: [
+        h('button', { class: 'btn', onClick: () => { m.close(); } }, 'Cancel'),
+        saveBtn,
+      ],
+      onClose: () => settle(null),
+    });
+    requestAnimationFrame(() => input.select());
+
+    async function go() {
+      const name = input.value.trim();
+      if (!name) { err.textContent = 'Give the copy a name.'; return; }
+      saveBtn.disabled = true;
+      err.textContent = '';
+      try {
+        if (store.playing) store.stop(); // play suspends the journal; the copy is of the edited project
+        await store.flushAll();
+        const copy = await api.copyProject(project.slug, name);
+        settle(copy);
+        m.close();
+        toast(`Saved as “${copy.name}”.`);
+        if (then === 'open' && onOpen) onOpen(copy);
+      } catch (e) {
+        saveBtn.disabled = false;
+        err.textContent = e.message || String(e);
+      }
+    }
+  });
 }
