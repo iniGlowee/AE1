@@ -91,3 +91,26 @@ never the problem.
 - **Audio transcoding** at export (ffmpeg is detected but unused).
 - **Zip download** from the editor. The server writes the folder; grab it from disk.
 - **Multi-resolution** builds. The frame is 1280×720, letterboxed to the window.
+
+## Keeping your work on the hosted demo
+
+The hosted demo (ae1.ausa.dev) is a shared, temporary workspace. Read this before you build something you care about.
+
+- **It is private to you, tied to your network address.** Nobody else sees your projects. People who share one connection
+  (a mobile carrier, an office, a campus) share one workspace.
+- **It is not backed up and can be lost without warning**, for example when the server is updated.
+- **The editable project cannot be downloaded from the hosted demo.** Build & Ship writes the finished game into your
+  workspace on the server and gives you a link to it; there is no zip or project download yet. Keep your own copies of the
+  images, models and scripts you put in.
+- **A 3D game can be kept as one file.** A browser build is a single self-contained `index.html`: the engine, scenes,
+  scripts and every `.glb` model are inside it. To keep one:
+  1. Build & Ship, then open the link it gives you.
+  2. Save that page. In the save dialog choose **"Webpage, HTML only"** (the wording varies by browser), **not**
+     "Webpage, Complete".
+  3. Double-click the saved file. It runs from your disk, with no server.
+  This was tested with the Starter project saved as the raw HTML and opened from disk. It has **not** been tested with
+  "Webpage, Complete" (which rewrites the page as it saves and may break it), and it does **not** apply to 2D point-and-click
+  projects, whose pictures stay as separate files next to the page.
+- **Or run AE1 yourself** from [github.com/iniGlowee/AE1](https://github.com/iniGlowee/AE1): there your projects are plain
+  files on your own disk.
+

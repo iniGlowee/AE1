@@ -16,7 +16,7 @@ exists only in this repository.** A re-derivation that does not read this file f
 
 | id | what it adds | commit / branch | what a re-derivation would lose |
 |---|---|---|---|
-| W1 | Guide: the viewport-drop flow is marked 2D-only, a note tells 3D users what to do instead, and model files are no longer described as "stored but not drawn" | `5b1ae36` on `held/w1-docs-2026-10-14` | the corrected wording in `docs/guide/02-the-editor.md` and `06-media.md`; the old text would say a 3D user can drop an image on the viewport |
+| W1 | Guide: the viewport-drop flow is marked 2D-only, a note tells 3D users what to do instead, and model files are no longer described as "stored but not drawn" | `5b1ae36` on `held/w1-docs-2026-10-14` | the corrected wording in `docs/guide/02-the-editor.md` and `06-media.md`, and the new "Keeping your work on the hosted demo" section of `09-build-and-ship.md`; the old text would say a 3D user can drop an image on the viewport and say nothing about losing work |
 | W2 | Dropping an image into a 3D viewport creates a textured plane element | pending, Admin (Engine) | the image-drop plane feature and the line in the guide that replaces W1's interim note |
 | W3b | A button to restore an element's script to its shipped default | pending, Admin (Engine) | the restore control; a visitor who blanks a script has no way back |
 | W3c | `projects/starter/scripts/player.ags.txt` ends with a stray `ags` before the closing marker; corrected | pending, Admin (Engine) | the corrected starter script (W3b restores exactly this text) |
