@@ -33,7 +33,7 @@ from exporter import ExportError, export_project
 # --------------------------------------------------------------------------- #
 
 ENGINE_NAME = "Angel's Egg"
-ENGINE_VERSION = "1.0.0-alpha"
+ENGINE_VERSION = "0.2.0-alpha"  # the public tag line (v0.1.0-alpha, v0.2.0-alpha); 1.0 is not a claim the alpha makes
 
 #: Bumped only when the on-disk shape changes in a way that needs migration.
 #: Every .ae1proj records the value it was written with, so a future AE1 can
