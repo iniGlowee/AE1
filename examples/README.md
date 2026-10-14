@@ -23,7 +23,7 @@ it runs. The § numbers refer to DESIGN.md.
 | `ladders/` | the reference action game ladder + the 286-rung 80 m sky ladder (the freefall/slam tuning fixture) | 3d-sandbox-mm | — |
 | `forges/` | Goober: mesh, clips, and voice all generated (meshforge/clipforge/audioforge) + the death-delay scene warp | 3d-sandbox | 18.25–18.27 |
 | `fixtures/` | Scene JSONs preserved as data: the MM Range (29 mmbox traversal blocks), the playtest duel (per-instance `attackSpecs` overrides in pure scene dat), flight1's nine-tile LOD-pair shape, factory1's five arena-light placements, playtest1's README (the mmbox rule) | various | 18.46/18.53 |
-| `media/` | The small irreplaceable glbs: flyer/biped enemies, the fist pair, the lance, Weiss + pod bolt, fishing kit (koi/chair/pier/water), goober, dungeon kit, sky ladder + tower, VFX orbs/rings, the reference action game effect sprites, the generated day-sky HDRI (`DAY_LAKESIDE.hdr`, the only daylight sky) | various | — |
+| `media/` | The small irreplaceable glbs: flyer/biped enemies, the fist pair, the lance, the book pod + pod bolt, fishing kit (koi/chair/pier/water), goober, dungeon kit, sky ladder + tower, VFX orbs/rings, the reference action game effect sprites, the generated day-sky HDRI (`DAY_LAKESIDE.hdr`, the only daylight sky) | various | — |
 
 Things NOT kept (rebuildable from the CPK pipelines documented in DESIGN.md and
 docs/ROADMAP.md): the baked map glbs (city tiles + LOD twins, tower, factory,

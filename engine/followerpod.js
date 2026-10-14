@@ -2,13 +2,13 @@
  * AE1 — FollowerPod (§18.55): the floating companion. the reference game's pod — here
  * wearing the companion pod — hovers at the host character's shoulder, bobs,
  * lags behind movement on a spring, faces where the camera faces, and
- * shoots on its own button. Stellar Blade's drone is the same creature.
+ * shoots on its own button. another recent action game's drone is the same creature.
  *
  * Design rules, in the engine's usual shape:
  *
  *  - The pod is its OWN element with its own model + clips (Idle/Fire/
  *    Special baked from the game's wp3000 pod motion set — the DLC skins
- *    share the pod skeleton, so Weiss plays pod motions unretargeted).
+ *    share the pod skeleton, so the book skin plays pod motions unretargeted).
  *  - The HOST stays the root of truth: the pod reads the host's position
  *    and the camera's yaw every tick and chases a camera-relative shoulder
  *    offset. It never pushes back. `host` dat names the element; empty

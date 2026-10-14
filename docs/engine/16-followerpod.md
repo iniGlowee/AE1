@@ -1,7 +1,7 @@
 # 16 — The Follower Pod (§18.55)
 
-The floating companion: the reference action game's pod, here wearing the Grimoire
-Weiss DLC book skin, hovering at the character's shoulder. Stellar Blade's
+The floating companion: the reference action game's pod, here wearing the book skin
+the DLC book skin, hovering at the character's shoulder. Another recent action game's
 drone is the same creature. One new base element carries the whole system.
 
 ## The element: `FollowerPod`
@@ -12,7 +12,7 @@ script exactly like `Aircraft`:
 ```
 <?def
 (extends FollowerPod)
-(name "GrimoirePod")
+(name "BookPod")
 ags?>
 ```
 

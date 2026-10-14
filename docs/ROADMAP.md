@@ -35,7 +35,7 @@ extraction pipeline + the foxcam testbed.**
 
 - **The Tower (`tower1`)**: wd5 g50001 identified and shipped — the Route-C
   spire: Library (spawn), Church, Under-Church, Red Girls' room, the faction
-  arena, elevator hall, all over the 7 km Earth cloud dome. The player character + Grimoire
+  arena, elevator hall, all over the 7 km Earth cloud dome. The player character + the pod
   pod + the flight unit on the Library floor, 75 fps. The chunk's mesh groups
   are NAMED (unlike city tiles) — per-room work is addressable. Destroyed
   "_D" duplicate set + BEFORE/AFTER variants dropped at bake. The wd5
