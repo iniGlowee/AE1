@@ -1,0 +1,21 @@
+<?dat
+; THE STARTER PLAYER — the engine's built-in third-person character driving a
+; simple generated body (player_body.glb, made with meshforge.py; no game assets).
+; WASD / arrows move, the mouse orbits the camera, Space jumps, Shift runs.
+; Swap the model for your own character (any glb, feet at the origin) and give it
+; animation clips with (move "clip") (air "clip") … — see docs/guide/03-elements.md.
+(speed 3.5)
+(jumpSpeed 5)
+(gravity 14)
+(health 100)
+; No lock-on target marker in the starter — blank so the build ships no stray asset.
+(lockMarkerMedia "")
+(displayName "Player")
+?>
+<?def
+(extends ThirdPersonCharacter)
+(name "Player")
+
+; Movement, jumping, gravity, and the camera hand-off are the built-in. Add
+; (runInfo method onPrimary) etc. here to script actions — see docs/guide/04-angel-script.md.
+ags?>

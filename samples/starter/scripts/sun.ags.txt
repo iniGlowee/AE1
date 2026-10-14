@@ -1,0 +1,15 @@
+<?dat
+; THE SUN: a directional key light that follows the player from (lightHeight)
+; above, plus a hemisphere fill so shadow sides never go black. Every dat is a
+; live slider — brightness, colour, the lot.
+(lightType "sun")
+(color "#ffffff")
+(intensity 1.5)
+(fill 0.35)
+(follow true)
+(lightHeight 14)
+?>
+<?def
+(extends Light)
+(name "SunLight")
+ags?>

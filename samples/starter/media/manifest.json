@@ -1,0 +1,31 @@
+{
+  "entries": {
+    "06bf03199cdeedc1558a52d9680634f0": {
+      "name": "floor.glb",
+      "ext": "glb",
+      "kind": "model",
+      "size": 26364,
+      "imported": "2026-10-12T15:08:23+00:00",
+      "tags": [],
+      "merged": true
+    },
+    "17a25fbfe5a8e9ede3390d1b8b6331b3": {
+      "name": "player_body.glb",
+      "ext": "glb",
+      "kind": "model",
+      "size": 63252,
+      "imported": "2026-10-12T15:08:24+00:00",
+      "tags": [],
+      "merged": true
+    },
+    "126f87e3ee00db3b5d236211394d0550": {
+      "name": "crate.glb",
+      "ext": "glb",
+      "kind": "model",
+      "size": 24716,
+      "imported": "2026-10-12T15:08:24+00:00",
+      "tags": [],
+      "merged": true
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "ae1": {
+    "engine": "Angel's Egg",
+    "engineVersion": "1.0.0-alpha",
+    "formatVersion": 1
+  },
+  "id": "0b8a6834-159e-4e3b-84a6-f7bd6abad2e5",
+  "name": "Starter",
+  "slug": "starter",
+  "folder": "starter",
+  "type": "game-3d",
+  "created": "2026-10-12T15:08:04+00:00",
+  "modified": "2026-10-12T15:09:37+00:00",
+  "opened": "2026-10-12T15:09:36+00:00",
+  "metadata": {
+    "author": "AE1",
+    "description": "A minimal original 3D scene to start from: a checker floor, a third-person player body, and a spinning crate.",
+    "version": "0.1.0"
+  },
+  "scenes": [
+    "scene-1.json"
+  ],
+  "entryScene": "scene-1.json"
+}

@@ -1111,19 +1111,33 @@ function mountScript(el) {
     '▶ Test',
   );
 
+  // MANAGER-PROJECT-01 W3b: the shipped version of this element's script, back
+  // in one click. Script edits are outside the undo history by design, so a
+  // select-all + delete in this pane used to brick a sample's element for good.
+  const restoreBtn = h(
+    'button',
+    {
+      class: 'btn btn--ghost',
+      title: 'Replace this script with the version the sample shipped with',
+      onClick: restoreDefault,
+    },
+    '↺ Restore default',
+  );
+
   const bar = h(
     'div',
     { class: 'pane-toolbar' },
     fileName,
     h('div', { class: 'ws-spacer' }),
     status,
+    restoreBtn,
     runBtn,
   );
 
   const editor = h('textarea', {
     class: 'ags-editor',
     spellcheck: false,
-    placeholder: 'No script attached.',
+    placeholder: 'This script is empty. Type Angel Script here — or press ↺ Restore default to get the shipped version back.',
     onInput: () => {
       const element = store.selected;
       if (element?.script) store.setScript(element.script, editor.value);
@@ -1161,6 +1175,38 @@ function mountScript(el) {
   );
 
   el.append(bar, editor, attach);
+
+  function hasDefault(element) {
+    return Boolean(element?.script && store.sample?.scripts?.includes(element.script));
+  }
+
+  async function restoreDefault() {
+    const element = store.selected;
+    if (!hasDefault(element)) return;
+    const file = element.script;
+    const current = store.scripts[file] ?? '';
+    if (current.trim()) {
+      const ok = await confirmDanger({
+        title: 'Restore the default script?',
+        message: h(
+          'div',
+          {},
+          h('p', {}, `${file} will be replaced by the version the “${store.sample.sample}” sample shipped with.`),
+          h('p', {}, `Its current text (${current.length} characters) will be lost. Every other script, scene and media file stays as it is.`),
+        ),
+        confirmLabel: 'Restore default',
+      });
+      if (!ok) return;
+    }
+    try {
+      await store.restoreScriptDefault(file);
+      editor.value = store.scripts[file] ?? '';
+      paint();
+      toast(`${file} restored to the shipped version.`);
+    } catch (err) {
+      toast(`Could not restore ${file}: ${err.message}`, 'error');
+    }
+  }
 
   function run() {
     const element = store.selected;
@@ -1221,6 +1267,7 @@ function mountScript(el) {
     editor.style.display = has ? '' : 'none';
     attach.style.display = element && !has ? '' : 'none';
     runBtn.style.display = has ? '' : 'none';
+    restoreBtn.style.display = hasDefault(element) ? '' : 'none';
     fileName.textContent = element ? (element.script ?? element.name) : 'No element selected';
 
     if (!element) {

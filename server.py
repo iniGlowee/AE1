@@ -306,6 +306,64 @@ def delete_project(slug: str) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Samples: the shipped projects, kept pristine (MANAGER-PROJECT-01 W3b/W4/W5)
+# --------------------------------------------------------------------------- #
+
+#: The SHIPPED copy of every sample project, read-only by convention. A user's
+#: projects/<slug> is their working copy and can be broken in two keystrokes
+#: (select-all, delete in the script pane); this is what "restore" reads.
+#: Resolved from this file, not from PATHS: a multi-tenant host swaps PATHS per
+#: visitor, but the samples are the app's own and live beside server.py.
+SAMPLES_DIR = Path(__file__).resolve().parent / "samples"
+
+#: Never part of a sample's comparison or copy: player saves belong to a
+#: playthrough, snapshots to the author's history, .tmp files to a write in flight.
+_SAMPLE_SKIP_DIRS = {"saves", "snapshots"}
+
+
+def sample_of(project: dict) -> str | None:
+    """The sample a project came from: itself if it IS one, else its `basedOn`.
+
+    A sample is identified by its folder having a twin in samples/; a project
+    copied from one (save-as) records `basedOn` and is NOT itself a sample, so it
+    can restore a shipped SCRIPT but never be reset wholesale."""
+    based = project.get("basedOn")
+    if based and (SAMPLES_DIR / based).is_dir():
+        return based
+    folder = project.get("folder") or project.get("slug")
+    if not based and folder and (SAMPLES_DIR / folder).is_dir():
+        return folder
+    return None
+
+
+def is_sample(project: dict) -> bool:
+    return not project.get("basedOn") and sample_of(project) is not None
+
+
+def _project_dir_of(slug: str) -> tuple[dict, Path]:
+    project = load_project(slug)
+    pdir = PATHS.project_dir(project.get("folder", slug)).resolve()
+    if not pdir.is_relative_to(PATHS.projects):
+        raise ApiError(400, "Project folder is outside /projects.")
+    return project, pdir
+
+
+def _tree_files(root: Path) -> dict[str, Path]:  # used by W5
+    """relative posix path -> file, skipping saves/snapshots/.tmp."""
+    out: dict[str, Path] = {}
+    if not root.is_dir():
+        return out
+    for path in root.rglob("*"):
+        if not path.is_file() or path.suffix == ".tmp":
+            continue
+        rel = path.relative_to(root)
+        if rel.parts and rel.parts[0] in _SAMPLE_SKIP_DIRS:
+            continue
+        out[rel.as_posix()] = path
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Scenes
 # --------------------------------------------------------------------------- #
 
@@ -646,6 +704,25 @@ def api_update(body, slug):
 @route("DELETE", r"/api/projects/([\w-]+)")
 def api_delete(_body, slug):
     return delete_project(slug)
+
+
+@route("GET", r"/api/projects/([\w-]+)/sample")
+def api_project_sample(_body, slug):
+    project = load_project(slug)
+    sample = sample_of(project)
+    scripts = sorted(p.name for p in (SAMPLES_DIR / sample / "scripts").glob("*.ags.txt")) if sample else []
+    return {"sample": sample, "isSample": is_sample(project), "scripts": scripts}
+
+
+@route("GET", r"/api/projects/([\w-]+)/sample/scripts/([\w.-]+)")
+def api_project_sample_script(_body, slug, filename):
+    if not AGS_RE.fullmatch(filename):
+        raise ApiError(400, f"Angel Script files must be named SOMENAME.ags.txt (got '{filename}').")
+    sample = sample_of(load_project(slug))
+    path = (SAMPLES_DIR / sample / "scripts" / filename).resolve() if sample else None
+    if not path or not path.is_relative_to(SAMPLES_DIR) or not path.is_file():
+        raise ApiError(404, f"No shipped version of '{filename}' for this project.")
+    return {"file": filename, "sample": sample, "content": path.read_text(encoding="utf-8")}
 
 
 @route("POST", r"/api/projects/([\w-]+)/media", raw=True)

@@ -95,6 +95,10 @@ export const api = {
     request('PUT', `/api/projects/${slug}/scripts/${file}`, { content }),
   deleteScript: (slug, file) => request('DELETE', `/api/projects/${slug}/scripts/${file}`),
 
+  /** MANAGER-PROJECT-01: the shipped sample a project came from, and its scripts. */
+  getSample: (slug) => request('GET', `/api/projects/${slug}/sample`),
+  getSampleScript: (slug, file) => request('GET', `/api/projects/${slug}/sample/scripts/${file}`),
+
   listScenes: (slug) => request('GET', `/api/projects/${slug}/scenes`),
   getScene: (slug, file) => request('GET', `/api/projects/${slug}/scenes/${file}`),
   putScene: (slug, file, data) => request('PUT', `/api/projects/${slug}/scenes/${file}`, data),

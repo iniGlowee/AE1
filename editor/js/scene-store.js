@@ -113,12 +113,16 @@ class SceneStore {
     this.project = project;
     this.file = project.entryScene ?? 'scene-1.json';
 
-    const [list, scripts, media, hud] = await Promise.all([
+    const [list, scripts, media, hud, sample] = await Promise.all([
       api.listScenes(project.slug),
       api.listScripts(project.slug).catch(() => ({ scripts: {} })),
       api.listMedia(project.slug).catch(() => ({ entries: {} })),
       api.getHud(project.slug).catch(() => ({ name: 'HUD', elements: {} })),
+      // which shipped sample this project came from (restore default script,
+      // restore the sample); an older server without the route answers 404
+      api.getSample(project.slug).catch(() => null),
     ]);
+    this.sample = sample && sample.sample ? sample : null;
 
     this.sceneList = list.scenes ?? [];
     if (!this.sceneList.some((s) => s.file === this.file)) {
@@ -282,6 +286,20 @@ class SceneStore {
 
     this.emit('scene', this.scene);
     if (this.selectedId) this.emit('selection', this.selected);
+  }
+
+  /** Replace a script with the shipped sample's version of the same file
+   *  (MANAGER-PROJECT-01 W3b): the way back from a cleared script pane, which
+   *  the undo history does not cover. Saved at once, not after the journal
+   *  delay, so a reload a second later cannot bring the empty text back. */
+  async restoreScriptDefault(file) {
+    if (!this.project) return false;
+    const shipped = await api.getSampleScript(this.project.slug, file);
+    this.setScript(file, shipped.content);
+    clearTimeout(this._scriptTimers.get(file));
+    await api.putScript(this.project.slug, file, shipped.content);
+    this.emit('dirty', false);
+    return true;
   }
 
   setScript(file, content) {

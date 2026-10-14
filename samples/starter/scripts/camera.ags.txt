@@ -1,0 +1,15 @@
+<?dat
+; The orbit's feel: distance is how far behind, lookHeight is where on the
+; character it looks (metres up from their feet).
+(distance 3.5)
+(lookHeight 1.4)
+(minPitch -60)
+(maxPitch 75)
+?>
+<?def
+(extends ThirdPersonCamera)
+(name "Camera")
+
+; The play-mode view. Mouse look orbits it around the character. The editor
+; viewport is never this camera — only Play is.
+ags?>
