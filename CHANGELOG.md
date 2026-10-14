@@ -1,6 +1,17 @@
+# AE1 — Angel's Egg 1 · v0.2.1-alpha
+
+**The alpha as hosted at ae1.ausa.dev.** Tag `v0.2.1-alpha` is the release the hosted demo pins. It carries two commits over v0.2.0-alpha:
+
+- **The engine's version string follows the tag line.** `ENGINE_VERSION` is `0.2.0-alpha`, so `/api/status`, the `Server` header and the `engineVersion` stamped into project files agree with the tags. `1.0.0-alpha` was the project's name from its first commit, never a claim that this alpha is a 1.0 candidate; projects already on disk keep their old stamp, and nothing reads it.
+- **A hosted-demo banner.** The editor asks `GET /api/hosted` once at boot. A multi-tenant host answers with a notice and the visitor's sandbox usage, and the editor shows one line under the top bar: the notice, then the sandbox's used and total megabytes and the upload limit — usage only, never the sandbox id. A plain local server has no such route and shows nothing.
+
+One deliberate oddity a reader will meet: the tag is `v0.2.1-alpha` while the engine constant inside it reads `0.2.0-alpha`. The constant names the version family; the patch tag names the release. They agree on the family, and that is the agreement the previous entry promised.
+
+---
+
 # AE1 — Angel's Egg 1 · v0.2.0-alpha
 
-**The alpha as hosted at ae1.ausa.dev.** Tag `v0.2.0-alpha` marks commit `4bb5bd1`, the published head that the hosted demo pins: the v0.1.0-alpha release below plus a documentation prose pass, a portable MSVC locator in `native/build.bat`, and this changelog. The engine's own version string moves to `0.2.0-alpha` in the commit after the tag, so `/api/status`, the `Server` header and the `engineVersion` stamped into project files agree with the tag line; `1.0.0-alpha` was the project's name from its first commit, never a claim that this alpha is a 1.0 candidate. Projects already on disk keep their old stamp; nothing reads it.
+**The published head of 2026-10-13.** Tag `v0.2.0-alpha` marks commit `4bb5bd1`: the v0.1.0-alpha release below plus a documentation prose pass, a portable MSVC locator in `native/build.bat`, and this changelog. The engine inside it still announces `1.0.0-alpha`; the version string moves in the commit after the tag (see v0.2.1-alpha above, which the hosted demo pins instead). This tag stays where it is.
 
 ---
 
