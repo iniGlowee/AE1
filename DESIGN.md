@@ -3000,8 +3000,8 @@ while `_pilotCraft` is set she only advances her held riding pose and
 mirrors out — no interact, no combat, no locomotion (the fishing-state
 doctrine). Weapons sheathe automatically (ladder mode's existing edge).
 
-**Modes** (the flight craft's own canon): TRAVEL = "Strider", upright hover, Armored
-Core hands — camera-relative inertial strafe, mech faces the camera aim,
+**Modes** (the flight craft's own canon): TRAVEL = "Strider", upright hover, mech-game
+hands — camera-relative inertial strafe, mech faces the camera aim,
 boost held / QUICK-BOOST on a sub-0.24 s tap (the a030/a031 spin evades),
 terrain-following hover that rises with ground but only ever DESCENDS
 slowly on input (hoverRise/hoverFall), melee lunge + shot attacks (melee =
