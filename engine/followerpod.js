@@ -385,7 +385,7 @@ export class AE1PodBolt extends AE1Element {
         scaleY: 0.1,
         scaleZ: 0.1,
         // invisible wave — the specialFx Particles burst carries the visual,
-        // the flight-unit AOE precedent (Austin retired the orange orb)
+        // the flight-craft AOE precedent (Austin retired the orange orb)
       });
       wave._mode = 'orb';
       wave._friendly = true;

@@ -3610,7 +3610,7 @@ function — "//" after (a ";" in the methods section fails the WHOLE
 compile and the element silently falls back to AE1Element); runInfo
 event names are a fixed whitelist — route custom dialogue events through
 onCall(eventName, from); Blender 4.2's glTF exporter ignores
-blend_method and ships every material alphaMode BLEND (the commander
+blend_method and ships every material alphaMode BLEND (the officer
 disease — body parts ghost/vanish by angle): patch the glb JSON after
 export (scratchpad patch_glb_alpha.py). Dialogue cinematography rides
 the EXISTING §18.49 camera-curve handover: DialogueUI sets
