@@ -294,7 +294,7 @@ this session; browser figures are from the §18.88–94 optimisation wave.</p>
     <thead><tr><th>Technique</th><th>What</th><th>Result</th></tr></thead>
     <tbody>
       <tr><td class="concept">KTX2 / Basis</td><td>ETC1S (color/data, qlevel 160), UASTC + zstd (normals), mips, sRGB/linear by slot</td><td>VRAM ~800 → ~120 MB; the player character's set BC7-class</td></tr>
-      <tr><td class="concept">meshopt</td><td><code>EXT_meshopt_compression</code> (<code>gltfpack -cc -kn -km -ke</code>), decoder inlined/vendored</td><td>flight_unit 50 → 11 MB</td></tr>
+      <tr><td class="concept">meshopt</td><td><code>EXT_meshopt_compression</code> (<code>gltfpack -cc -kn -km -ke</code>), decoder inlined/vendored</td><td>flight_craft 50 → 11 MB</td></tr>
       <tr><td class="concept">MM int16 quant</td><td>pose/feature streams int16 + per-column scales; dequant at load</td><td>pose pack 137 → 68 MB; net packs −80 MB</td></tr>
       <tr><td class="concept">aepack</td><td>offset-indexed binary, sha256 de-dup of identical blobs</td><td>HDR packed once; boot heap 1.5 → 0.87 GB</td></tr>
       <tr><td class="concept">HDR</td><td>Radiance <code>.hdr</code> kept as-is (equirect), decoded to float at load</td><td>skybox + IBL from one 2048×1024 asset</td></tr>
