@@ -69,6 +69,26 @@
   font-family: var(--font-mono);
 }
 
+/* Hosted banner (§18.120) — only a multi-tenant host mounts it ------------- */
+
+.hosted-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-4);
+  padding: var(--sp-1) var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+}
+
+.hosted-banner-usage {
+  font-family: var(--font-mono);
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
 /* Status bar -------------------------------------------------------------- */
 
 #statusbar {

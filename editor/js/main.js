@@ -54,6 +54,40 @@ function setStatus(text) {
   document.getElementById('status-context').textContent = text;
 }
 
+/**
+ * The HOSTED banner (§18.120). A multi-tenant host (ae1.ausa.dev) answers
+ * GET /api/hosted with a notice and the visitor's sandbox usage; a plain
+ * local server has no such route and answers 404, and then nothing is shown
+ * and nothing is logged. Usage only — never the sandbox id, which derives
+ * from the network address. Fetched once at boot; the editor is not a meter.
+ */
+async function mountHostedBanner() {
+  let info = null;
+  try {
+    const res = await fetch('/api/hosted', { cache: 'no-store' });
+    if (!res.ok) return;
+    info = await res.json();
+  } catch {
+    return; // no server, no route, no banner
+  }
+  if (!info || info.hosted !== true) return;
+  const parts = [];
+  if (Number.isFinite(Number(info.quota_mb))) {
+    const used = Number.isFinite(Number(info.used_mb)) ? `${Number(info.used_mb)} of ` : '';
+    parts.push(`Sandbox ${used}${Number(info.quota_mb)} MB`);
+  }
+  if (Number.isFinite(Number(info.max_upload_mb))) parts.push(`uploads up to ${Number(info.max_upload_mb)} MB`);
+  const bar = document.getElementById('topbar');
+  document.getElementById('hosted-banner')?.remove();
+  const banner = h(
+    'div',
+    { id: 'hosted-banner', class: 'hosted-banner', role: 'status' },
+    h('span', { class: 'hosted-banner-text' }, String(info.banner || 'Hosted demo.')),
+    parts.length ? h('span', { class: 'hosted-banner-usage' }, parts.join(' · ')) : null,
+  );
+  bar.insertAdjacentElement('afterend', banner);
+}
+
 function buildTopbar() {
   const bar = document.getElementById('topbar');
   clear(bar);
@@ -152,6 +186,7 @@ async function boot() {
   }
 
   buildTopbar();
+  mountHostedBanner(); // §18.120 — a hosted demo says so; a local server shows nothing
 
   // Reopen where the user left off. In incognito this survives reloads but not a
   // window close, which is exactly right: it is a convenience, not a save.
