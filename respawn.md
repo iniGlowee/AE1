@@ -842,7 +842,7 @@ the grip in real time. Scroll wheel cycles; Shift+E drops 0.8 m ahead; `onPickup
 onUnequip` dispatch to the item, and `onPrimary/onSecondary` FORWARD to the equipped item (the
 wield framework). **`(isWeapon true)` + `(attack "file.glb")` turn left click into the `attack`
 one-shot** (uninterruptible like interact; hooks fire first; unarmed clicks stay hooks-only) —
-wired for DragoonLance + player_character_sword_attack1.glb, verified armed/unarmed. Demo items: DragoonLance (weapon, damage 50) + **key** (key.ags.txt, non-weapon — clicking with
+wired for Lance + player_character_sword_attack1.glb, verified armed/unarmed. Demo items: Lance (weapon, damage 50) + **key** (key.ags.txt, non-weapon — clicking with
 it does NOT swing). **Scroll cycling verified with both**: wraps in BOTH directions (backward
 from slot 0 → the LAST item; the first two-item test caught `equipIndex(-1)` emptying the hand —
 fixed: the hand only empties with the inventory). Still true: no 2D HUD overlay in 3D yet
