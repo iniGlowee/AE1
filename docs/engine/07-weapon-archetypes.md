@@ -2,7 +2,7 @@
 
 > † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
 
-How the Combat Bracers (type-3 fists) and the lance (spear) work,
+How the Combat Bracers (fist pairs) and the lance (spear) work,
 and the exact order of operations for bringing in the next weapon class
 (e.g. `smallSword`). Prerequisite reading:
 [Motion Matching](06-motion-matching.md) for the pack pipeline.
@@ -129,7 +129,7 @@ along local +Y (the exporter convention). One mesh, one axis → it binds to
 the right hand (`(socket "rightHand")`), and the built-in equip mounts it.
 A *paired* weapon (the fists: two meshes, two axes) declares `(fistPair
 "OtherElement")` + `(pairSocket "leftHand")` and mounts the second mesh in
-its script — see `type3fist.ags.txt`; that pairing is the **only**
+its script — see `fistpair.ags.txt`; that pairing is the **only**
 structural difference between the fists' script and the lance's.
 
 **Grip tuning**: `mountX/Y/Z` (position) and `mountOffsetX/Y/Z` (degrees)
@@ -171,7 +171,7 @@ action-clip attack path.
 > `0100-0106` — the first three become Light_1/2/3).
 
 
-1. **Survey the mots.** Curator, search "Small Sword" — the `c0xx` block is
+1. **Survey the mots.** Curator, search "Short Sword" — the `c0xx` block is
    the locomotion grid, `01xx` the attacks. Confirm each role in the tables
    above has a source id (they will — the grid is complete per weapon).
 2. **Curate.** Name them `Sword_<Role>`, sets `Sword` / `SwordAir`, with

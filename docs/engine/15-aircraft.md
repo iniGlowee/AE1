@@ -1,8 +1,8 @@
 # 15 — Aircraft: pilotable vehicles (§18.52)
 
 The `Aircraft` builtin (`engine/aircraft.js`, `(extends Aircraft)`) turns a
-skinned glb element into a two-mode pilotable vehicle. The the reference action game flight unit
-(project `flight1`, script `flight-unit.ags.txt`) is the first tenant —
+skinned glb element into a two-mode pilotable vehicle. The the reference action game flight craft
+(project `flight1`, script `flight-craft.ags.txt`) is the first tenant —
 planes, helicopters, and anything else ridden later reuse the same base and
 override dats.
 
@@ -28,7 +28,7 @@ fishing-state doctrine — a character state swaps the entire control scheme.
 
 ## Modes
 
-**TRAVEL ("Asura", upright hover)** — Armored Core hands:
+**TRAVEL ("Strider", upright hover)** — mech-game hands:
 
 - camera-relative inertial strafe; the mech faces the camera's aim
   (`turnRate`),
@@ -39,9 +39,9 @@ fishing-state doctrine — a character state swaps the entire control scheme.
 - attacks: melee lunge (frontal-arc `takeDamage` sweep + hitStop + rumble)
   and a shot clip. The pilot hides during attack clips (the hull swings
   through the seat).
-- The normal fox orbit camera is untouched — she *is* the craft.
+- The normal chase orbit camera is untouched — she *is* the craft.
 
-**FLIGHT ("Cygnus", jet)** — Ace Combat hands:
+**FLIGHT ("Falcon", jet)** — flight-game hands:
 
 - Shift/Ctrl throttle between `flightMin`/`flightMax`; W/S pitch; A/D
   roll-to-turn (`bankTurnRate` × bank fraction); dives gain speed, climbs
@@ -58,7 +58,7 @@ fishing-state doctrine — a character state swaps the entire control scheme.
   (`model.lodPair` + `lodDistance` on the tile elements) swaps to it for
   the whole flight, the transform curve and seam flash hiding the flip.
   The unfold to travel (and any unboard) restores full detail. Measured
-  on the City Ruins: 45 → 75 fps while flying, on-foot detail untouched.
+  on the city tiles: 45 → 75 fps while flying, on-foot detail untouched.
 
 **Rules**: `F` toggles modes. Flight→travel **refuses** above
 `travelEnterHeight` (or over the void — unknown altitude is infinite).
@@ -150,7 +150,7 @@ engine fix that this surfaced: a LOOPING held action must never trip the
 `frames-2` "action finished" edge — the forward branch now guards on
 `clip.loops` like the reverse always did.
 
-## The the flight unit numbers (flight1)
+## The the flight craft numbers (flight1)
 
 Sixteen unit clips: Idle/Board/Unboard/Cockpit, Travel_Move (a01b),
 Travel_Boost (a01e), QB_L/R (a030/1), Attack_Melee (a02a), Attack_Shoot

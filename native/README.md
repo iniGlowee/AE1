@@ -130,8 +130,8 @@ build\ae1game.exe ..\exports\devroom-agp ..\engine
   `EXT_meshopt_compression` (via vendored meshoptimizer), `KHR_mesh_quantization`,
   and **CPU skinning at bind pose** (joint matrices = worldTransform(joint) ·
   inverseBindMatrix; the skinned mesh's node transform is ignored per spec).
-  Props and the full character cast render — the stubby machine, the player character, the companion character, the
-  Commander all stand correctly.
+  Props and the full character cast render — the runt machine, the player character, the companion character, the
+  Officer all stand correctly.
 - **Step 6 (done):** the scene join — `ae1player` with no glb argument reads the
   entry scene from data.json and draws every visible element that has a model,
   each glb loaded from the pack and placed at its element world transform

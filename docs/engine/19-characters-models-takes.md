@@ -58,7 +58,7 @@ so the hash dither read as visible static. Revision (§18.86, in
 `conditionGltf`): **hair that ARRIVES masked keeps its authored cut value**
 (crisp cutout); hair arriving BLEND still gets hashed. The per-frame
 alphaTest=0 invariant only fires on hashed materials. Practical split: the player character
-ships MASK; the companion character/Commander/the operator ship BLEND and keep their hashed look.
+ships MASK; the companion character/Officer/the operator ship BLEND and keep their hashed look.
 
 ## The mocap take pipeline
 

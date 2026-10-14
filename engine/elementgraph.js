@@ -1,7 +1,7 @@
 /**
  * AE1 — ElementGraph: an opt-in, engine-generated map of every scene element AND
  * the named sub-nodes inside its glb, plus the classic reference-MMO right-click
- * "Choose Option" menu that drives interactions against them.
+ * "Options" menu that drives interactions against them.
  *
  * THE IDEA (Austin's element-graph spec). A 3D project rarely needs to reach
  * INTO a model — but a point-and-click world does: a door is one node inside a
@@ -277,17 +277,17 @@ export class AE1ElementGraph extends AE1Element {
 
   inspect(text) { if (text) this._toast(String(text)); }
 
-  /* -- classic "Choose Option" menu (DOM overlay) --------------------- */
+  /* -- classic "Options" menu (DOM overlay) --------------------- */
 
   _menuInit() {
     if (typeof document === 'undefined') return;
     const box = document.createElement('div');
     box.style.cssText =
-      'position:fixed;z-index:99999;display:none;min-width:120px;font:12px/1.35 "the reference MMO UF",Helvetica,Arial,sans-serif;' +
+      'position:fixed;z-index:99999;display:none;min-width:120px;font:12px/1.35 "AE1 UF",Helvetica,Arial,sans-serif;' +
       'background:rgba(93,82,52,0.96);border:1px solid #000;box-shadow:2px 2px 0 rgba(0,0,0,0.5);' +
       'color:#fff;user-select:none;cursor:default;padding-bottom:2px;';
     const head = document.createElement('div');
-    head.textContent = 'Choose Option';
+    head.textContent = 'Options';
     head.style.cssText = 'background:#5d5234;color:#fff;padding:2px 6px;border-bottom:1px solid #000;font-weight:bold;';
     box.appendChild(head);
     const list = document.createElement('div');
@@ -301,7 +301,7 @@ export class AE1ElementGraph extends AE1Element {
     const act = document.createElement('div');
     act.style.cssText =
       'position:fixed;z-index:99998;display:none;pointer-events:none;white-space:nowrap;' +
-      'font:bold 14px/1.3 "the reference MMO UF",Helvetica,Arial,sans-serif;color:#fff;' +
+      'font:bold 14px/1.3 "AE1 UF",Helvetica,Arial,sans-serif;color:#fff;' +
       'text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000;';
     document.body.appendChild(act);
     this._actionEl = act;
@@ -313,7 +313,7 @@ export class AE1ElementGraph extends AE1Element {
     document.addEventListener('keydown', this._onKey, true);
 
     // Kill the BROWSER's native right-click menu everywhere while the game's own
-    // "Choose Option" box is in play — including over the game overlays (the menu
+    // "Options" box is in play — including over the game overlays (the menu
     // box, marker, toast), which the canvas-only guard in input.js can't reach.
     // OUR menu is raised on mousedown(button 2), not the contextmenu event, so it
     // is unaffected; this only suppresses the browser popup. Removed in onRemove
@@ -395,7 +395,7 @@ export class AE1ElementGraph extends AE1Element {
       // (in the editor the canvas is only a panel). It's the reference MMO's "chatbox" line.
       t.style.cssText =
         'position:fixed;z-index:99998;padding:4px 10px;' +
-        'font:13px/1.4 "the reference MMO UF",Helvetica,Arial,sans-serif;color:#0ff;background:rgba(0,0,0,0.55);' +
+        'font:13px/1.4 "AE1 UF",Helvetica,Arial,sans-serif;color:#0ff;background:rgba(0,0,0,0.55);' +
         'border:1px solid #000;pointer-events:none;transition:opacity .4s;';
       document.body.appendChild(t);
       this._toastEl = t;

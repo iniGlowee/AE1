@@ -22,7 +22,7 @@ shows on every element wearing the same media.
 - **The DialogueUI element renders a DOM overlay.** 3D projects have no 2D
   HUD canvas; DOM is the pattern (the debug wall and console set the
   precedent). Speaker header from the NPC's `(displayName)` dat, line text,
-  FF-style options with a white ▸ cursor. Nav: arrows/WASD/dpad; confirm:
+  JRPG-style options with a white ▸ cursor. Nav: arrows/WASD/dpad; confirm:
   E/Enter/Space/pad-A.
 - **Trees are plain JS objects** — `{start: {text, options: [{label, next,
   event, action}]}}` — passed from the NPC's own `onInteract`. An option

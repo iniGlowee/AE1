@@ -1,5 +1,5 @@
 <?dat
-; THE GAUNTLET SPAWNER (Playtest 1, Level 3): twenty stubbies from one
+; THE GAUNTLET SPAWNER (Playtest 1, Level 3): twenty runts from one
 ; parked prototype — every color, ring-scaled difficulty, and deliberately
 ; TOO MANY. This level is supposed to kill you; dying restarts the run at
 ; Level 1 (the player's restartScene dat). §18.46 instancing throughout.
@@ -20,7 +20,7 @@ function begin() {
     const ring = i % 3;
     const a = (i / n) * Math.PI * 2 + ring * 0.35;
     const r = 3.5 + ring * 2.4;
-    const inst = this.spawnInstance("StubbyProto", {
+    const inst = this.spawnInstance("RuntProto", {
       x: Math.sin(a) * r,
       z: Math.cos(a) * r,
       y: 0.01,
@@ -37,7 +37,7 @@ function begin() {
     inst.setAttackDamage("Attack_2", 4 + ring * 3);
     inst.setTint(palette[i % palette.length]);
   }
-  console.log("[Gauntlet] " + this.instancesOf("StubbyProto").length
+  console.log("[Gauntlet] " + this.instancesOf("RuntProto").length
     + " machines. It was nice knowing you.");
 }
 ags?>

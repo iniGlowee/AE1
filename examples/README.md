@@ -9,7 +9,7 @@ it runs. The § numbers refer to DESIGN.md.
 | Folder | What it is | Born in | § |
 |---|---|---|---|
 | `portals/` | The complete render-to-texture portal gun + portal eye (`PerspectiveCamera` as an element, wall-normal placement, the ARMED anti-ping-pong latch, mirrored-yaw walk-through continuity) | 3d-sandbox → -mm | 18.30/18.32 |
-| `weapons/` | The type-3 fist PAIR weapon (both arms, bind-pose mirror derivation, `mountExtra`/`pickupAs`) and the lance (the weapon-registry second class). The only pair weapon ever built. | 3d-sandbox-mm | 18.14/18.39 |
+| `weapons/` | The fist pair PAIR weapon (both arms, bind-pose mirror derivation, `mountExtra`/`pickupAs`) and the lance (the weapon-registry second class). The only pair weapon ever built. | 3d-sandbox-mm | 18.14/18.39 |
 | `enemies/` | Biped (aoe1 tank), Flyer (the only ranged/hovering enemy), horde + gauntlet spawners (§18.46 instancing, ring-scaled difficulty) | 3d-sandbox-mm, playtest1 | 18.40/18.44/18.46 |
 | `fishing/` | The whole fishing feature: TriggerBox state machine (chair-spawns-under-you, E-toggle grammar, cleanup safety net) + the only non-vehicle camera course (sweep-and-push "admire the catch"). The superseded Hitbox rev is kept beside it as the migration lesson. | fishing1 | 18.49/18.50 |
 | `pause-menu/` | The engine's only working menu: faction CSS hand-port, the reference series' flower dial (original inline SVG art), pure-AGS DOM UI over the paused loop. Gated behind the MENU_PROTO debug flag. | forest1 | 18.64 |
@@ -29,5 +29,5 @@ Things NOT kept (rebuildable from the CPK pipelines documented in DESIGN.md and
 docs/ROADMAP.md): the baked map glbs (city tiles + LOD twins, tower, factory,
 forest tiles, colosseum, bunker), the fat Mixamo-era animation libraries, and
 per-project exports. The current character stack (hero.glb, npc_native.glb,
-npc_commander.glb, flight_unit.glb, all mm packs, the lucky takes) lives on in
+npc_officer.glb, flight_craft.glb, all mm packs, the lucky takes) lives on in
 `projects/devroom`.

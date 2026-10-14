@@ -260,26 +260,26 @@ function menuBuildDom() {
 function menuContent(name) {
   // placeholder panel bodies -- enough to make each tab feel distinct
   if (name === "MAP") {
-    return "<h3>Forest Zone</h3>" +
+    return "<h3>The Woods</h3>" +
       "<div class='ym-row'><span>Region</span><span>River gorge</span></div>" +
       "<div class='ym-row'><span>Grid</span><span>g11418</span></div>" +
       "<div class='ym-row ym-dim'><span>Waypoints</span><span>&mdash;</span></div>";
   }
   if (name === "ITEMS") {
     return "<h3>Consumables</h3>" +
-      "<div class='ym-row'><span>Small Recovery</span><span>3</span></div>" +
-      "<div class='ym-row'><span>Medium Recovery</span><span>1</span></div>" +
+      "<div class='ym-row'><span>Small Tonic</span><span>3</span></div>" +
+      "<div class='ym-row'><span>Medium Tonic</span><span>1</span></div>" +
       "<div class='ym-row ym-dim'><span>Bait (fishing)</span><span>0</span></div>";
   }
   if (name === "WEAPONS") {
     return "<h3>Equipped</h3>" +
-      "<div class='ym-row'><span>Slot I</span><span>Small Sword</span></div>" +
+      "<div class='ym-row'><span>Slot I</span><span>Short Sword</span></div>" +
       "<div class='ym-row ym-dim'><span>Slot II</span><span>&mdash;</span></div>";
   }
   if (name === "SKILLS") {
-    return "<h3>Pod Programs</h3>" +
-      "<div class='ym-row'><span>R010: Laser</span><span>Lv. 1</span></div>" +
-      "<div class='ym-row ym-dim'><span>R020: Mirage</span><span>locked</span></div>";
+    return "<h3>Pod Skills</h3>" +
+      "<div class='ym-row'><span>P01: Beam</span><span>Lv. 1</span></div>" +
+      "<div class='ym-row ym-dim'><span>P02: Decoy</span><span>locked</span></div>";
   }
   if (name === "SYSTEM") {
     return "<h3>System</h3>" +

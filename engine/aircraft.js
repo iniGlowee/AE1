@@ -1,6 +1,6 @@
 /**
  * AE1 - Aircraft (DESIGN.md §18.52): a PILOTABLE VEHICLE base element — the
- * the reference action game flight unit today; planes, helicopters, anything ridden tomorrow.
+ * the reference action game flight craft today; planes, helicopters, anything ridden tomorrow.
  *
  * THE CONTRACT (Austin's spec): the THIRD-PERSON CHARACTER stays the root of
  * truth — input, position, hitbox all live on her. Boarding puts her driver
@@ -9,15 +9,15 @@
  * body rides at (pilot - seat offsets) every tick. Visually she "becomes"
  * the aircraft; mechanically the aircraft is a costume around her root.
  *
- * TWO PILOTED MODES, per the flight unit's own canon:
+ * TWO PILOTED MODES, per the flight craft's own canon:
  *
- *  TRAVEL ("Asura", upright mobile config) — Armored Core-flavored hover:
+ *  TRAVEL ("Strider", upright mobile config) — mech-game-flavored hover:
  *    camera-relative strafe with inertia, boost held / QUICK-BOOST tapped,
  *    terrain-following hover that can descend slowly but never climbs on
- *    input, melee + shot attacks. The fox orbit camera stays — she IS the
+ *    input, melee + shot attacks. The chase orbit camera stays — she IS the
  *    craft, so the ordinary third-person camera just works.
  *
- *  FLIGHT ("Cygnus", jet config) — Ace Combat-flavored: throttle, pitch,
+ *  FLIGHT ("Falcon", jet config) — flight-game-flavored: throttle, pitch,
  *    roll-to-turn, real altitude. A chase camera (banked with the craft,
  *    FOV scaling with speed) is requested through `pilot._flightCam`,
  *    consumed by AE1ThirdPersonCamera.
@@ -355,7 +355,7 @@ export class AE1Aircraft extends AE1Element {
             this._acHidePilot(true);
           } else this._acPilotAction(this.pilotProne);
           this._acPlay(String(this.clipCruise), { loop: true });
-          console.log('[Aircraft] flight mode — Cygnus configuration.');
+          console.log('[Aircraft] flight mode — Falcon configuration.');
         } else {
           this._acSetMode('travel');
           this._acHidePilot(false);
@@ -364,7 +364,7 @@ export class AE1Aircraft extends AE1Element {
           const sp = Math.min(Number(this.travelSpeed) || 12, this._acSpeed);
           this._acVel = { x: Math.sin(h) * sp, z: Math.cos(h) * sp };
           this._acPlay(String(this.clipTravelIdle), { loop: true });
-          console.log('[Aircraft] travel mode — Asura configuration.');
+          console.log('[Aircraft] travel mode — Strider configuration.');
         }
       }
       this._acMirror();
@@ -386,7 +386,7 @@ export class AE1Aircraft extends AE1Element {
     this._acVel.z *= Math.max(0, 1 - 1.5 * dt);
   }
 
-  /* -- TRAVEL: the Armored Core hover ------------------------------------- */
+  /* -- TRAVEL: the mech-game hover ------------------------------------- */
 
   _acTravelTick(dt, input, ctl) {
     const p = this._acPilot;
@@ -420,7 +420,7 @@ export class AE1Aircraft extends AE1Element {
     }
     const mag = Math.min(1, Math.hypot(axF, axR));
 
-    // the mech faces the camera's aim — AC's fourth-gen convention — but
+    // the mech faces the camera's aim — the mech genre's convention — but
     // ONLY under movement input: an idle craft holds its own heading (the
     // approach camera must never spin the parked-then-boarded unit around)
     if (mag > 0.05) {
@@ -558,7 +558,7 @@ export class AE1Aircraft extends AE1Element {
     this.world?.input3d?.rumble?.(0.4, 0.7, 300);
   }
 
-  /* -- FLIGHT: the Ace Combat chase --------------------------------------- */
+  /* -- FLIGHT: the flight-game chase --------------------------------------- */
 
   _acFlightTick(dt, input, ctl) {
     const p = this._acPilot;
@@ -581,7 +581,7 @@ export class AE1Aircraft extends AE1Element {
       console.log('[Aircraft] too high to unfold — descend first.');
     }
 
-    // AC6 hands: stick = pitch/roll; keyboard W/S pitch, A/D roll,
+    // flight-game hands: stick = pitch/roll; keyboard W/S pitch, A/D roll,
     // Shift throttle, Ctrl brake. Roll turns the nose (bank-to-turn).
     let pit = (input.down(ctl.forward) ? -1 : 0) + (input.down(ctl.back) ? 1 : 0);
     let rol = (input.down(ctl.right) ? 1 : 0) - (input.down(ctl.left) ? 1 : 0);
@@ -688,7 +688,7 @@ export class AE1Aircraft extends AE1Element {
       scaleZ: 0.1,
       // an EMPTY aoeMedia = an invisible wave: the damage front still
       // expands, and a Particles burst (blastFx) carries the whole visual
-      // (Austin retired the orange orb on the flight unit)
+      // (Austin retired the orange orb on the flight craft)
       ...(media ? { components: { model: { media, node: 'aoe_orb' } } } : {}),
     });
     el._mode = 'orb';
@@ -783,7 +783,7 @@ AE1Aircraft.agsDat = {
   pilotProne: 'Flight_Prone',
   pilotTransform: 'Flight_Transform',
   pilotTransformBack: 'Flight_TransformBack',
-  // -- travel (Asura) physics ----------------------------------------------
+  // -- travel (Strider) physics ----------------------------------------------
   hoverHeight: 1.6,
   travelSpeed: 12,
   travelBoost: 22,
@@ -793,7 +793,7 @@ AE1Aircraft.agsDat = {
   turnRate: 240,
   hoverRise: 9,
   hoverFall: 3.5,
-  // -- flight (Cygnus) physics ---------------------------------------------
+  // -- flight (Falcon) physics ---------------------------------------------
   flightMin: 14,
   flightMax: 55,
   throttleRate: 14,

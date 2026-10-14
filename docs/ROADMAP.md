@@ -8,9 +8,9 @@ The living checklist, rebuilt from DESIGN's open questions, every docs page's
 Weapon families · enemy base class + archetyped attacks (melee/ranged/AOE) ·
 combat feel (hit stop, kill slow-mo, rumble, hurt reactions) · lock-on ·
 player death + restart · instancing + tint · playtest1 · standalone tools
-(mot-extractor, enemy-glb-baker) · **§18.47: the Fox camera (stealth-game feel),
+(mot-extractor, enemy-glb-baker) · **§18.47: the chase camera (stealth-game feel),
 the PostFX shader layer (focal DOF/grain/vignette/CA), the reference action game environment
-extraction pipeline + the foxcam testbed.**
+extraction pipeline + the camtest testbed.**
 
 ## Landed 2026-08-26 (this cycle)
 
@@ -36,7 +36,7 @@ extraction pipeline + the foxcam testbed.**
 - **The Tower (`tower1`)**: wd5 g50001 identified and shipped — the Route-C
   spire: Library (spawn), Church, Under-Church, Red Girls' room, the faction
   arena, elevator hall, all over the 7 km Earth cloud dome. The player character + the pod
-  pod + the flight unit on the Library floor, 75 fps. The chunk's mesh groups
+  pod + the flight craft on the Library floor, 75 fps. The chunk's mesh groups
   are NAMED (unlike city tiles) — per-room work is addressable. Destroyed
   "_D" duplicate set + BEFORE/AFTER variants dropped at bake. The wd5
   survey also identified the Copied City (g50010) and the Factory
@@ -47,7 +47,7 @@ extraction pipeline + the foxcam testbed.**
   the companion pod (<asset>, DLC cpk) on the real <asset> pod skeleton with
   real pod motions; shoulder follow, own fire/special buttons (KeyQ/RB,
   KeyC/LT), lock-target aiming, friendly-wave special, vanishes while
-  piloting the flight unit. Demo project `pod1`. Follow-ups queued below.
+  piloting the flight craft. Demo project `pod1`. Follow-ups queued below.
 
 ## Landed 2026-08-27 (this cycle)
 
@@ -78,8 +78,8 @@ extraction pipeline + the foxcam testbed.**
   rings, own 16km starfield sphere. Skinning-strip bake pass (ba props
   are armature-bound → SkinnedMesh → no ground rays), element-side
   orientation (ba axes ≠ wd tiles by 90°), the bound-vs-unbound model
-  path doctrine written down. Cloned from flight1 → flight unit +
-  boarding ready; **<asset> (the companion character's armed flight unit) identified as the
+  path doctrine written down. Cloned from flight1 → flight craft +
+  boarding ready; **<asset> (the companion character's armed flight craft) identified as the
   enemy model for space battles — pulled, not yet baked.** Spawn on the
   corridor ring, collision verified by 111-point probe grid. Export
   shipped (663 MB). Eyes-on pass pending (browser pane closed mid-verify).
@@ -92,17 +92,17 @@ extraction pipeline + the foxcam testbed.**
   extracted), pod voice barks via Ambience.
 
 - **Shader layer, phase 2**: bloom (¼-res Kawase), soft-shoulder tone curve
-  (linear→0.6, Fox's own), LUT color-grade slot, lens dirt — the rest of the
+  (linear→0.6, the reference stealth game's own), LUT color-grade slot, lens dirt — the rest of the
   the reference stealth game's post stack (Courrèges frame study is the map). Motion blur
   (camera-rotation velocity first — cheapest "filmed" win).
 - **ADS / aim camera state**: the discrete aim lens of the reference stealth game (32° vFOV, 0.55 m
   shoulder, 0.15 s snap) + DOF-on-aim trigger; shoulder-swap that remembers.
 - **Camera trauma layer**: impact shake (trauma², Perlin, 8°/8°/5° max) fed
   by the §18.41 combat-feel seams; CQC-style finisher dolly on kills.
-- **Main-game map tiles**: pull wd1 city-ruins tiles (g10716 first) via the
+- **Main-game map tiles**: pull wd1 city-tile tiles (g10716 first) via the
   documented CriPakGUI recipe (tools/ENVIRONMENTS.md); then the <pack>
   prop sweep (<asset> tree-skyscraper, bg cars/trees) for set dressing.
-- **Enemy roster growth**: <asset> small biped family (em005f pack), the
+- **Enemy roster growth**: <asset> small biped family (<asset> pack), the
   spin-attack chain (0600-0602 as a multi-phase archetype), directional hit
   reactions (attacker-bearing pick from the 011x grid).
 

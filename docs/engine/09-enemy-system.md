@@ -11,7 +11,7 @@ AE1 has two tiers of inhabitant:
 | `Enemy` | `engine/enemy.js` | everything above **plus** a clip-driven animation state machine and a selectable combat brain |
 
 `Enemy extends NPC extends PassiveDialogue extends Hitbox` — nothing is lost
-down the chain. The Goober still runs on plain `NPC`; the Stubby (the Combat
+down the chain. The Goober still runs on plain `NPC`; the Runt (the Combat
 Room's inhabitant) is the reference `Enemy`.
 
 ## The animation state machine
@@ -82,7 +82,7 @@ blender --background --python motion-matching/tools/bake_enemy_glb.py -- ^
   --mots  "<unpacked emXXXf.dat directory>" ^
   --clips "Idle=<asset>,Walk=<asset>,...,Death=<asset>" ^
   --out   "<out>.glb"
-py -3 motion-matching/tools/import_ae1_media.py --as stubby.glb <out>.glb
+py -3 motion-matching/tools/import_ae1_media.py --as runt.glb <out>.glb
 ```
 
 The tool strips LOD/shadow meshes (`--drop`, default `-LOD\d|-SHADOW`),
@@ -105,7 +105,7 @@ dat is the motion pack (118 mots for <asset>); the numbered dat is
 model+params. **The game ships its own labeling**: `<asset>.dat/AnimationTable.csv`
 maps semantic states to motion ids (`a0000l` idle → `<asset>.mot`,
 `0500`/`0510`/`0600-0602` attacks, `01xx` damage reactions, `0190` death,
-`03xx` stun) — no triage gallery needed. Variants (<asset>-<asset>, em000b…)
+`03xx` stun) — no triage gallery needed. Variants (<asset>-<asset>, <asset>…)
 re-skin the same rig and **reuse <asset>**, so palette-swap enemies cost
 one mesh bake.
 
@@ -118,9 +118,9 @@ a Hitbox + `goToScene`, the standard door recipe), with
 `combat-door-back.ags.txt` leading home. Two species live there, one of
 each temperament:
 
-| | Stubby (<asset>) | Medium Biped (<asset>) |
+| | Runt (<asset>) | Medium Biped (<asset>) |
 | --- | --- | --- |
-| script | `stubby.ags.txt` | `biped.ags.txt` |
+| script | `runt.ags.txt` | `biped.ags.txt` |
 | temperament | `friendlyUntilAttacked true` — potters until hit | hostile on sight |
 | health / damage | 60 / 8 | 150 / 4 — the tank |
 | swings | 2 attacks, ~2 s | 3 attacks, 3-4 s, windup 0.9 |
@@ -166,11 +166,11 @@ The biped proved this list is complete; nothing else was touched. In order:
 
 - **One animated instance per glb file.** A second element wearing the same
   glb renders as a static clone (render3d's one-glb-one-timeline rule). A
-  room full of stubbies needs either per-instance glb copies (cheap — dedupe
+  room full of runts needs either per-instance glb copies (cheap — dedupe
   by name in media) or a renderer change. Start here when Austin asks for
   "a bunch of enemies".
 - Chase is straight-line steering with a blocked-probe hold — no pathfinding
   around obstacles yet.
 - Enemy→player strikes are distance + facing arc, not per-bone hitboxes.
-- `Stun`/`Stun_Loop`/`Walk_B` are baked into stubby.glb but unused by the
+- `Stun`/`Stun_Loop`/`Walk_B` are baked into runt.glb but unused by the
   v1 brain — free material for a future stagger/knockdown system.

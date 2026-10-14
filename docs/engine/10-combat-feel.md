@@ -3,7 +3,7 @@
 > † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
 
 *(DESIGN.md §18.41. The research behind the numbers: hit-stop frame data from
-the publisher beat-'em-ups and Smash, UE global-time-dilation conventions, the
+the publisher beat-'em-ups and a platform fighter, UE global-time-dilation conventions, the
 Vlambeer "art of screenshake" school. This page is the impact layer ON TOP of
 the combat systems in [Enemy System](09-enemy-system.md) and
 [Weapon Archetypes](07-weapon-archetypes.md). Particles, sound, and HUD are
@@ -103,7 +103,7 @@ focal.
 
 **Camera**: while locked the camera owns its yaw — eased onto the
 player→target bearing at `(lockYawSpeed 240)` deg/s, pitch settling to
-`(lockPitch 16)`° — the Souls frame. Sticks resume the moment the lock
+`(lockPitch 16)`° — the action-RPG frame. Sticks resume the moment the lock
 drops.
 
 **The indicator**: `LockMarker` (engine/lockmarker.js, builtin) — a white

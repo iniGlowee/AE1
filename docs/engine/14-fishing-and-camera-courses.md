@@ -66,7 +66,7 @@ fishing chair (`etf100`). One `export_static_glb.py` call each.
 **The lake**: the flooded city (a canonical the reference action game fishing area) as the far
 shore — the colosseum map's proven placement pushed 420 m north — with a
 meshforged translucent water plane and a plank pier. A real lake TILE
-(city-ruins crater lake) is queued: LibCPK.dll is driveable from PowerShell
+(city-tile crater lake) is queued: LibCPK.dll is driveable from PowerShell
 (TOC verified against Steam's <pack>/014), recipe in tools/ENVIRONMENTS.md.
 
 Verified end-to-end headless: pack loads, every phase in order on loaded

@@ -1,6 +1,6 @@
 /**
  * AE1 - LockMarker (§18.43): the lock-on indicator — a small white circle
- * billboarded in front of the locked enemy, Dark Souls style.
+ * billboarded in front of the locked enemy, action-RPG lock-on style.
  *
  * SPAWNED, never authored: the character creates one on lock and removes it
  * on release (`_lockAcquire` / `_lockRelease` in thirdperson.js) — scenes

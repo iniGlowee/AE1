@@ -413,7 +413,7 @@ export class AE1Element {
   }
 
   /** INSTANCING (§18.46) — spawn a live copy of a prototype element with
-   *  overrides: `this.spawnInstance("StubbyProto", {x: 4, z: -2, health: 30})`.
+   *  overrides: `this.spawnInstance("RuntProto", {x: 4, z: -2, health: 30})`.
    *  Returns the new element (or null). `instancesOf(name)` queries every
    *  live instance spawned from that prototype. `setTint("#40ff90")` colors
    *  THIS element's textures without touching any other instance's. */

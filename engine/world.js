@@ -371,7 +371,7 @@ export class AE1World {
       // ...for TEMPLATES and COMPANIONS alike: any same-named scene element
       // takes over from the travelling twin (returning to the fists' home
       // scene must hand the pair back to the authored left arm, or two
-      // Type3FistLefts answer one name). The takeover COPIES the twin's
+      // FistPairLefts answer one name). The takeover COPIES the twin's
       // mount + visibility (§18.42): the authored element is a fresh spawn
       // at its rack transform, and without the twin's state a worn
       // companion re-entered its home scene lying on the floor.

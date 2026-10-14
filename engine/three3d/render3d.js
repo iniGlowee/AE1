@@ -19,12 +19,12 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 // §18.53 phase 3b: BVH-accelerated raycasts (three-mesh-bvh, vendored).
-// three has NO ray acceleration — a ground probe against the City Ruins'
+// three has NO ray acceleration — a ground probe against the city tiles'
 // megameshes was 3 ms PER CALL (per-triangle tests), and every character
 // fires several per tick: three chasing enemies alone ate the frame budget.
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three/addons/utils/three-mesh-bvh.module.js';
 // §18.66: the Kawaii-style secondary-bone pass (ponytails, sashes, the
-// Commander's sword) — runs after the mixers, before the render.
+// Officer's sword) — runs after the mixers, before the render.
 import { createBonePhys } from './bonephys.js';
 
 // Opt-in per geometry: acceleratedRaycast uses the BVH only where a
@@ -614,7 +614,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
         const light = !(el.lightScene === false || el.lightScene === 'false');
         // §18.67: the LIGHTING copy is PMREM-prefiltered. The raw equirect
         // has no roughness mips, so metals sampled the sharp texel grid and
-        // glittered angle-dependently in motion (the flight unit's strobing
+        // glittered angle-dependently in motion (the flight craft's strobing
         // panels). PMREM builds the blurred mip chain PBR expects —
         // reflections go smooth and uniform; the BACKDROP keeps the raw
         // sharp texture (that crispness is wanted there).
@@ -1537,7 +1537,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
   // §18.46 PER-INSTANCE ANIMATION — the instancing round's renderer half.
   // A clone-bound element may drive clips of its OWN: a mixer rooted at ITS
   // clone binds the SHARED glb's clips by node name (cloneWithSkeleton
-  // preserves names), so twenty stubbies play twenty timelines over ONE
+  // preserves names), so twenty runts play twenty timelines over ONE
   // loaded glb — one download, shared geometry and materials, per-instance
   // state. OPT-IN by an explicitly set clip: an unset clip on a clone stays
   // the static snapshot it always was (projectile rounds, carried-item
@@ -2740,7 +2740,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
 
   // DISTANCE CULLING (§18.53 phase 2): any element with `(cullDistance N)`
   // in its dat hides its bound object when the CAMERA is farther than N
-  // from the element — the nine-tile City Ruins only ever shows a few
+  // from the element — the nine-tile city tiles only ever shows a few
   // tiles' worth of geometry. 1 Hz is plenty at flight speeds; hidden
   // means pruned from ground rays too, so pick N well past gameplay range.
   // PHASE 3 LOD PAIRS: `cullDistanceMin M` hides the object when the camera
@@ -2777,7 +2777,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     sweepLodPairs();
   }
 
-  // PER-MESH LOD (§18.53 phase 3). The City Ruins chunks are NOT a spatial
+  // PER-MESH LOD (§18.53 phase 3). The city tiles chunks are NOT a spatial
   // grid — all nine overlap one ~±150 m area, so element-level distance
   // swapping can never separate near from far. Instead a full-detail element
   // names its decimated twin in the model bag (`lodPair` + `lodDistance D`),
@@ -2786,7 +2786,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
   // unjoined from the same blends, so meshes pair by name + occurrence.
   // Verdicts land on mesh.userData.ae1LodHidden — applyParts re-asserts
   // every mesh's visibility each frame and folds that flag in.
-  // FLIGHT LOD (setLodFar): measured on the City Ruins, the whole ~9 ms
+  // FLIGHT LOD (setLodFar): measured on the city tiles, the whole ~9 ms
   // tile bill lives in the giant meshes the camera is always inside of —
   // honest distance LOD can't touch them, but decimating EVERYTHING cut
   // 22 ms to 13 ms. The aircraft flips this on for flight mode, where

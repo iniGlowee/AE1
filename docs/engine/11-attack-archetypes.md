@@ -59,7 +59,7 @@ enemy.setAttackDamage("Attack_3", 2)   // live — the NEXT swing deals 2
 
 All runtime-mutable, so a higher-order AngelScript system — an area buff, an
 enrage event, a difficulty scalar — is a loop over enemies calling setters.
-Verified live: nerfing a stubby punch to 2 mid-fight dealt exactly 2.
+Verified live: nerfing a runt punch to 2 mid-fight dealt exactly 2.
 
 ## The spawned execution elements
 
@@ -77,7 +77,7 @@ meshes: `orange_orb.glb`, `red_ring.glb`, `aoe_orb.glb`.
 
 | enemy | classified attacks |
 | --- | --- |
-| Stubby (<asset>) | 2× melee 8 + **Trumpet aoe2 orb** (6 dmg, 6 m) |
+| Runt (<asset>) | 2× melee 8 + **Trumpet aoe2 orb** (6 dmg, 6 m) |
 | Medium Biped (<asset>) | 2× melee 4 + **Attack_3 stomp aoe1 ring** (8 dmg, 8 m, lands at windup 1.2 into the slam) |
 | **Small Flyer (<asset>)** — NEW | **ranged** 5 dmg orb, 4 m/s, fired from ~7 m |
 
@@ -93,7 +93,7 @@ animation at all — check `AnimationTable.csv` before assuming ids exist:
 ## Traps found and paid for
 
 - **Bind-pose boxes don't swing.** Render bounds come from bind-pose
-  geometry; GPU skinning never moves them. The stubby's punch visibly
+  geometry; GPU skinning never moves them. The runt's punch visibly
   reaches 1.7 m but his box is 0.9 m deep, and his brain stops OUTSIDE his
   own box — pure mesh-overlap whiffed forever. The melee `pad`
   (reach×0.3) is the swing's forward extension.
