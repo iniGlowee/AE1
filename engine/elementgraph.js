@@ -1,6 +1,6 @@
 /**
  * AE1 — ElementGraph: an opt-in, engine-generated map of every scene element AND
- * the named sub-nodes inside its glb, plus the classic-the reference MMO right-click
+ * the named sub-nodes inside its glb, plus the classic reference-MMO right-click
  * "Choose Option" menu that drives interactions against them.
  *
  * THE IDEA (Austin's element-graph spec). A 3D project rarely needs to reach
@@ -18,13 +18,13 @@
  * name convention here — `door*`→door, `roofs`→roof — a subclass may override),
  * and `interactions()` returns, per kind, the inspection text and the primary /
  * secondary option verbs. A right-click raycasts the cursor to a node
- * (env3d.pointerPick), looks up its kind, and raises the RS options box; picking
+ * (env3d.pointerPick), looks up its kind, and raises the reference-MMO-style options box; picking
  * a verb runs its handler against the node. Doors swing on their baked hinge
  * origin; roofs hide themselves whenever the player steps under one (an up-ray,
  * env3d.rayUp) — the authentic global "roofs off when indoors".
  *
- * Base class only — no genre code lives here; the the reference MMO project's yanille-graph
- * script supplies the the test town verbs. Reference: the movement research notes
+ * Base class only — no genre code lives here; the reference MMO project's town-graph
+ * script supplies the test town's verbs. Reference: the movement research notes
  */
 import { AE1Element, defineDatAccessors } from './element.js';
 
@@ -236,7 +236,7 @@ export class AE1ElementGraph extends AE1Element {
   /**
    * What a LEFT-CLICK at (nx,ny) will do — the single source of truth for both
    * the action and the top-left action text. Pick the node, resolve to its
-   * logical group, and pick the DEFAULT option in RS priority: PRIMARY (a door's
+   * logical group, and pick the DEFAULT option in the reference MMO's priority: PRIMARY (a door's
    * Open/Close), else INSPECT if that's all it has, else Walk here. Returns
    * `{ verb, target, run }` — `run` null means "let the mover walk".
    */
@@ -262,7 +262,7 @@ export class AE1ElementGraph extends AE1Element {
   }
 
   /**
-   * LEFT-CLICK default action (§RS left-click). Runs the default action at
+   * LEFT-CLICK default action (the left-click rule). Runs the default action at
    * (nx,ny) — a door opens/closes, an inspect-only node examines — and returns
    * true; returns false for plain ground/scenery so the mover walks there.
    * Duck-typed: the TileMover calls this on any element that exposes it.
@@ -277,7 +277,7 @@ export class AE1ElementGraph extends AE1Element {
 
   inspect(text) { if (text) this._toast(String(text)); }
 
-  /* -- classic RS "Choose Option" menu (DOM overlay) --------------------- */
+  /* -- classic "Choose Option" menu (DOM overlay) --------------------- */
 
   _menuInit() {
     if (typeof document === 'undefined') return;
@@ -295,7 +295,7 @@ export class AE1ElementGraph extends AE1Element {
     document.body.appendChild(box);
     this._menuBox = box; this._menuList = list;
 
-    // §action text (RS top-left): a persistent line showing what a LEFT-CLICK
+    // §action text (top-left, as in the reference MMO): a persistent line showing what a LEFT-CLICK
     // will do under the cursor — "Open Door", "Walk here", "Inspect Rooftop".
     // Pinned to the game canvas's top-left, updated every tick from _actionAt.
     const act = document.createElement('div');
@@ -392,7 +392,7 @@ export class AE1ElementGraph extends AE1Element {
       // Anchored to the GAME CANVAS (the resizable window), not the browser
       // viewport — _positionToast() places it at the canvas's lower-left every
       // frame it's up, so it rides window resizes and stays inside the game area
-      // (in the editor the canvas is only a panel). It's the RS "chatbox" line.
+      // (in the editor the canvas is only a panel). It's the reference MMO's "chatbox" line.
       t.style.cssText =
         'position:fixed;z-index:99998;padding:4px 10px;' +
         'font:13px/1.4 "the reference MMO UF",Helvetica,Arial,sans-serif;color:#0ff;background:rgba(0,0,0,0.55);' +

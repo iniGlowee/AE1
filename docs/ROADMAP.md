@@ -8,7 +8,7 @@ The living checklist, rebuilt from DESIGN's open questions, every docs page's
 Weapon families · enemy base class + archetyped attacks (melee/ranged/AOE) ·
 combat feel (hit stop, kill slow-mo, rumble, hurt reactions) · lock-on ·
 player death + restart · instancing + tint · playtest1 · standalone tools
-(mot-extractor, enemy-glb-baker) · **§18.47: the Fox camera (MGSV feel),
+(mot-extractor, enemy-glb-baker) · **§18.47: the Fox camera (stealth-game feel),
 the PostFX shader layer (focal DOF/grain/vignette/CA), the reference action game environment
 extraction pipeline + the foxcam testbed.**
 
@@ -72,7 +72,7 @@ extraction pipeline + the foxcam testbed.**
 
 ## Landed 2026-08-30 (this cycle)
 
-- **The Bunker (`bunker1`, §18.65)**: the orbital station found by
+- **The Bunker (`bunker-level`, §18.65)**: the orbital station found by
   archive string-scan (<asset>, <pack> — r550 is audio-only, wd5 was a
   dead end). Hangars, control room, the androids' quarters, corridor
   rings, own 16km starfield sphere. Skinning-strip bake pass (ba props
@@ -93,9 +93,9 @@ extraction pipeline + the foxcam testbed.**
 
 - **Shader layer, phase 2**: bloom (¼-res Kawase), soft-shoulder tone curve
   (linear→0.6, Fox's own), LUT color-grade slot, lens dirt — the rest of the
-  MGSV post stack (Courrèges frame study is the map). Motion blur
+  the reference stealth game's post stack (Courrèges frame study is the map). Motion blur
   (camera-rotation velocity first — cheapest "filmed" win).
-- **ADS / aim camera state**: the discrete MGSV aim lens (32° vFOV, 0.55 m
+- **ADS / aim camera state**: the discrete aim lens of the reference stealth game (32° vFOV, 0.55 m
   shoulder, 0.15 s snap) + DOF-on-aim trigger; shoulder-swap that remembers.
 - **Camera trauma layer**: impact shake (trauma², Perlin, 8°/8°/5° max) fed
   by the §18.41 combat-feel seams; CQC-style finisher dolly on kills.

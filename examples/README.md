@@ -9,10 +9,10 @@ it runs. The § numbers refer to DESIGN.md.
 | Folder | What it is | Born in | § |
 |---|---|---|---|
 | `portals/` | The complete render-to-texture portal gun + portal eye (`PerspectiveCamera` as an element, wall-normal placement, the ARMED anti-ping-pong latch, mirrored-yaw walk-through continuity) | 3d-sandbox → -mm | 18.30/18.32 |
-| `weapons/` | The type-3 fist PAIR weapon (both arms, bind-pose mirror derivation, `mountExtra`/`pickupAs`) and the Dragoon Lance (the weapon-registry second class). The only pair weapon ever built. | 3d-sandbox-mm | 18.14/18.39 |
+| `weapons/` | The type-3 fist PAIR weapon (both arms, bind-pose mirror derivation, `mountExtra`/`pickupAs`) and the lance (the weapon-registry second class). The only pair weapon ever built. | 3d-sandbox-mm | 18.14/18.39 |
 | `enemies/` | Biped (aoe1 tank), Flyer (the only ranged/hovering enemy), horde + gauntlet spawners (§18.46 instancing, ring-scaled difficulty) | 3d-sandbox-mm, playtest1 | 18.40/18.44/18.46 |
 | `fishing/` | The whole fishing feature: TriggerBox state machine (chair-spawns-under-you, E-toggle grammar, cleanup safety net) + the only non-vehicle camera course (sweep-and-push "admire the catch"). The superseded Hitbox rev is kept beside it as the migration lesson. | fishing1 | 18.49/18.50 |
-| `pause-menu/` | The engine's only working menu: faction CSS hand-port, the the reference series flower dial (original inline SVG art), pure-AGS DOM UI over the paused loop. Gated behind the MENU_PROTO debug flag. | forest1 | 18.64 |
+| `pause-menu/` | The engine's only working menu: faction CSS hand-port, the reference series' flower dial (original inline SVG art), pure-AGS DOM UI over the paused loop. Gated behind the MENU_PROTO debug flag. | forest1 | 18.64 |
 | `lighting/` | Fixture-derived lamps (the reference action game maps carry no light data — glow-material centroids ARE the lamps; 1500 cd / 55 m for interiors) + the fully-tuned factory PostFX profile (dofSharpRange 14, dynamicRes band, the measured renderScale datapoints) | factory1 | 18.57/18.59/18.60 |
 | `audio-volumes/` | The three-layer audio model: ambience bed, music volume box, bitcrush FX volume (equal-power dry/wet). No later project authored an AudioFXVolume. | 3d-sandbox | 18.19/18.34 |
 | `projectiles/` | Bazooka + missile: scene-element-as-ammo-template, `projectileAt` mid-clip spawn, aim assist (`aimWeight`/`aimMaxDeg`), muzzle-flash + breech-smoke socket particles | 3d-sandbox | 18.15/18.16/18.22 |
@@ -28,6 +28,6 @@ it runs. The § numbers refer to DESIGN.md.
 Things NOT kept (rebuildable from the CPK pipelines documented in DESIGN.md and
 docs/ROADMAP.md): the baked map glbs (city tiles + LOD twins, tower, factory,
 forest tiles, colosseum, bunker), the fat Mixamo-era animation libraries, and
-per-project exports. The current character stack (2b.glb, 9s_native.glb,
+per-project exports. The current character stack (hero.glb, npc_native.glb,
 npc_commander.glb, flight_unit.glb, all mm packs, the lucky takes) lives on in
 `projects/devroom`.

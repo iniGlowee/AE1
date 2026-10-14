@@ -14,7 +14,7 @@
  */
 import { AE1Element, defineDatAccessors } from './element.js';
 
-// Built-in default: a the reference MMO-style four-point yellow star/X, red-edged.
+// Built-in default: a reference MMO-style four-point yellow star/X, red-edged.
 const DEFAULT_MARK =
   'data:image/svg+xml;utf8,' +
   encodeURIComponent(
@@ -122,7 +122,7 @@ AE1ClickMarker.agsDat = {
   image: '',        // media name, URL, or data-URI; empty ⇒ built-in yellow X
   size: 32,         // marker size in CSS pixels
   duration: 0.6,    // seconds it stays before fading out
-  spin: true,       // rotate as it fades (the RS click-X spin)
+  spin: true,       // rotate as it fades (the reference MMO's click-X spin)
   cursor: true,     // ensure point-and-click cursor mode on load
 };
 

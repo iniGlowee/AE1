@@ -265,7 +265,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
       // ground slides under them — Austin's "scan lines strobbing on every
       // texture." So a big-footprint mesh starts with its BASE material (never
       // dithers by default). But it STILL gets a twin, so an element that opts in
-      // (`nearFade true`) can fade a big spread-out OCCLUDER — the the reference MMO town's
+      // (`nearFade true`) can fade a big spread-out OCCLUDER — the reference MMO town's
       // per-material meshes each span the whole map yet are walls, not floor, and
       // must dither out when the camera backs into them. Geometry bounds are the
       // glb's authored metres (terrain ships 1:1), before element scale.
@@ -303,7 +303,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     // exists to keep visible, and it lives closer to the camera than any
     // wall — the band would shave it.
     const mounted = !!el.components?.model?.mount?.host;
-    // Tri-state: an EXPLICIT nearFade wins (a spread-out occluder like the the reference MMO
+    // Tri-state: an EXPLICIT nearFade wins (a spread-out occluder like the reference MMO
     // town sets it true to dither near the camera; a floor sets it false). With
     // nothing set, the DEFAULT is per-mesh — small meshes fade, big-footprint
     // (floor-scale) meshes don't — so existing projects are unchanged and grounds
@@ -2037,7 +2037,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     }
     // §the reference MMO render — element-declared CLIP RANGE. frameCamera's radius-scaled
     // near/far (0.08 / 1600 on a 1.6 m character = ~20,000:1) leaves almost no
-    // depth precision, so dense coplanar tile geometry (RS walls/decor stacked
+    // depth precision, so dense coplanar tile geometry (the reference MMO's walls/decor stacked
     // on the ground) z-fights and flickers. A tight far plane restores it.
     const nearP = Number(el.nearPlane) || 0, farP = Number(el.farPlane) || 0;
     if (nearP > 0 && farP > nearP && (camera.near !== nearP || camera.far !== farP)) {
@@ -2207,7 +2207,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
    * Is something DIRECTLY OVERHEAD? (§element-graph roof-removal.) Cast a ray
    * straight up from a world point and return the nearest NAMED node it hits, or
    * null for open sky. The ElementGraph asks this at the player's feet each tick:
-   * a "roof" node overhead → hide the roofs (classic RS steps-inside behaviour).
+   * a "roof" node overhead → hide the roofs (the classic steps-inside behaviour of the reference MMO).
    */
   function rayUp(x, y, z, maxDist = 40, exclude = null) {
     if (buildsInFlight > 0) return null;
@@ -2231,7 +2231,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
    * (at the character) toward the ideal camera position; return the free
    * distance to the first static hit, or null when the path is clear. The
    * third-person camera pulls its boom in to this distance so it never clips
-   * through a wall/roof — the the reference MMO "camera zooms in when blocked" feel.
+   * through a wall/roof — the reference MMO "camera zooms in when blocked" feel.
    * `exclude` is the character's own object (the ray starts inside it).
    */
   function cameraClip(lx, ly, lz, cx, cy, cz, exclude = null) {

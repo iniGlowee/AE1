@@ -225,7 +225,7 @@ export class AE1Input {
         if (e.button === 0) { const p = ndc(e); this._clicks.push({ nx: p.nx, ny: p.ny, button: 0 }); }
         else if (e.button === 1) e.preventDefault();
         else if (e.button === 2) {
-          // RIGHT click raises the classic RS options menu — record NDC (to pick
+          // RIGHT click raises the classic options menu — record NDC (to pick
           // the node under the cursor) and VIEWPORT pixels (clientX/Y) to place
           // the DOM box, which is position:fixed. Canvas-relative would be wrong:
           // in the editor the canvas is inside a panel, offset from the viewport.

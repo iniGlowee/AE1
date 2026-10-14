@@ -1,15 +1,15 @@
 /**
- * AE1 — RSStats: the the reference MMO player-state spine (skills, XP, levels, combat
+ * AE1 — RSStats: the reference MMO player-state spine (skills, XP, levels, combat
  * level, hitpoints / prayer / run energy).
  *
  * A persistent, genre-neutral stat block: 23 named skills each with an XP total,
- * the authentic RS XP curve (level 1→99), derived levels, and the the reference MMO combat
+ * the reference MMO's XP curve (level 1→99), derived levels, and the reference MMO combat
  * level. `addXp(skill, amount)` returns whether a level was gained (so the HUD can
  * fire an XP drop + level-up message). HP/prayer/run-energy are tracked as live
  * pools over their skill maxima. Everything a save file needs is here; no UI, no
  * world — the GameHUD reads it, the combat/skilling systems write it.
  *
- * Reference: RS wiki XP table + the reference MMO combat-level formula. Reference use only.
+ * Reference: the reference MMO's public XP table + the reference MMO combat-level formula. Reference use only.
  */
 import { AE1Element, defineDatAccessors } from './element.js';
 
@@ -22,7 +22,7 @@ export const SKILLS = [
 ];
 const COMBAT_SKILLS = new Set(['attack', 'strength', 'defence', 'ranged', 'prayer', 'magic', 'hitpoints']);
 
-// XP → level table (1..99), built once from the RS formula:
+// XP → level table (1..99), built once from the reference MMO's formula:
 //   points(L) = Σ_{x=1..L-1} floor(x + 300·2^(x/7));  xpForLevel(L) = floor(points/4)
 const MAX_LEVEL = 99;
 const XP_FOR_LEVEL = (() => {

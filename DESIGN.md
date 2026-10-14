@@ -1806,8 +1806,8 @@ The pieces:
 - **New RUN_INFO modes**: `onPickup`/`onDrop`/`onEquip`/`onUnequip` (category `item`), dispatched
   TO THE ITEM with the actor as argument.
 
-Verified end-to-end with `DragoonLance.glb` (`(extends Hitbox)`): walked into the volume, E —
-inventory `["DragoonLance"]`, auto-equipped, lance VISIBLY in her right hand tracking the idle
+Verified end-to-end with `lance.glb` (`(extends Hitbox)`): walked into the volume, E —
+inventory `["Lance"]`, auto-equipped, lance VISIBLY in her right hand tracking the idle
 (screenshot; auto-detected bone); `[Lance] picked up by the player character` and `[Lance] stab!` both reached the
 item script; Shift+E dropped it 0.8 m ahead with clean bounds at the new spot; picked back up and
 re-equipped. NOT yet verified: scroll cycling (needs a second item to mean anything) and the 2D
@@ -1849,7 +1849,7 @@ equipped item in her hand IS the visual for now).
   surface for the full system (soft mesh collisions, morph-by-contact) lives here; the depth is
   future work — declared honestly as the seed, not the tree.
 
-Verified end-to-end with `enemy_no_animations.glb` ("Enemy", a machine lifeform): wandered 2.36 m
+Verified end-to-end with `enemy_no_animations.glb` ("Enemy", a machine enemy): wandered 2.36 m
 in 2.5 s with a 4-point cyan route drawn on the floor (screenshot); E → `[Enemy] the player character pokes me`;
 strike one 99→49, strike two 49→−1 → toppled to 90° → gone at 3 s; `onHit` carried
 `(attacker, amount)` into the script both times.
@@ -1964,7 +1964,7 @@ element `(extends Projectile)` is a TEMPLATE, not a prop:
 
 Verified live: fire → "Missile round" appears in the Outliner at ~50% of the firing clip,
 flies with acceleration, expires at range and leaves the list; centered shot dealt exactly 90
-("[Enemy] hit for 90! Health now 9", "[Missile] hit Pascal").
+("[Enemy] hit for 90! Health now 9", "[Missile] hit NPC").
 
 ### 18.16 The aim triangulation: muzzle → camera focal point
 
@@ -2019,7 +2019,7 @@ The third-person-shooter baseline (guns now; grenades and throwables will reuse 
 
 Verified live: tracer visible through her to the crosshair with the muzzle leg attached;
 camera centered on the wandering NPC → fired → round left the muzzle, converged on the view
-center, hit ("[Missile] hit Pascal") — aiming is now LOOK-and-shoot, no body alignment needed.
+center, hit ("[Missile] hit NPC") — aiming is now LOOK-and-shoot, no body alignment needed.
 
 ### 18.18 Passive proximity dialogue
 
@@ -2122,12 +2122,12 @@ Two changes, one inheritance move:
   entry today; add more and one is picked at random. Fires inside `takeDamage`'s death
   block, tagged through `emitVoice` like every voice.
 
-Demo: Pascal (enemy.ags.txt) — seven `pascal_audio_00N_idle_passive.mp3` lines +
+Demo: the placeholder NPC (enemy.ags.txt) — seven `npc_audio_00N_idle_passive.mp3` lines +
 `pascal_audio_001_death_event.mp3`. Verified live: his roll fired and played (caught by a
 playSound spy — his lines are 2.2 s, easy to miss between polls), and the death blow set
 `_dead`, started the topple, and put the death cry live in `world.voices` in the same tick.
 A finding worth keeping: with the player character standing between them, the companion character's 7.7-second lines against his
-8-second cooldown nearly SATURATE the one-voice-world-wide channel and starve Pascal's rolls
+8-second cooldown nearly SATURATE the one-voice-world-wide channel and starve the NPC's rolls
 — organic crowd behaviour, by design, but worth remembering when tuning line lengths and
 cooldowns for scenes with several talkers.
 
@@ -2221,7 +2221,7 @@ offered to cross it off — the light layer was worth keeping).
   settle by the LOWER foot's drop below the base plane (clamped 0.35 — past that is a
   ledge), smoothed; each foot tilts halfway to the slope normal under it. Flat ground is a
   no-op by construction. Bones auto-detected (mixamorig RightArm/RightForeArm/LeftFoot/
-  RightFoot/Hips); elements without them (Pascal's bone0 skeleton) skip silently.
+  RightFoot/Hips); elements without them (the placeholder NPC's bone0 skeleton) skip silently.
 
 Verified live: interact near the key → reach weight ramped 0 → 0.498 with all five bones
 found, ramp-out back to exactly 0 with the reach cleared; on the grass, per-foot ground
@@ -2654,7 +2654,7 @@ player who arrives empty-handed.)
 ### 18.39 Weapon-type CLASSES, and the registry that made the second one cheap
 
 The type-3 fists proved a weapon could own the searched locomotion table
-(§18.15's successor). The Dragoon Lance asked the real question: is the
+(§18.15's successor). The lance asked the real question: is the
 SECOND weapon class cheap? It was not, at first — "Bracer", "CombatAir" and
 "combat" were spelled into two dozen decisions across the matcher.
 
@@ -2715,7 +2715,7 @@ The first real combatant (docs/engine/09-enemy-system.md). Decisions:
   place to reason about all combat AI.
 - **`AE1Enemy extends AE1NPC`, and NPC survived.** The goober still runs on
   the old class; the rewrite Austin authorized became a subclass + a wander
-  factor-out (`_wanderTick`) instead of a replacement. Pascal (the placeholder
+  factor-out (`_wanderTick`) instead of a replacement. the NPC (the placeholder
   enemy element and `enemy.ags.txt`) was retired with his blessing.
 - **Enemy clips are in-place; the AI owns travel.** The glTF exporter bakes
   object-level root tracks into every clip, own-glb clips are not
@@ -2859,7 +2859,7 @@ Austin's "doozy" turned out half-built (docs/engine/12-instancing.md):
 
 ### 18.47 The Fox camera, the shader layer, and the reference action game environments
 
-The MGSV-feel round (docs/engine/13-fox-camera-and-shaders.md). Decisions:
+The stealth-game-feel round (docs/engine/13-fox-camera-and-shaders.md). Decisions:
 
 - **The camera is a lens, input stays raw.** Fox Engine's model, verified
   from extracted TPP Lua (16–35 mm at f/1.875): never smooth the stick;
@@ -2868,7 +2868,7 @@ The MGSV-feel round (docs/engine/13-fox-camera-and-shaders.md). Decisions:
   `(handheld 0)` restores the rigid camera exactly. Chase lag retuned for
   the player character's 12 m/s sprint (drag ≈ speed × lag — Snake's constants trail double).
 - **PostFX is an element, passes are a module.** One uber-pass (focal DOF /
-  grain / vignette / CA) modeled on Austin's own the reference action game ReShade preset;
+  grain / vignette / CA) modeled on Austin's own ReShade preset for the reference action game;
   autofocus eases camera→chest distance the way CinematicDOF does. Zero
   cost absent; scaffolded for the rest of the Fox stack (bloom, tone
   shoulder, LUT, motion blur — ROADMAP).
@@ -3355,7 +3355,7 @@ read as machine vibration. Each octave is now a PAIR of nearby slow
 frequencies BEATING, so amplitude itself swells and fades over ~10 s:
 drift, not vibration. Nothing above 0.61 Hz at rest; sprint wakes one
 1.7 Hz gait bob. Dat `swaySpeed` multiplies every frequency. **Look
-momentum**: dat `lookSmooth` (0.07 s; 0 = the raw MGSV response) — the
+momentum**: dat `lookSmooth` (0.07 s; 0 = the raw reference-stealth-game response) — the
 orbit is carried by a smoothed VELOCITY: input accelerates it in over
 the constant and glides out over the same after release (measured: a
 3.6° flick coasted a further 1.8°). The look block now gathers deltas
@@ -3450,7 +3450,7 @@ dispatched KeyboardEvents, which exercise the same engine listeners.
 
 ### 18.65 The Bunker & the two model paths (2026-08-30)
 
-`bunker1`: the orbital Bunker, found the hard way. r550 (<pack> st5) is
+`bunker-level`: the orbital Bunker, found the hard way. r550 (<pack> st5) is
 AUDIO ONLY (sound banks + hap); the station is not in wd5 (g50100 = the
 Copied City, mesh names say "Copycity"); the community docs doesn't list it. A
 string-scan of every ba/bg/bh/et dat+dtt for "unker/angar" found it:
@@ -3505,7 +3505,7 @@ the corridor.
 `env3d.materialsOf(el, pattern)` hands AGS scripts the live three.js
 materials of an element's bound object by name-regex — the shared
 originals, so a map's whole screen bank changes at once. First user:
-bunker1's `bunker-screens.ags.txt` flips the map's own the reference action game screen
+bunker-level's `bunker-screens.ags.txt` flips the map's own in-game screen
 materials emissive (emissiveMap = map, RepeatWrapping) and animates
 offsets: the code-column crawl, the Earth display's scan sweep, the
 2x3 operator-dashboard atlas hopping pages, the faction emblem breathing.
@@ -3516,7 +3516,7 @@ render3d capability does nothing until forwarded there.
 ### 18.80 The ring gravity stabilizer (2026-08-30)
 
 the reference action game's bunker ring keeps the player upright by rotating camera+gravity.
-AE1's physics is y-down to the bone, so bunker1 rotates the WORLD
+AE1's physics is y-down to the bone, so bunker-level rotates the WORLD
 instead (Austin's call: no forced camera — a "fixed camera box" comes
 later): `ring-stability.ags.txt` samples the floor normal under the
 player each tick (groundInfo now returns the world-space hit normal `n`)
@@ -3567,7 +3567,7 @@ Talking to NPCs, the extremely-simple version Austin asked for. Three
 pieces: (1) ENGINE `world.uiLock` — while truthy, the motion-matching
 character updates on neutral input (the piloting/death pattern): she
 idles, no locomotion/interact/combat/inventory. (2) `dialogue.ags.txt`
-(bunker1): a DialogueUI element that renders a DOM overlay box (the
+(bunker-level): a DialogueUI element that renders a DOM overlay box (the
 debug-menu pattern — 3D projects have no 2D HUD canvas): speaker name,
 line, FF-style options with a white &#9656; cursor; up/down or
 dpad/stick to move, E / pad-X to confirm; an option with no `next`
@@ -3619,14 +3619,14 @@ OTS/two-shot/low angles, LOS-checked, slow dolly per cut).
 
 ### 18.83 The native the companion character pack pipeline (2026-08-30)
 
-"9s only skeleton, 9s only motion matching, 9s only animations" — the
+"one NPC's skeleton, one NPC's motion matching, one NPC's animations" — the
 transplant experiment is retired. New pieces: (1) the companion character's complete personal
 animation archive: <asset> (<pack>) -> 483 native <asset> mots,
 triaged by the standalone mot-extractor into a gallery, 393 auto-named
 from the community the player character/A2 sheet by SHARED INDEX (the faction androids share the
 moveset layout) with per-clip metric validation. (2) The Curator grew
-multi-source triage (?src=9s, serve.py TRIAGE_SOURCES) — browse, name,
-set, select any character's gallery. (3) tools/bake_9s_native.py: bakes
+multi-source triage (?src=npc, serve.py TRIAGE_SOURCES) — browse, name,
+set, select any character's gallery. (3) tools/bake_npc_native.py: bakes
 curator-selected <asset> clips STRAIGHT from the gallery blends into the
 standard pack format — no retarget. The reference action game mots root travel on the ARMATURE
 OBJECT (action channel "location"), so sampling must be world-space; the
@@ -3636,10 +3636,10 @@ pi because his rest faces -Y), stores pelvis sway/bob as root-frame
 rest-relative residuals, and DE-YAWS the hips basis (the root carries
 facing; doubled yaw = double-speed turns). (4) The runtime hardcodes
 canonical role names (pelvis/foot_l/LEG_RE), so pack bone list AND the
-runtime body (9s_native.glb, a pure node-name patch of npc_9s_clean.glb)
+runtime body (npc_native.glb, a pure node-name patch of npc_clean.glb)
 wear canonical labels on his untouched native skeleton — renaming, not
-retargeting. (5) serve.py /convert?src=9s runs the native bake and pushes
-the pack into bunker1 media as mm_<pack>_* — the curator's one button
+retargeting. (5) serve.py /convert?src=npc runs the native bake and pushes
+the pack into the level's media as `<pack>_*` — the curator's one button
 does gallery -> database -> game media. Verified on idle/walk/dash:
 travel 11.37 m, forward vel +0.97 m/s in the fwd slot, pelvis residuals
 in centimetres, quats normalized.
@@ -3663,7 +3663,7 @@ wall; it applies the instant play resumes.
 ## 18.86 Hair alpha: an authored MASK beats the hash (the cut value)
 
 SS18.84 hashed every hair material because hard alphaTest chewed soft
-strands. The authored-head the player character flipped the trade: her the reference action game hair textures
+strands. The authored-head the player character flipped the trade: her hair textures from the reference action game
 sit heavily in the soft mid-alpha band and stack TWO shells, so the hash
 dither read as visible static (Austin: "staticy"), while the crisp
 cutout looked right in playtest. Revision in conditionGltf: hair that
@@ -3681,7 +3681,7 @@ The first phase of the break-out-of-the-browser plan (docs/engine/20): make
 the existing runtime industry-standard BEFORE abstracting it. Audited by
 three deep passes (render pipeline / asset pipeline / frame loop); measured
 result in the dev room: p99 frame time 21.5 -> 13.7 ms (spikes erased),
-2b.glb 167 -> 24 MB, the shipped build 667 -> 445 MB, heap -300 MB.
+hero.glb 167 -> 24 MB, the shipped build 667 -> 445 MB, heap -300 MB.
 
 RENDER: canvas antialias OFF + 4x MSAA on the postfx scene target (the old
 setup paid canvas MSAA to antialias one composite triangle -- the shipped
@@ -3901,7 +3901,7 @@ Three rounds this session chasing the player character's hair, ending at the rig
 compression alpha error, so hair/lash CUTOUT baseColor textures skip KTX2
 entirely (kept PNG, downscale-capped; detected by material name ->
 baseColorTexture source). §18.97 THE FIX: the holes were never really about
-compression — this authored the reference action game head's soft feathered hair alpha punches
+compression — this authored head's soft feathered hair alpha punches
 holes at ANY hard alphaTest threshold, even on uncompressed PNG (the
 original §18.84 complaint). Both prior treatments were wrong for it:
 §18.84's alphaHash read as "static", §18.86's cutout as "spotty, holes".

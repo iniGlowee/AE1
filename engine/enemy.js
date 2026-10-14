@@ -243,7 +243,7 @@ export class AE1Enemy extends AE1NPC {
   }
 
   /** RANGED (§18.44): one round toward the player's center as of the shot —
-   *  straight flight, the the reference action game orb convention. Spawned live; game3d's
+   *  straight flight, the reference action game orb convention. Spawned live; game3d's
    *  element-count rebuild loads the glb. */
   _spawnRound(p) {
     const scn = this.world?.scene;

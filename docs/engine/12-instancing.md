@@ -20,7 +20,7 @@ differences"). That is precisely Unity's prefab-override model:
 | GPU instancing / HISM (shared mesh memory) | shared glb + clones (geometry/materials shared by three.js clone) — animation was the missing half |
 | per-instance material property block | **`model.tint`** — new |
 
-Platinum-style crowds (the machine mobs of the reference action game) are this same recipe: one
+Crowd-style mobs (the machine mobs of the reference action game) are this same recipe: one
 rig, one clip set, N lightweight animation states.
 
 ## What was actually missing, and what was built

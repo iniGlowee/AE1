@@ -24,7 +24,7 @@
 namespace ae1 {
 
 struct AepackEntry {
-    std::string name;    // asset name, e.g. "2b.glb" or "mm/pose66t.bin"
+    std::string name;    // asset name, e.g. "hero.glb" or "mm/pose66t.bin"
     std::string bag;     // "glbs" or "bins"
     uint64_t    offset;  // byte offset into the payload region
     uint64_t    length;  // asset size in bytes

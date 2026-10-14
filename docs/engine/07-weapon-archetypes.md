@@ -2,7 +2,7 @@
 
 > † The motion-matching system (its core, driver, and character) is described here as history. It is not part of the public build — it depended on a non-free clip library — and references to it are kept because the techniques and lessons still apply.
 
-How the Combat Bracers (type-3 fists) and the Dragoon Lance (spear) work,
+How the Combat Bracers (type-3 fists) and the lance (spear) work,
 and the exact order of operations for bringing in the next weapon class
 (e.g. `smallSword`). Prerequisite reading:
 [Motion Matching](06-motion-matching.md) for the pack pipeline.

@@ -1,5 +1,5 @@
 /**
- * AE1 — GameHUD: the the reference MMO interface as a DOM overlay pinned to the game
+ * AE1 — GameHUD: the reference MMO interface as a DOM overlay pinned to the game
  * canvas. First slice: the SKILLS panel (all 23 skills + total & combat level),
  * the CHATBOX (game messages), and floating XP DROPS. Structured to grow into the
  * full tab panel / orbs / minimap (see the project plan §C).

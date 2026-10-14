@@ -9,7 +9,7 @@
  * body rides at (pilot - seat offsets) every tick. Visually she "becomes"
  * the aircraft; mechanically the aircraft is a costume around her root.
  *
- * TWO PILOTED MODES, per the the flight unit's own canon:
+ * TWO PILOTED MODES, per the flight unit's own canon:
  *
  *  TRAVEL ("Asura", upright mobile config) — Armored Core-flavored hover:
  *    camera-relative strafe with inertia, boost held / QUICK-BOOST tapped,

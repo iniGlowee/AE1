@@ -350,7 +350,7 @@ def optimize_glb_textures(blob: bytes, max_dim: int = 2048, jpeg_q: int = 88,
                           encoder: str | None = None) -> tuple[bytes, str]:
     """§18.87 — the texture half of a glb, put on a diet, best-effort.
 
-    Measured on the shipped character: 2b.glb was 167 MB of which 94% was
+    Measured on the shipped character: hero.glb was 167 MB of which 94% was
     embedded PNG (one 5792² map + four 4096²) costing ~550 MB of VRAM once
     decoded — the classic multi-frame-stutter signature on ≤6 GB GPUs.
     Three passes, all inside the glb, no runtime change required:

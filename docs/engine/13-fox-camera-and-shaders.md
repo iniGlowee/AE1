@@ -1,10 +1,10 @@
 # 13. The Fox Camera & the Shader Layer
 
-*(DESIGN.md §18.47 — the MGSV-feel round. Research base: the Fox Engine
+*(DESIGN.md §18.47 — the stealth-game-feel round. Research base: the Fox Engine
 camera is parameterized as a REAL LENS — extracted TPP Lua shows 16–35 mm
 focal lengths at f/1.875 — with raw input rotation over damped position
 chase, and a 3-octave handheld sway gated by the game's own Camera Shake
-toggle. Post stack per Courrèges' MGSV frame study; DOF triggers per
+toggle. Post stack per Courrèges' frame study of the reference stealth game; DOF triggers per
 NVIDIA's guide. The environment pipeline rides along: real the reference action game ground under
 all of it.)*
 
@@ -12,7 +12,7 @@ all of it.)*
 
 Three principles from the research, kept exactly:
 
-1. **Never smooth the stick.** `_yaw`/`_pitch` stay raw input — MGSV's
+1. **Never smooth the stick.** `_yaw`/`_pitch` stay raw input — the reference stealth game's
    low-latency feel — and every consumer (mouse-steer, lock-on, aim math,
    billboards) keeps reading them clean.
 2. **Smooth the POSITION.** The camera chases its ideal spherical spot
@@ -26,7 +26,7 @@ Three principles from the research, kept exactly:
    octave only sprint wakes) rides the final rotation fields — pitch, yaw,
    and the new camera ROLL — scaled from `swayIdle 0.15°` (barely-alive
    breathing) to `swaySprint 1.6°` (the documentary chase). `(handheld 0)`
-   is MGSV's own Camera Shake toggle: the old rigid camera, exactly.
+   is the reference stealth game's own Camera Shake toggle: the old rigid camera, exactly.
 
 The lens: `fovBase 48` (the 28 mm feel), `fovSprintAdd 4` — speed reads
 from lag + sway, NOT a fisheye kick. Framing: `shoulder 0.25` slides the
