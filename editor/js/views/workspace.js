@@ -50,6 +50,19 @@ export async function renderWorkspace({ mount, project, onBack, onOpen }) {
     },
   });
 
+  // MANAGER-PROJECT-01 W5: shown only in a SAMPLE project itself (never a
+  // copy), once the open below has said which sample this is
+  const restoreSampleBtn = h(
+    'button',
+    {
+      class: 'btn btn--ghost',
+      style: 'display:none',
+      title: 'Reset this sample project to how it shipped',
+      onClick: () => restoreSampleDialog(project, { onOpen }),
+    },
+    'Restore sample…',
+  );
+
   const undoBtn = h(
     'button',
     { class: 'btn btn--ghost ws-hist', title: 'Undo (Ctrl+Z)', onClick: () => store.undo() },
@@ -79,6 +92,7 @@ export async function renderWorkspace({ mount, project, onBack, onOpen }) {
         },
         'Save as…',
       ),
+      restoreSampleBtn,
       sceneSelect,
       undoBtn,
       redoBtn,
@@ -223,6 +237,7 @@ export async function renderWorkspace({ mount, project, onBack, onOpen }) {
 
   try {
     await store.open(project);
+    restoreSampleBtn.style.display = store.sample?.isSample ? '' : 'none';
     paintScenes();
     saveState.textContent = 'Saved';
     saveState.dataset.state = 'saved';
@@ -319,5 +334,103 @@ export function saveAsDialog(project, { onOpen, then = 'open', title = 'Save as 
         err.textContent = e.message || String(e);
       }
     }
+  });
+}
+
+/* Restore the sample (MANAGER-PROJECT-01 W5) ---------------------------------- */
+
+/** The loss, listed in the user's terms: scripts, media, scene elements. */
+function lossList(diff) {
+  const items = [];
+  const s = diff.scripts;
+  for (const f of s.changed) items.push(`Script ${f} — your edits`);
+  for (const f of s.added) items.push(`Script ${f} — added by you, will be deleted`);
+  for (const f of s.removed) items.push(`Script ${f} — deleted by you, will come back`);
+  for (const n of diff.media.added) items.push(`Media ${n} — added by you, will be removed`);
+  for (const n of diff.media.removed) items.push(`Media ${n} — removed by you, will come back`);
+  for (const sc of Object.values(diff.scenes)) {
+    const scene = sc.file.replace(/\.json$/, '');
+    if (sc.new) { items.push(`Scene ${scene} — added by you, will be deleted`); continue; }
+    if (sc.deleted) { items.push(`Scene ${scene} — deleted by you, will come back`); continue; }
+    const parts = [];
+    if (sc.added.length) parts.push(`added ${sc.added.join(', ')}`);
+    if (sc.changed.length) parts.push(`changed ${sc.changed.join(', ')}`);
+    if (sc.removed.length) parts.push(`removed ${sc.removed.join(', ')}`);
+    items.push(`Scene ${scene} — ${parts.join('; ')}`);
+  }
+  for (const f of diff.other) items.push(`File ${f} — changed`);
+  return items;
+}
+
+/**
+ * Restore is destructive, and whoever reaches for it has work she values. The
+ * dialog names exactly what will be lost, offers to save a copy first (W4) in
+ * the same place, and Cancel changes nothing at all.
+ */
+async function restoreSampleDialog(project, { onOpen }) {
+  if (store.playing) store.stop();
+  let diff;
+  try {
+    await store.flushAll(); // compare against what is really on disk
+    diff = await api.getSampleDiff(project.slug);
+  } catch (e) {
+    toast(`Could not compare with the shipped sample: ${e.message}`, 'error');
+    return;
+  }
+
+  if (!diff.changed) {
+    const m = modal({
+      title: `“${project.name}” is as it shipped`,
+      body: h('p', {}, 'Nothing has changed since this sample shipped, so there is nothing to restore.'),
+      footRight: [h('button', { class: 'btn', onClick: () => m.close() }, 'Close')],
+    });
+    return;
+  }
+
+  const items = lossList(diff);
+  const err = h('p', { class: 'modal-error' });
+  const buttons = [];
+  const busy = (on) => buttons.forEach((b) => { b.disabled = on; });
+
+  const doRestore = async (keptAs) => {
+    busy(true);
+    try {
+      const restored = await api.restoreSample(project.slug);
+      m.close();
+      store.forgetProject(); // the server replaced the project; never write the old state back
+      toast(keptAs ? `“${project.name}” restored. Your work is in “${keptAs.name}” (Projects).` : `“${project.name}” restored to how it shipped.`);
+      onOpen?.(restored);
+    } catch (e) {
+      busy(false);
+      err.textContent = e.message || String(e);
+    }
+  };
+
+  const cancelBtn = h('button', { class: 'btn', onClick: () => m.close() }, 'Cancel');
+  const keepBtn = h('button', {
+    class: 'btn btn--primary',
+    onClick: async () => {
+      busy(true);
+      const copy = await saveAsDialog(project, { then: 'stay', title: 'Save your work as a copy first' });
+      if (!copy) { busy(false); return; } // cancelled the copy: nothing happened, the choice is still open
+      await doRestore(copy);
+    },
+  }, 'Save a copy, then restore');
+  const loseBtn = h('button', { class: 'btn btn--danger', onClick: () => doRestore(null) }, 'Restore and lose these');
+  buttons.push(cancelBtn, keepBtn, loseBtn);
+
+  const m = modal({
+    title: `Restore “${project.name}” to how it shipped?`,
+    body: h(
+      'div',
+      { class: 'restore-body' },
+      h('p', {}, 'These changes will be lost:'),
+      h('ul', { class: 'loss-list' }, ...items.map((t) => h('li', {}, t))),
+      h('p', { class: 'modal-note' },
+        'Save a copy first and your work is kept as a new project, then this sample goes back to how it shipped. ' +
+        'Cancel changes nothing.'),
+      err,
+    ),
+    footRight: buttons,
   });
 }

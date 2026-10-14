@@ -348,7 +348,7 @@ def _project_dir_of(slug: str) -> tuple[dict, Path]:
     return project, pdir
 
 
-def _tree_files(root: Path) -> dict[str, Path]:  # used by W5
+def _tree_files(root: Path) -> dict[str, Path]:
     """relative posix path -> file, skipping saves/snapshots/.tmp."""
     out: dict[str, Path] = {}
     if not root.is_dir():
@@ -360,6 +360,105 @@ def _tree_files(root: Path) -> dict[str, Path]:  # used by W5
         if rel.parts and rel.parts[0] in _SAMPLE_SKIP_DIRS:
             continue
         out[rel.as_posix()] = path
+    return out
+
+
+def _digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+_TEXT_SUFFIXES = {".json", ".txt", ".md", ".css", ".html", ".js"}
+
+
+def _same_file(a: Path, b: Path) -> bool:
+    """Equal as CONTENT, not as bytes: the editor re-saves JSON in its own
+    formatting and a Windows checkout may hold CRLF, and neither is a change a
+    user made — the first live test listed an untouched hud.json as a loss.
+    JSON compares by value, text with newlines normalised, the rest by bytes."""
+    if a.suffix.lower() in _TEXT_SUFFIXES or a.name.endswith(".ags.txt"):
+        try:
+            ta = a.read_text(encoding="utf-8").replace("\r\n", "\n")
+            tb = b.read_text(encoding="utf-8").replace("\r\n", "\n")
+        except (OSError, UnicodeDecodeError):
+            return _digest(a) == _digest(b)
+        if a.suffix.lower() == ".json":
+            try:
+                return json.loads(ta) == json.loads(tb)
+            except json.JSONDecodeError:
+                pass
+        return ta.rstrip("\n") == tb.rstrip("\n")
+    return _digest(a) == _digest(b)
+
+
+def _scene_changes(old: Path | None, new: Path | None) -> dict:
+    """Element-level difference of one scene file, by element id, named."""
+    def els(path):
+        if path is None:
+            return {}
+        try:
+            data = read_json(path)
+        except (json.JSONDecodeError, OSError):
+            return {}
+        e = data.get("elements") or {}
+        return e if isinstance(e, dict) else {str(i): v for i, v in enumerate(e)}
+
+    a, b = els(old), els(new)
+    name = lambda d: (d or {}).get("name") or "(unnamed)"
+    return {
+        "added": sorted(name(b[k]) for k in b.keys() - a.keys()),
+        "removed": sorted(name(a[k]) for k in a.keys() - b.keys()),
+        "changed": sorted(name(b[k]) for k in a.keys() & b.keys() if a[k] != b[k]),
+    }
+
+
+def sample_diff(slug: str) -> dict:
+    """What a restore would LOSE, in the user's terms (W5: the confirm names it).
+
+    The project against its shipped twin: scripts edited or added, media added
+    (by the name the Media Collection shows), and per scene the elements added,
+    removed or changed, by name."""
+    project, pdir = _project_dir_of(slug)
+    sample = sample_of(project)
+    if not sample:
+        raise ApiError(404, f"'{slug}' is not based on a sample project.")
+    mine, shipped = _tree_files(pdir), _tree_files(SAMPLES_DIR / sample)
+    manifest = {}
+    try:
+        manifest = read_json(pdir / "media" / "manifest.json").get("entries", {})
+    except (json.JSONDecodeError, OSError):
+        pass
+
+    out = {"sample": sample, "scripts": {"added": [], "changed": [], "removed": []},
+           "media": {"added": [], "removed": []}, "scenes": {}, "other": []}
+    for rel in sorted(mine.keys() | shipped.keys()):
+        a, b = shipped.get(rel), mine.get(rel)
+        if a and b and _same_file(a, b):
+            continue
+        top = rel.split("/", 1)[0]
+        if top == "scripts":
+            kind = "added" if not a else "removed" if not b else "changed"
+            out["scripts"][kind].append(rel.split("/", 1)[1])
+        elif top == "media":
+            if rel.endswith("manifest.json"):
+                continue  # the media rows below already say what changed
+            digest = Path(rel).stem
+            label = (manifest.get(digest) or {}).get("name", Path(rel).name)
+            if not a:
+                out["media"]["added"].append(label)
+            elif not b:
+                out["media"]["removed"].append(label)
+        elif top == "scenes" and rel.endswith(".json"):
+            ch = _scene_changes(a, b)
+            if any(ch.values()) or not a or not b:
+                ch["file"] = rel.split("/", 1)[1]
+                ch["new"] = not a
+                ch["deleted"] = not b
+                out["scenes"][ch["file"]] = ch
+        else:
+            out["other"].append(rel)
+    out["changed"] = bool(
+        any(out["scripts"].values()) or any(out["media"].values()) or out["scenes"] or out["other"]
+    )
     return out
 
 
@@ -394,6 +493,43 @@ def copy_project(slug: str, body: dict) -> dict:
         copy["basedOn"] = based
     write_json(PATHS.project_file(new_slug), copy)
     return copy
+
+
+def restore_sample(slug: str) -> dict:
+    """Reset a sample project to its shipped state (W5). Destructive by design;
+    the editor only calls it after a confirm that names the loss (sample_diff)
+    and offers save-as first. The new tree is built beside the old one and
+    swapped in, so a failure part-way leaves the project as it was."""
+    project, pdir = _project_dir_of(slug)
+    if not is_sample(project):
+        raise ApiError(400, f"'{slug}' is not a sample project; only a sample can be restored.")
+    sample = sample_of(project)
+    src = SAMPLES_DIR / sample
+    staging = pdir.with_name(f".{pdir.name}.restoring")
+    retired = pdir.with_name(f".{pdir.name}.retired")
+    for stale in (staging, retired):
+        if stale.exists():
+            shutil.rmtree(stale)
+    shutil.copytree(src, staging)
+    # keep the player's saves: a restore resets the PROJECT, not a playthrough
+    if (pdir / "saves").is_dir():
+        shutil.copytree(pdir / "saves", staging / "saves", dirs_exist_ok=True)
+    pdir.rename(retired)
+    staging.rename(pdir)
+    shutil.rmtree(retired, ignore_errors=True)
+
+    shipped_file = SAMPLES_DIR / f"{sample}.ae1proj"
+    restored = read_json(shipped_file) if shipped_file.is_file() else dict(project)
+    restored.update({
+        "id": project.get("id", restored.get("id")),
+        "slug": project.get("slug", slug),
+        "folder": project.get("folder", slug),
+        "modified": now_iso(),
+        "opened": now_iso(),
+        "restoredFromSample": now_iso(),
+    })
+    write_json(PATHS.project_file(slug), restored)
+    return restored
 
 
 # --------------------------------------------------------------------------- #
@@ -761,6 +897,16 @@ def api_project_sample_script(_body, slug, filename):
     if not path or not path.is_relative_to(SAMPLES_DIR) or not path.is_file():
         raise ApiError(404, f"No shipped version of '{filename}' for this project.")
     return {"file": filename, "sample": sample, "content": path.read_text(encoding="utf-8")}
+
+
+@route("GET", r"/api/projects/([\w-]+)/sample/diff")
+def api_project_sample_diff(_body, slug):
+    return sample_diff(slug)
+
+
+@route("POST", r"/api/projects/([\w-]+)/sample/restore")
+def api_project_sample_restore(_body, slug):
+    return restore_sample(slug)
 
 
 @route("POST", r"/api/projects/([\w-]+)/media", raw=True)

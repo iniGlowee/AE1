@@ -241,6 +241,19 @@ class SceneStore {
     this.emit('scenes', this.sceneList);
   }
 
+  /** Drop the open project WITHOUT writing it back (MANAGER-PROJECT-01 W5).
+   *  After the server has replaced the project on disk (restore-the-sample),
+   *  close()'s flush would write the old in-memory scene over the restored
+   *  one; this clears every pending write and the scene first, so the close
+   *  that follows has nothing to save. Only for after a server-side replace. */
+  forgetProject() {
+    if (this.playing) this.stop();
+    clearTimeout(this._timer);
+    for (const t of this._scriptTimers.values()) clearTimeout(t);
+    this._scriptTimers.clear();
+    this.scene = null;
+  }
+
   close() {
     if (this.playing) this.stop();
     this.flush();

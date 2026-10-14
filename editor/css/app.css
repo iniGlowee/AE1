@@ -685,3 +685,11 @@
 }
 
 .modal-error:empty { display: none; }
+
+.loss-list {
+  margin: var(--sp-2) 0 0 var(--sp-4);
+  max-height: 40vh;
+  overflow: auto;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}

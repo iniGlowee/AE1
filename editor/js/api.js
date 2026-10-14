@@ -100,6 +100,9 @@ export const api = {
   /** MANAGER-PROJECT-01: the shipped sample a project came from, and its scripts. */
   getSample: (slug) => request('GET', `/api/projects/${slug}/sample`),
   getSampleScript: (slug, file) => request('GET', `/api/projects/${slug}/sample/scripts/${file}`),
+  /** W5: what a restore would lose, in the user's terms; then the restore itself. */
+  getSampleDiff: (slug) => request('GET', `/api/projects/${slug}/sample/diff`),
+  restoreSample: (slug) => request('POST', `/api/projects/${slug}/sample/restore`, {}),
 
   listScenes: (slug) => request('GET', `/api/projects/${slug}/scenes`),
   getScene: (slug, file) => request('GET', `/api/projects/${slug}/scenes/${file}`),
