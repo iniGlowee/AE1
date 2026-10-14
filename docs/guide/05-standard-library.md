@@ -30,8 +30,8 @@ about them.
 Another element by name, case-insensitive. Searches the current scene first, then the HUD.
 
 ```js
-var kyle = this.find("Kyle");
-if (kyle && kyle.spoken) { … }
+var ned = this.find("Ned");
+if (ned && ned.spoken) { … }
 ```
 
 Scene wins over HUD, because `find("Door")` means the door in the room you're standing in.
@@ -68,7 +68,7 @@ export time.
 A one-shot. Overlapping calls layer rather than cut each other off.
 
 ```js
-this.playSound("cartman-hey.mp3");
+this.playSound("bram-hey.mp3");
 this.playSound("footstep.wav", { volume: 0.4, rate: 1.2 });
 ```
 
@@ -115,8 +115,8 @@ a level per scene.
 
 ---
 
-**Media is addressed by NAME**, not hash — `"cartman-hey.mp3"` is what the Media Collection
-shows you. The extension is optional: `playSound("cartman-hey")` also works.
+**Media is addressed by NAME**, not hash — `"bram-hey.mp3"` is what the Media Collection
+shows you. The extension is optional: `playSound("bram-hey")` also works.
 
 **Browsers block audio until the player interacts with the page.** Music started in `onLoad`
 would therefore fail on your very first scene — exactly where a game wants its theme. AE1
@@ -471,7 +471,7 @@ it:
 
 ```js
 this.saveData.chapter = 2;
-this.saveData.metCartman = true;
+this.saveData.metBram = true;
 if (this.saveData.chapter > 1) { … }
 ```
 

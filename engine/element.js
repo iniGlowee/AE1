@@ -441,7 +441,7 @@ export class AE1Element {
   }
 
   /**
-   * Play a one-shot. Takes a media NAME ("cartman-hey.mp3") because that is what
+   * Play a one-shot. Takes a media NAME ("bram-hey.mp3") because that is what
    * an author sees in the Media Collection; hashes are an implementation detail
    * they should never have to type.
    */
@@ -548,7 +548,7 @@ export class AE1Element {
    * The game's open save bag. Anything you put here goes into the save file.
    *
    *   this.saveData.chapter = 2;
-   *   if (this.saveData.metCartman) { … }
+   *   if (this.saveData.metBram) { … }
    *
    * The engine never looks inside it. That is the point: what a save MEANS is the
    * author's business, and the format is an envelope around this.

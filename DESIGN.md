@@ -491,7 +491,7 @@ now," never "discard this element's state." Two fixes, both kept:
 
 **`runInfo` inherits, exactly like `dat`.**
 
-Without this, a subclass that inherits behaviour loses its scheduling. A `Cartman` that
+Without this, a subclass that inherits behaviour loses its scheduling. A `Bram` that
 `(extends Kid)` and defines no methods of its own had an **empty** runInfo — nothing registered
 for `onClick`, so clicking him did *nothing*. The class was right, the methods were there, the
 compile was clean; he simply never got called. This is the template-method pattern — a `Kid`
@@ -719,7 +719,7 @@ compiler in reach (Principle 3).
 Gzip on the host recovers most of what minification would have.
 
 > **Assets named only in scripts must not be pruned.** A sound reached solely via
-> `playSound("cartman-hey.mp3")` has no element pointing at it, so a sprite-only sweep prunes
+> `playSound("bram-hey.mp3")` has no element pointing at it, so a sprite-only sweep prunes
 > it and the game falls silent **in the build but not in the editor** — precisely the
 > export-only failure Principle 2 exists to prevent. `collect_name_refs()` scans script text
 > for asset names. Deliberately crude: an author can build a filename at runtime, so no static
@@ -993,8 +993,8 @@ lives where pictures live.
 | `DialogueBox` | the **presentation** — where the line is drawn, where the choices sit |
 
 The same division that made `SaveHandler` work (§16.3): the engine owns the structure, the
-moment, and the ordering; the author owns the contents. A delegate knows what Cartman says and
-nothing about pixels. A box knows about pixels and nothing about Cartman.
+moment, and the ordering; the author owns the contents. A delegate knows what Bram says and
+nothing about pixels. A box knows about pixels and nothing about Bram.
 
 ### 12.7.1 Why the box is elements, and not the DOM
 
@@ -1113,7 +1113,7 @@ explodes just because nothing is running:
 | `this.setSprite(name)` | swap the picture (the door-opens case) |
 | `this.inventory` | the project's inventory, if any |
 
-Media is addressed **by name** (`playSound("cartman-hey.mp3")`) because that is what the Media
+Media is addressed **by name** (`playSound("bram-hey.mp3")`) because that is what the Media
 Collection shows. Hashes are an implementation detail an author should never type.
 
 ## 14. Audio
@@ -2861,12 +2861,12 @@ Austin's "doozy" turned out half-built (docs/engine/12-instancing.md):
 
 The stealth-game-feel round (docs/engine/13-fox-camera-and-shaders.md). Decisions:
 
-- **The camera is a lens, input stays raw.** Fox Engine's model, verified
-  from extracted TPP Lua (16–35 mm at f/1.875): never smooth the stick;
+- **The camera is a lens, input stays raw.** the reference stealth game engine's model, verified
+  from its extracted camera scripts (16–35 mm at f/1.875): never smooth the stick;
   damp POSITION per-axis with speed-loosened lag; sway is 3-octave noise on
   the OUTPUT rotation only, so steering/lock-on/aim keep clean state.
   `(handheld 0)` restores the rigid camera exactly. Chase lag retuned for
-  the player character's 12 m/s sprint (drag ≈ speed × lag — Snake's constants trail double).
+  the player character's 12 m/s sprint (drag ≈ speed × lag — the reference's constants trail double).
 - **PostFX is an element, passes are a module.** One uber-pass (focal DOF /
   grain / vignette / CA) modeled on Austin's own ReShade preset for the reference action game;
   autofocus eases camera→chest distance the way CinematicDOF does. Zero

@@ -111,7 +111,7 @@ export function resolveMedia(table, nameOrHash) {
   const wanted = String(nameOrHash).toLowerCase();
   for (const [hash, entry] of Object.entries(table)) {
     if (entry.name?.toLowerCase() === wanted) return { hash, ext: entry.ext };
-    // Also match without the extension: playSound("cartman-hey") should work.
+    // Also match without the extension: playSound("bram-hey") should work.
     if (entry.name?.toLowerCase().replace(/\.[^.]+$/, '') === wanted) {
       return { hash, ext: entry.ext };
     }

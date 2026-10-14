@@ -62,13 +62,13 @@ refetch them on reload.
 **Scripts address media by name:**
 
 ```js
-this.playSound("cartman-hey.mp3");
+this.playSound("bram-hey.mp3");
 this.setSprite("door-open.png");
 this.give({ id: "key", name: "Key", icon: "keyicon.png" });
 ```
 
 So the name you give a file is the name you type in scripts. The extension is optional
-(`playSound("cartman-hey")` works). Rename freely afterwards — anything already resolved
+(`playSound("bram-hey")` works). Rename freely afterwards — anything already resolved
 stores the hash.
 
 ## Using an asset

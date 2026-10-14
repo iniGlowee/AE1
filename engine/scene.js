@@ -96,7 +96,7 @@ export class AE1Scene {
     return el;
   }
 
-  /** Find by name, case-insensitively. What `this.find("Cartman")` calls. */
+  /** Find by name, case-insensitively. What `this.find("Bram")` calls. */
   findByName(name) {
     const wanted = String(name).toLowerCase();
     return this.all().find((e) => e.name?.toLowerCase() === wanted) ?? null;

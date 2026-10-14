@@ -543,7 +543,7 @@ AE1ThirdPersonCamera.agsDat = {
   // in over this constant and glides out over the same. 0 = raw reference-stealth-game.
   lookSmooth: 0.07,
   chaseLag: 0.08, // s â€” position damping at rest (composed)
-  // steady-state drag â‰ˆ speed Ã— lag: the player character sprints ~12 m/s (Snake ~6), so the
+  // steady-state drag â‰ˆ speed Ã— lag: the player character sprints ~12 m/s (the reference ~6), so the
   // research value of 0.3 s trailed 3.6 m â€” halved for the same LOOK
   chaseLagSprint: 0.15, // s â€” the character leads ~1.8 m at full sprint
   shoulder: 0.25, // m â€” off-center framing along the camera's right

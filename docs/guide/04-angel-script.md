@@ -245,22 +245,22 @@ ags?>
 ```
 
 ```
-; cartman.ags.txt — four lines
+; bram.ags.txt — four lines
 <?dat
-(sound "cartman.mp3")
-(line "Ay! Screw you guys.")
+(sound "bram.mp3")
+(line "Hey! Leave me alone.")
 ?>
 <?def
 (extends Kid)
-(name "Cartman")
+(name "Bram")
 ags?>
 ```
 
 ```
-; butters.ags.txt — overrides one method
+; pip.ags.txt — overrides one method
 <?def
 (extends Kid)
-(name "Butters")
+(name "Pip")
 
 function speech(actor) {
   if (!this.everyoneSpoken()) { return this.line; }
@@ -268,14 +268,14 @@ function speech(actor) {
   return "Aw, okay. Here's the key.";
 }
 function everyoneSpoken() {
-  var c = this.find("Cartman");
-  var k = this.find("Kyle");
+  var c = this.find("Bram");
+  var k = this.find("Ned");
   return c && k && c.spoken && k.spoken;
 }
 ags?>
 ```
 
-Cartman is *four lines* and fully wired. Butters overrides one method and inherits the sound,
+Bram is *four lines* and fully wired. Pip overrides one method and inherits the sound,
 the click wiring, and the hover.
 
 ### `draw(ctx, api)` — owning your rendering

@@ -205,7 +205,7 @@ export class AE1World {
   /**
    * Resolve a media NAME (or hash) to `{hash, ext}`.
    *
-   * Authors write `playSound("cartman-hey.mp3")` because that is what the Media
+   * Authors write `playSound("bram-hey.mp3")` because that is what the Media
    * Collection shows them. Hashes are an implementation detail they should never
    * have to type.
    *

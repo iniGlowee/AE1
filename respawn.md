@@ -340,7 +340,7 @@ Menu (looping video + hamburger) → New Game / Load Game / Settings / Credits. 
 placeholder ffmpeg videos; Austin will swap in real assets. The New Game / Load Game / Settings
 / Credits scenes exist but are **empty** — they are where the next work goes.
 
-There is a `south-park` demo project on disk — three characters, a key, a door, a scene
+There is a small 2-D demo project on disk — three characters, a key, a door, a scene
 change. It's a test bed, not the point. Austin has said explicitly it is **not** the focus.
 
 The **`3d-sandbox`** project IS the 3D project type's living demo — and Austin is actively

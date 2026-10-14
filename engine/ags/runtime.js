@@ -118,7 +118,7 @@ export function buildClass(compiled, Base = AE1Element, { name } = {}) {
   // runInfo MERGES down the chain, exactly like dat.
   //
   // Without this, a subclass that inherits behaviour loses its scheduling: a
-  // Cartman that `(extends Kid)` and defines no methods of its own had an empty
+  // Bram that `(extends Kid)` and defines no methods of its own had an empty
   // runInfo, so nothing registered for onClick and clicking him did NOTHING. The
   // class was correct, the methods were there, the compile was clean -- he simply
   // never got called. Inheriting behaviour has to mean inheriting when it runs.

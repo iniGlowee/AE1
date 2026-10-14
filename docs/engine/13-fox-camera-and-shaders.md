@@ -1,7 +1,7 @@
 # 13. The Fox Camera & the Shader Layer
 
-*(DESIGN.md §18.47 — the stealth-game-feel round. Research base: the Fox Engine
-camera is parameterized as a REAL LENS — extracted TPP Lua shows 16–35 mm
+*(DESIGN.md §18.47 — the stealth-game-feel round. Research base: the reference stealth game's
+camera is parameterized as a REAL LENS — its extracted camera scripts show 16–35 mm
 focal lengths at f/1.875 — with raw input rotation over damped position
 chase, and a 3-octave handheld sway gated by the game's own Camera Shake
 toggle. Post stack per Courrèges' frame study of the reference stealth game; DOF triggers per
