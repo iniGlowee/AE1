@@ -5,7 +5,7 @@ camera is parameterized as a REAL LENS — extracted TPP Lua shows 16–35 mm
 focal lengths at f/1.875 — with raw input rotation over damped position
 chase, and a 3-octave handheld sway gated by the game's own Camera Shake
 toggle. Post stack per Courrèges' frame study of the reference stealth game; DOF triggers per
-NVIDIA's guide. The environment pipeline rides along: real the reference action game ground under
+NVIDIA's guide. The environment pipeline rides along: real ground from the reference action game under
 all of it.)*
 
 ## The Fox camera (`AE1ThirdPersonCamera`, §18.47)
@@ -47,7 +47,7 @@ uber-pass composites to screen. No element → the plain path, byte-for-byte;
 targets allocate lazily; a 1 Hz scan notices the element appearing or
 leaving mid-play.
 
-The pass, modeled on Austin's own the reference action game ReShade stack (CinematicDOF + film
+The pass, modeled on Austin's own ReShade stack for the reference action game (CinematicDOF + film
 grain + Prism CA + grade):
 
 - **Cinematic DOF**: per-pixel circle-of-confusion from |viewZ − focus|,
@@ -123,4 +123,4 @@ ScenePostFX on the colosseum arena, bracers ahead of spawn, one stubby.
 Verified: idle micro-sway alive at ±0.05° roll, sprint energy 0→1 with the
 48→52 FOV ease and the trailing chase, clean settle, DOF focus gliding
 3.6 m → 7.2 m with the sprint pull-back, and the full combat loop (aggro,
-hits, kill) on real the reference action game ground.
+hits, kill) on real ground from the reference action game.

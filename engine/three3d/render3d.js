@@ -58,7 +58,7 @@ export function conditionGltf(root, maxAniso = 8) {
       }
       // §18.97 HAIR = ALPHA BLEND WITH DEPTH. The long history: §18.84 hashed
       // hair (soft, but "staticy" dither); §18.86 switched authored-MASK hair
-      // to a hard cutout (crisp, but this the reference action game head's soft feathered alpha
+      // to a hard cutout (crisp, but this authored head's soft feathered alpha
       // punches HOLES through the strands at any threshold — Austin: "spotty,
       // holes", and it survives even uncompressed PNG). Blending is the
       // answer neither earlier pass used: `transparent` renders the soft

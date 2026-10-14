@@ -1,7 +1,7 @@
 # 22 — Native build: status & pause (2026-09-09)
 
 *We are pausing the Windows-native target here to enrich the single browser 3D
-project (devroom) with a real the reference action game map, so features get tested against real
+project (devroom) with a real map from the reference action game, so features get tested against real
 content. This is the state of the native build at the pause, how to drive it,
 what's deliberately reduced, and the ordered list to pick up when we return.*
 

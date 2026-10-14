@@ -41,7 +41,7 @@ project's media, run all three patches or you get a known failure:
 1. **Alpha** — Blender 4.2 exports every material `alphaMode: BLEND`
    (ghosting, vanishing parts). Patch: hair/eyelash → `MASK` with a cut
    value (0.4 shipped), everything else → `OPAQUE`.
-2. **PBR sanitize** — raw the reference action game-extract materials carry `metallicFactor 1` +
+2. **PBR sanitize** — raw materials extracted from the reference action game carry `metallicFactor 1` +
    a garbage MR texture (renders black), and meshes carry all-black
    `COLOR_0` vertex colors (multiply the textures to black). Zero the
    metals, strip the vertex colors.
