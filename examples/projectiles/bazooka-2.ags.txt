@@ -20,7 +20,7 @@
 (isWeapon true)
 ; THIS weapon's firing animation -- overrides the character's (attack ...)
 ; while wielded. Uninterruptible while it plays, like every attack.
-(attack "2b_actions.glb#fire_bazooka")
+(attack "hero_actions.glb#fire_bazooka")
 ; The AMMUNITION: a Projectile element in the scene is the template; a fresh
 ; round spawns at this fraction of the firing clip (mid-animation, not at
 ; the click). The round carries its own speed/range/damage (missile-2.ags.txt).

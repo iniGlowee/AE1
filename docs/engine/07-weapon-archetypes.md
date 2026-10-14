@@ -140,7 +140,7 @@ rotation; grip conventions come from the source game, not from geometry
 metrics — when in doubt, render a **titled contact sheet** of candidate
 orientations and let the director point at one.
 
-**Script** (`dragoonlance.ags.txt` is the clean single-mesh template):
+**Script** (`lance.ags.txt` is the clean single-mesh template):
 
 ```
 (weaponTag "spear")                                  ; the registry tag
@@ -187,7 +187,7 @@ action-clip attack path.
    run-rate corrections (start from the bracer/spear values `0.89` /
    walk-to-run `1.22` — same converter, same root undershoot — and retune
    on feel).
-5. **Item script**: copy `dragoonlance.ags.txt`, change names/dats/mount.
+5. **Item script**: copy `lance.ags.txt`, change names/dats/mount.
    Attach to the sword element; make it `pickable` with `hasPhysics`.
 6. **Verify** (headless or by hand): equip → `Sword_Stance` idle; walk /
    run / sprint speeds on sword clips; light×3 + heavy; dashes; jump chain

@@ -1854,7 +1854,7 @@ in 2.5 s with a 4-point cyan route drawn on the floor (screenshot); E → `[Enem
 strike one 99→49, strike two 49→−1 → toppled to 90° → gone at 3 s; `onHit` carried
 `(attacker, amount)` into the script both times.
 
-**NPCs animate** (added with `pascal_moving.glb`): `(animLibs …)` + `(move "file.glb")` /
+**NPCs animate** (added with `npc_moving.glb`): `(animLibs …)` + `(move "file.glb")` /
 `(idle "file.glb")` on the NPC — the same by-file clip addressing as the player (§18.10),
 libs copied dat → component at `_npcBegin` (the Model pattern; renderers read only
 components). `_npcAnimate` is a two-state machine: `move` while a leg is underfoot, `idle`
@@ -2051,7 +2051,7 @@ stays the DialogueDelegate's domain — this deliberately shares nothing with it
 
 Demo: "the companion character" (Austin renamed the idling hero; armature.ags.txt now
 `(extends PassiveDialogue)`; his idle keeps playing via the scene's persisted model-component
-clip — no Model script needed). Four lines (`9s_audio_00N_idle_passive.mp3`). Verified live:
+clip — no Model script needed). Four lines (`npc_audio_00N_idle_passive.mp3`). Verified live:
 line on approach, three DIFFERENT lines at cooldown cadence with no repeats and no overlap,
 two silent rolls at 60%, and the walking-away trace matched the falloff formula exactly
 (2.18 m → 0.818, 5.02 m → 0.582 at hearRange 12).
@@ -2123,7 +2123,7 @@ Two changes, one inheritance move:
   block, tagged through `emitVoice` like every voice.
 
 Demo: the placeholder NPC (enemy.ags.txt) — seven `npc_audio_00N_idle_passive.mp3` lines +
-`pascal_audio_001_death_event.mp3`. Verified live: his roll fired and played (caught by a
+`npc_audio_001_death_event.mp3`. Verified live: his roll fired and played (caught by a
 playSound spy — his lines are 2.2 s, easy to miss between polls), and the death blow set
 `_dead`, started the topple, and put the death cry live in `world.voices` in the same tick.
 A finding worth keeping: with the player character standing between them, the companion character's 7.7-second lines against his

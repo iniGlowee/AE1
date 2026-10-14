@@ -69,7 +69,7 @@ doctrine is **rename, never retarget**:
 3. The runtime hardcodes canonical role names, so the pack AND the runtime
    body (`npc_native.glb`, a pure node-name patch) wear canonical labels on
    his untouched native skeleton.
-4. Packs auto-push into project media as `mm_<pack>_*`.
+4. Packs auto-push into project media as `<pack>_*`.
 
 **THE CANONICAL COMPASS IS BACKWARD** — measured on the original locomotion
 database: runs travel vz NEGATIVE and L-named dashes are +x. Pack-forward is

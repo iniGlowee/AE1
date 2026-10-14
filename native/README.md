@@ -157,7 +157,7 @@ build\ae1game.exe ..\exports\devroom-agp ..\engine
   dynamic meshes (`updateMesh`) to refresh the verts each frame. `ae1player
   <glb> --anim <clip>` plays any clip; `ae1game` plays each animated character's
   Idle in-scene while the engine ticks. (the player character's clips live in a separate
-  `2b_actions.glb` with no skin — retargeting those is later.)
+  `hero_actions.glb` with no skin — retargeting those is later.)
 - **Step 10 (done) — native bindings; real element modules run.** `ae1game`
   builds a native `world`: `input3d` backed by the platform keyboard (KeyboardEvent.code
   / Mouse<N> strings mapped to live key state), `env3d` as the query surface with

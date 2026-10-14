@@ -101,7 +101,7 @@ the frame, and release is the new `'__none__'` renderer sentinel
 (render3d.js: stop the action, restore NOTHING — `'__bind__'` would flash
 the rest pose for a frame). `_modelBegin` must hold `clip: '__none__'` from
 load or the empty-clip fallback auto-plays the first library clip. The
-clips themselves are `2b_actions.glb` (sword_attack, fire_bazooka),
+clips themselves are `hero_actions.glb` (sword_attack, fire_bazooka),
 retargeted from the old Mixamo one-shots by
 `motion-matching/tools/retarget_actions.py` — joint-frame DIRECTION matching,
 because delta retargeting would carry the T-pose/A-pose rest difference
@@ -753,7 +753,7 @@ Projectile TEMPLATES never render anywhere — `wantsVisible` in render3d (duck-
 
 **NPCs SPEAK now** (`DESIGN.md §18.21`): `AE1NPC extends AE1PassiveDialogue` (which extends
 Hitbox — nothing lost) — every NPC gets the companion character's proximity-chatter machine via dat alone
-(`(passiveLines …)` in enemy.ags.txt: seven pascal_audio lines); `_pvTick` refuses the dead.
+(`(passiveLines …)` in enemy.ags.txt: seven npc_audio lines); `_pvTick` refuses the dead.
 TWO gotchas honoured: the builtin runInfo lists `_pvTick` EXPLICITLY (hand-built defs don't
 merge up), and passivedialogue.js precedes npc.js in ENGINE_MODULES (base before subclass in
 one bundle scope). `(deathSounds (…))` is the DEATH EVENT TREE — no silence roll, never
@@ -825,7 +825,7 @@ Hitbox: v1 gravity+floor for free items — the SEED of the physics system, not 
 "Enemy" (enemy_no_animations.glb, a machine enemy) — wander/path/poke/two-strike-kill/topple/
 vanish all verified; screenshot shows the cyan route. NOTE: bundle-collision guard forced
 `NPC_DEG` (not DEG) in npc.js — concatenated scope. **NPCs animate now**: `(animLibs
-("pascal_moving.glb")) (move "pascal_moving.glb")` in enemy.ags.txt — the walk clip plays
+("npc_moving.glb")) (move "npc_moving.glb")` in enemy.ags.txt — the walk clip plays
 while a leg is underfoot, stops/death pin `'__bind__'` EXPLICITLY (with libs attached an
 empty clip resolves first-anywhere and a stopped NPC walks in place); `(idle "file.glb")`
 is there when an idle clip exists. The clip is a subtle up-down bob — Austin confirmed it
