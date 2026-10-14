@@ -6,9 +6,20 @@
 
 #app {
   display: grid;
-  grid-template-rows: var(--topbar-h) 1fr var(--statusbar-h);
+  /* §18.121 every child is PLACED by area, so an optional child cannot shift
+     the others: the hosted banner (§18.120) sits in its own auto row, which
+     collapses to zero on a plain server where the banner never mounts.
+     Auto-placement put the banner in the 1fr row and the whole editor in the
+     statusbar's 22 px row on the hosted demo. */
+  grid-template-rows: var(--topbar-h) auto 1fr var(--statusbar-h);
+  grid-template-areas: 'topbar' 'banner' 'view' 'status';
   height: 100vh;
 }
+
+#topbar { grid-area: topbar; }
+#hosted-banner { grid-area: banner; }
+#view { grid-area: view; }
+#statusbar { grid-area: status; }
 
 /* Top bar ----------------------------------------------------------------- */
 
