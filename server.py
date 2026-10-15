@@ -1339,6 +1339,9 @@ class AE1Handler(BaseHTTPRequestHandler):
         rel = path.lstrip("/")
         if rel in ("", "index.html"):
             target = PATHS.editor / "index.html"
+        elif rel == "favicon.ico":
+            # browsers and link scrapers ask the ROOT for it whatever the page says
+            target = PATHS.editor / "assets" / "favicon.ico"
         elif rel in ROOT_DOCS:
             # the docs viewer reads the root-level markdown (DESIGN, respawn)
             target = PATHS.root / rel
