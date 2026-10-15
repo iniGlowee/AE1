@@ -14,12 +14,16 @@ exists only in this repository.** A re-derivation that does not read this file f
 
 ## Entries (MANAGER-PROJECT-01, the public UX fixes from the first outside test, 2026-10-14)
 
+The hashes below are those on the held branches; rebasing onto main changes them. They stay findable by subject: every code commit's
+subject ends `(MANAGER-PROJECT-01 W<n>)`, so `git log --grep "MANAGER-PROJECT-01 W5"` finds a commit whatever its hash is now. The
+layout fix (W8) is found by `git log --grep "cannot take the editor's row"`, the docs (W1) by `git log --grep "viewport-drop flow"`.
+
 | id | what it adds | commit / branch | what a re-derivation would lose |
 |---|---|---|---|
 | W1 | Guide: the viewport-drop flow is marked 2D-only, a note tells 3D users what to do instead, and model files are no longer described as "stored but not drawn" | `5b1ae36` on `held/w1-docs-2026-10-14` | the corrected wording in `docs/guide/02-the-editor.md` and `06-media.md`, and the new "Keeping your work on the hosted demo" section of `09-build-and-ship.md`; the old text would say a 3D user can drop an image on the viewport and say nothing about losing work |
 | W2 | Dropping an image into a 3D viewport creates a card (image plane) in the scene: the `image` component (`element.js` COMPONENT_SCHEMA "Image Plane"), renderer-owned image planes in `render3d`, the viewport drop; AND a shipped-host fix in `game3d.js` (`mediaUrl` falls back to the shipped file by manifest entry, because images and particle sheets drew white in builds) | `6f3371f` on `held/mp01-ux-2026-10-14` | image drop, the component, and the build fix (a re-derivation would bring back white images in exported games) |
 | W3b | Restore an element's default script: `samples/` (the pristine shipped Starter + starter.ae1proj), server routes `GET /api/projects/<slug>/sample` and `.../sample/scripts/<file>`, and "Restore default" in the script pane | `f8c5499` on `held/mp01-ux-2026-10-14` | the samples folder, the routes, the button and the empty-pane placeholder text |
-| W3c | NO CHANGE: the `ags?>` at the end of the starter scripts is the format's own end marker (`compiler.js` DEF_RE `<?def ... ags?>`), not a typo; the earlier note calling it a stray typo was wrong | none | nothing |
+| W3c | WITHDRAWN, NO CHANGE (do not "fix" it again): the `ags?>` at the end of the starter scripts is the format's own end marker (`compiler.js` DEF_RE `<?def ... ags?>`), not a typo; the earlier note calling it a stray typo was wrong | none | nothing |
 | W3 | Script edits recorded in the undo history (per-file snapshots) | pending, Admin (Engine); a design change | undo covering scripts; today a cleared script cannot be undone |
 | W4 | Save the project under a new name: `POST /api/projects/<slug>/copy`, `store.flushAll`, "Save as" in the workspace bar | `6cb5a5e` on `held/mp01-ux-2026-10-14` | save-as entirely |
 | W5 | Restore the sample project: `GET .../sample/diff`, `POST .../sample/restore`, `store.forgetProject`, "Restore sample" with the dialog that names what will be lost and offers a copy first (depends on W4) | `7d2658b` on `held/mp01-ux-2026-10-14` | restore and its safety dialog |
