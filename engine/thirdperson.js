@@ -660,8 +660,8 @@ export class AE1ThirdPersonCharacter extends AE1Model {
   /**
    * MOUNT A SECOND MESH ON ANOTHER SOCKET â€” the PAIR-WEAPON path (Â§18.14).
    * `equipIndex` mounts the equipped item to its own socket and that is the
-   * whole story for a lance or a bazooka: one mesh, one hand. The type-3
-   * fist is two meshes in two hands, so its script mounts the off-hand arm
+   * whole story for a lance or a bazooka: one mesh, one hand. The fist
+   * pair is two meshes in two hands, so its script mounts the off-hand arm
    * itself â€” and Angel Script has no object literal to write a mount
    * component by hand (every other script passes strings or arrays). This is
    * that missing verb, using the SAME contract equipIndex writes, so the

@@ -311,8 +311,8 @@ export class AE1World {
           have.add(pname);
         }
       }
-      // COMPANIONS TRAVEL WITH THEIR WEAPONS TOO (§18.14's pair): the type-3
-      // fist's LEFT arm is a scene element its script mounts BY NAME — walk
+      // COMPANIONS TRAVEL WITH THEIR WEAPONS TOO (§18.14's pair): the fist
+      // pair's LEFT arm is a scene element its script mounts BY NAME — walk
       // through a door without carrying it and equipping in the new scene
       // showed one bracer and the weapon state never engaged (worn() bailed
       // at the missing pair before claiming combat). Same doctrine as the

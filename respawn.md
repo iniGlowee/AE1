@@ -1119,8 +1119,8 @@ himself (session close): **a Shader layer** (per-scene custom shaders as a base 
 **a new engine font**, **an interactable dialogue system + trees for 3D**, and **enemy
 lock-on**. Claude pitched five composites back (see the session-close message): the
 Director timeline element (absorbs cutscenes/QTE/camera scripting), a ScreenFX post stack
-(absorbs shader layer/scene FX, reuses the render-target + FX-volume patterns), Z-target
-lock-on, the in-engine blend-graph editor (the real fix for movement feel), and the
+(absorbs shader layer/scene FX, reuses the render-target + FX-volume patterns), lock-on
+targeting, the in-engine blend-graph editor (the real fix for movement feel), and the
 in-game debug toolkit (teleport/checkpoint/save tools — his stated testing doctrine).
 
 Older candidates that still stand, in rough order of design weight:

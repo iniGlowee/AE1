@@ -74,9 +74,11 @@ Those dat fields are the same values your script reads. Change `locked` here and
 
 Drag files in, or **+ Import**. See [Media](06-media.md).
 
-Tiles show usage counts (`3×`). **In a 2D point-and-click project**, drag a tile to the viewport to make it an element;
-double-click adds it at the frame centre. **In a 3D project** (the Starter) the viewport shows a scene, so dropping an
-image does nothing yet; see the note under [Media](06-media.md#using-an-asset).
+Tiles show usage counts (`3×`). **Click a tile to preview it** in a strip at the bottom of the pane — the picture
+with its size, a sound or video in a player — without placing anything. **In a 2D point-and-click project**, drag a
+tile to the viewport to make it an element; double-click adds it at the frame centre. **In a 3D project** (the
+Starter) drag an image onto the viewport and it stands up as an **Image Plane** where you dropped it — a flat card
+at the picture's own shape, 1 m on its longest side, facing the camera; see [Media](06-media.md#using-an-asset).
 
 ### Angel Script
 
@@ -85,6 +87,10 @@ The script attached to the selected element. Compiles as you type; the header sh
 
 **▶ Test** fires that element's `onCall` methods immediately — the cheapest "does this do
 anything" without running the game.
+
+**↺ Restore default** appears when the element's script came with a sample project (the Starter, or a copy of
+it). It puts back the text the sample shipped with — the way back if a script was cleared or broken, since script
+edits are not part of undo (below). It asks first when the script still has text in it.
 
 ### Console
 
@@ -96,6 +102,8 @@ element, never the game.
 
 | | |
 |---|---|
+| **Save as…** | copy the whole project under a new name and keep working in the copy; the original is left as it is |
+| **Restore sample…** | in a sample project only (the Starter): put it back the way it shipped. It lists exactly what you would lose first, and offers **Save a copy, then restore** so nothing has to be lost |
 | Scene dropdown | switch scenes, or **+ New scene…** |
 | `↺` `↻` | undo / redo |
 | **Build & Ship** | export |
@@ -123,7 +131,9 @@ yet.*
 - **Does not cross scenes.** Switching scenes resets the stack — undoing into a room you
   aren't looking at would be a trap.
 - **Disabled during play.** Play has its own snapshot/restore.
-- **Never steals typing.** `Ctrl+Z` in the script editor undoes text.
+- **Never steals typing.** `Ctrl+Z` in the script editor undoes text while you are typing in it.
+- **Script edits are not in the history.** Once you click away from the script pane, Undo will not bring old script
+  text back. For a script that came with a sample, **↺ Restore default** will.
 
 Depth is 60 steps.
 

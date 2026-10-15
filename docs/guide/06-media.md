@@ -76,7 +76,8 @@ stores the hash.
 
 | | |
 |---|---|
-| Drag a tile → Viewport | **2D point-and-click projects:** becomes an element there, at natural size. **3D projects (the Starter, and anything the Wizard scaffolds for 3D):** the viewport shows a scene, so an image dropped on it does nothing yet. See the note below |
+| Drag a tile → Viewport | **2D point-and-click projects:** becomes an element there, at natural size. **3D projects (the Starter, and anything the Wizard scaffolds for 3D):** an image becomes an **Image Plane** — see the note below |
+| Click a tile | previews it in the pane — picture, sound or video — without placing it |
 | Double-click a tile | **2D projects:** adds it at the frame centre |
 | `this.setSprite("name.png")` | swaps an existing element's picture |
 | `icon: "name.png"` in `give()` | an inventory item's picture |
@@ -134,6 +135,9 @@ For a thing painted into a background you want clickable, you don't need art at 
 element with **`opacity: 0`** over it. It still hit-tests. That's the most common trick in the
 genre.
 
-> **Working in a 3D project?** A picture is not an object in a 3D scene, it has to be on a surface, and the editor has no way yet to
-> turn a dropped image into one. Until it does: put the picture on a surface in your 3D tool, export a `.glb`, and import that;
-> or use a 2D point-and-click project for picture-based work. `this.setSprite("name.png")` applies to 2D elements.
+> **Working in a 3D project?** A picture is not an object in a 3D scene — it has to be on a surface — so dropping an image
+> onto the 3D viewport makes the surface for you: an element with an **Image Plane** component, a flat card standing on the
+> ground where you dropped it, facing the camera, at the picture's own shape and 1 m on its longest side. A transparent
+> background is cut out. In Properties you can change its size, show it on one side or both, let the scene's lights shade
+> it, or point it at another picture. It plays and ships like any element. For a picture *on* a 3D model, put it on the
+> model in your 3D tool and import the `.glb`. `this.setSprite("name.png")` applies to 2D elements.
