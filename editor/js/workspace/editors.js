@@ -1391,8 +1391,65 @@ function mountMedia(el, context) {
     h('span', { class: 'pane-count' }),
   );
 
-  el.append(bar, picker, grid);
+  // MANAGER-PROJECT-01 W6: a click on a tile PREVIEWS it here — nothing is
+  // placed in the scene. Images fitted over a checkerboard (so transparency
+  // reads), with their pixel size; audio and video in the browser's own player;
+  // anything else a line of facts. Click the tile again, or ✕, to close.
+  const preview = h('div', { class: 'media-preview', hidden: true });
+  let previewHash = null;
+
+  el.append(bar, picker, grid, preview);
   const count = bar.querySelector('.pane-count');
+
+  function closePreview() {
+    previewHash = null;
+    for (const m of preview.querySelectorAll('audio, video')) { m.pause(); m.removeAttribute('src'); m.load(); }
+    clear(preview);
+    preview.hidden = true;
+    for (const t of grid.querySelectorAll('.media-tile')) delete t.dataset.selected;
+  }
+
+  function openPreview(entry) {
+    if (previewHash === entry.hash) return closePreview();
+    closePreview();
+    previewHash = entry.hash;
+    const url = mediaURL(mediaBase(slug), entry.hash, entry.ext);
+    const used = store.elementsUsingMedia(entry.hash).length;
+    const facts = h('div', { class: 'media-preview-facts' });
+    const say = (extra) => {
+      facts.textContent = [extra, formatBytes(entry.size), entry.kind, used ? `used by ${used}` : 'not placed'].filter(Boolean).join(' · ');
+    };
+    say('');
+    let body;
+    if (entry.kind === 'image') {
+      body = h('img', {
+        class: 'media-preview-img',
+        src: url,
+        alt: entry.name,
+        onLoad: (ev) => say(`${ev.target.naturalWidth} × ${ev.target.naturalHeight} px`),
+      });
+    } else if (entry.kind === 'audio') {
+      body = h('audio', { class: 'media-preview-audio', src: url, controls: true, preload: 'metadata' });
+    } else if (entry.kind === 'video') {
+      body = h('video', {
+        class: 'media-preview-video', src: url, controls: true, muted: true, playsInline: true, preload: 'metadata',
+        onLoadedmetadata: (ev) => say(`${ev.target.videoWidth} × ${ev.target.videoHeight}, ${ev.target.duration.toFixed(1)} s`),
+      });
+    } else {
+      body = h('div', { class: 'media-preview-glyph' }, KIND_GLYPH[entry.kind] ?? '◻');
+    }
+    preview.append(
+      h('div', { class: 'media-preview-head' },
+        h('span', { class: 'media-preview-name', title: entry.name }, entry.name),
+        h('button', { class: 'btn btn--ghost', title: 'Close the preview', onClick: closePreview }, '✕')),
+      body,
+      facts,
+    );
+    preview.hidden = false;
+    for (const t of grid.querySelectorAll('.media-tile')) {
+      if (t.dataset.hash === entry.hash) t.dataset.selected = 'true'; else delete t.dataset.selected;
+    }
+  }
 
   let mediaFilter = '';
   function applyMediaFilter() {
@@ -1419,7 +1476,9 @@ function mountMedia(el, context) {
       'div',
       {
         class: 'media-tile',
+        dataset: { hash: entry.hash, ...(previewHash === entry.hash ? { selected: 'true' } : {}) },
         draggable: true,
+        onClick: () => openPreview(entry), // W6: look before placing
         title: `${entry.name}\n${formatBytes(entry.size)}${used ? `\nUsed by ${used} element${used > 1 ? 's' : ''}` : ''}`,
         onDragstart: (e) => {
           e.dataTransfer.setData('application/x-ae1-media', entry.hash);
@@ -1500,6 +1559,7 @@ function mountMedia(el, context) {
   function paint() {
     clear(grid);
     const entries = Object.values(store.media);
+    if (previewHash && !store.media[previewHash]) closePreview(); // its asset was deleted
     count.textContent = entries.length ? `${entries.length}` : '';
 
     if (!entries.length) {

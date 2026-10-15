@@ -878,3 +878,72 @@ body[data-dragging='col'] * { cursor: row-resize !important; }
   flex: 1 1 0;
   min-height: 0;
 }
+
+/* Media preview (MANAGER-PROJECT-01 W6) ------------------------------------- */
+
+.media-tile[data-selected='true'] {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.media-preview {
+  /* the pane body is a scroll container: stay pinned under a long media list */
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-top: 1px solid var(--line);
+  background: var(--bg-0);
+}
+
+.media-preview[hidden] { display: none; }
+
+.media-preview-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.media-preview-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--text-0);
+}
+
+.media-preview-img,
+.media-preview-video {
+  display: block;
+  max-width: 100%;
+  max-height: 28vh;
+  min-height: 0;
+  object-fit: contain;
+  align-self: center;
+  /* a checkerboard behind the picture, so a transparent background reads as one */
+  background-color: #2a2a2a;
+  background-image:
+    linear-gradient(45deg, #3a3a3a 25%, transparent 25%, transparent 75%, #3a3a3a 75%),
+    linear-gradient(45deg, #3a3a3a 25%, transparent 25%, transparent 75%, #3a3a3a 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+
+.media-preview-audio { width: 100%; }
+
+.media-preview-glyph {
+  font-size: 40px;
+  text-align: center;
+  color: var(--text-1);
+}
+
+.media-preview-facts {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+}

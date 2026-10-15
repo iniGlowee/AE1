@@ -1124,10 +1124,17 @@ ags?>
   /** Anything pointing at this asset, across every scene and the HUD. */
   elementsUsingMedia(hash) {
     const users = [];
+    // An Image Plane names its picture by FILE NAME, not hash (MANAGER-PROJECT-01
+    // W2) — without this the delete guard let a card's picture be deleted
+    // under it, and the media preview said "not placed".
+    const name = this.media[hash]?.name?.toLowerCase();
+    const usesIt = (el) =>
+      el.components?.sprite?.media === hash ||
+      (name && String(el.components?.image?.media ?? '').toLowerCase() === name);
     for (const [file, data] of Object.entries(this.sceneData)) {
       const live = file === this.file ? this.scene?.serialize() : data;
       for (const el of Object.values(live?.elements ?? {})) {
-        if (el.components?.sprite?.media === hash) users.push({ name: `${el.name} (${file})` });
+        if (usesIt(el)) users.push({ name: `${el.name} (${file})` });
       }
     }
     for (const el of this.hud?.all() ?? []) {
