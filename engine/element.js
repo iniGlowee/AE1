@@ -130,6 +130,23 @@ export const COMPONENT_SCHEMA = {
     },
   },
 
+  // An IMAGE as a flat card in a 3D scene (MANAGER-PROJECT-01 W2): the renderer
+  // builds the plane itself at the image's own aspect — no mesh file — so a
+  // picture dropped from the Media Collection onto a 3D viewport is one of
+  // these. `size` is the longest edge in metres; the card stands on its bottom
+  // edge. Unlit by default so the image shows its own colours.
+  image: {
+    label: 'Image Plane',
+    dim: '3d',
+    fields: {
+      media: { label: 'Image', type: 'media', default: '' },
+      size: { label: 'Size (m)', type: 'number', default: 1, step: 0.1, min: 0.01 },
+      lit: { label: 'Lit by scene', type: 'bool', default: false },
+      doubleSided: { label: 'Both sides', type: 'bool', default: true },
+      alphaCutoff: { label: 'Alpha cutoff', type: 'number', default: 0.5, step: 0.05, min: 0, max: 1 },
+    },
+  },
+
   // A light. Kind decides which fields matter (cone angle is spot-only, etc.);
   // the union lives here and the renderer reads what the kind uses. Intensity is
   // AE1's own friendly scale, NOT glTF candela -- decomposition converts.

@@ -993,6 +993,78 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     return tex;
   }
 
+  /* -- IMAGE PLANES (MANAGER-PROJECT-01 W2) --------------------------------
+   * An `image` component is a card the renderer owns, like a Light element:
+   * a 1×1 plane (pivot on its bottom edge, so it stands on the ground) inside
+   * a group that becomes the element's BINDING — so the element transform,
+   * visibility, near-fade and Play all work through the ordinary paths. The
+   * plane is scaled to the image's aspect once the picture has loaded, the
+   * longest edge = `size` metres. Alpha is a cutout (`alphaCutoff`): a PNG's
+   * transparent background shows through and still sorts correctly, which a
+   * blended material does not. Never a floor: ground and aim casts walk glb
+   * scenes only. The texture is shared by every plane showing the same image. */
+  const imagePlanes = new Map(); // el.id -> { group, mesh, tex, key, cfg }
+  const imageTex = new Map(); // media name -> texture
+  function imageTexture(name) {
+    if (imageTex.has(name)) return imageTex.get(name);
+    const url = mediaUrl?.(name);
+    if (!url) return null;
+    const tex = new THREE.TextureLoader().load(url, () => {
+      for (const p of imagePlanes.values()) if (p.tex === tex) sizeImagePlane(p);
+    });
+    tex.colorSpace = THREE.SRGBColorSpace;
+    imageTex.set(name, tex);
+    return tex;
+  }
+  function sizeImagePlane(p) {
+    const im = p.tex?.image;
+    const w0 = im?.width || 1, h0 = im?.height || 1;
+    const k = Math.max(0.01, Number(p.cfg.size) || 1) / Math.max(w0, h0);
+    p.mesh.scale.set(w0 * k, h0 * k, 1);
+  }
+  function dropImagePlane(id) {
+    const p = imagePlanes.get(id);
+    if (!p) return;
+    scene.remove(p.group);
+    p.mesh.geometry.dispose();
+    p.mesh.material.dispose();
+    imagePlanes.delete(id);
+    if (bindings.get(id) === p.group) bindings.delete(id);
+  }
+  /** Build/refresh an element's image plane; returns its group (the binding) or null. */
+  function applyImagePlane(el) {
+    const cfg = el.components?.image;
+    let p = imagePlanes.get(el.id);
+    if (!cfg?.media) { if (p) dropImagePlane(el.id); return null; }
+    const lit = cfg.lit === true || cfg.lit === 'true';
+    const key = `${cfg.media}|${lit}`;
+    if (!p || p.key !== key) {
+      if (p) dropImagePlane(el.id);
+      const tex = imageTexture(String(cfg.media));
+      const geo = new THREE.PlaneGeometry(1, 1);
+      geo.translate(0, 0.5, 0);
+      const mat = lit
+        ? new THREE.MeshStandardMaterial({ map: tex, roughness: 1, metalness: 0 })
+        : new THREE.MeshBasicMaterial({ map: tex, toneMapped: false });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.name = `${el.name} image`;
+      const group = new THREE.Group();
+      group.name = el.name;
+      group.add(mesh);
+      scene.add(group);
+      p = { group, mesh, tex, key, cfg };
+      imagePlanes.set(el.id, p);
+    }
+    p.cfg = cfg;
+    const m = p.mesh.material;
+    const side = cfg.doubleSided === false || cfg.doubleSided === 'false' ? THREE.FrontSide : THREE.DoubleSide;
+    const cut = Math.max(0, Math.min(1, Number(cfg.alphaCutoff ?? 0.5)));
+    if (m.side !== side || m.alphaTest !== cut) { m.side = side; m.alphaTest = cut; m.needsUpdate = true; }
+    sizeImagePlane(p);
+    if (bindings.get(el.id) !== p.group) bindings.set(el.id, p.group);
+    return p.group;
+  }
+
   // REAL sprite sheets for particles (§18.52): an fx component may name a
   // MEDIA image (`texture`) — the reference game's own extracted effect sprites ride the
   // same emitters as the canvas blobs. TextureLoader returns synchronously
@@ -1884,6 +1956,8 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
         lightSets.delete(id);
       }
     }
+    // image planes whose element is gone (MANAGER-PROJECT-01 W2)
+    for (const id of [...imagePlanes.keys()]) if (!els.some((e) => e.id === id)) dropImagePlane(id);
 
     bindings.clear();
     const claimedThisPass = new Set();
@@ -1891,6 +1965,9 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
       applySky(el); // the sky element carries no model — apply before binding
       applyVolumeBox(el); // ditto — and the on-demand editor may not update again
       applyLightObject(el); // ditto — a Light element is renderer-owned (§18.48)
+      // an image card is renderer-owned too, but it IS the element's binding (W2)
+      const plane = applyImagePlane(el);
+      if (plane) { applyTransform(plane, el); continue; }
       const glbName = el.components?.model?.media;
       const nodeName = el.components?.model?.node ?? el.name;
       // Load-time nodeMap, NOT live getObjectByName — see ensureGlb.
@@ -2279,6 +2356,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     applyPortal(el); // ditto: portal OVALS belong to the pass, not a glb
     applyCapture(el); // ditto: an EYE is a render target, not a mesh
     applyVolumeBox(el); // ditto: an audio REGION draws authoring ink only
+    applyImagePlane(el); // MANAGER-PROJECT-01 W2: binds its own card, so it goes before the lookup
     const obj = bindings.get(el.id);
     if (!obj) return;
     applyNearFade(el, obj); // §18.33 — dat-toggled, cached, cheap

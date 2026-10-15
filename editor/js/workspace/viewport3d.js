@@ -423,6 +423,57 @@ export function mountViewport3D(el, context) {
   const ro = new ResizeObserver(resize);
   ro.observe(el);
 
+  // MANAGER-PROJECT-01 W2: an IMAGE dropped onto the 3D viewport — from the
+  // Media Collection or straight from the OS — becomes an Image Plane element
+  // standing on the ground where it was dropped, turned to face the camera,
+  // at the image's own aspect (longest edge 1 m). Models still merge on
+  // import, as before; other kinds have no 3D form yet and are ignored.
+  canvas.addEventListener('dragover', (e) => {
+    if (store.playing) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+  canvas.addEventListener('drop', async (e) => {
+    if (store.playing) return;
+    e.preventDefault();
+    let entries = [];
+    const hash = e.dataTransfer.getData('application/x-ae1-media');
+    if (hash && store.media[hash]) entries = [store.media[hash]];
+    else if (e.dataTransfer.files?.length) entries = await store.importFiles([...e.dataTransfer.files]);
+    const images = entries.filter((m) => m?.kind === 'image');
+    if (!images.length) return;
+    const rect = canvas.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    const at = r3d.pointerGround(nx, ny) ?? aheadOfCamera(3);
+    let offset = 0;
+    for (const m of images) {
+      placeImagePlane(m, at.x + offset, at.y, at.z);
+      offset += 1.2; // several at once stand side by side, not inside each other
+    }
+  });
+
+  function aheadOfCamera(d) {
+    const dir = new r3d.camera.position.constructor();
+    r3d.camera.getWorldDirection(dir);
+    dir.y = 0;
+    if (dir.lengthSq() < 1e-6) dir.set(0, 0, -1);
+    dir.normalize();
+    return { x: r3d.camera.position.x + dir.x * d, y: 0, z: r3d.camera.position.z + dir.z * d };
+  }
+
+  function placeImagePlane(entry, x, y, z) {
+    const cam = r3d.camera.position;
+    const yaw = (Math.atan2(cam.x - x, cam.z - z) * 180) / Math.PI;
+    return store.addElement({
+      name: String(entry.name).replace(/\.[^.]+$/, '') || 'Image',
+      type: 'element',
+      x, y, z,
+      rotationY: Math.round(yaw * 10) / 10,
+      components: { image: { media: entry.name, size: 1, lit: false, doubleSided: true, alphaCutoff: 0.5 } },
+    });
+  }
+
   resize();
   sync();
   tick();

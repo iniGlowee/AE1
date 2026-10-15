@@ -164,7 +164,17 @@ export function bootGame3D(data, mount = document.body) {
         ? [...world.scene.all(), ...(world.carried ?? []), ...(world.carriedAux ?? [])]
         : [],
     loadGlb,
-    mediaUrl: mediaUrlSync,
+    // An inlined asset by name (glb, hdr) — or, for media the export ships as a
+    // FILE (images: an Image Plane's picture, a particle sheet), the shipped file
+    // by its manifest entry, which a relative <img> load reads on http and on
+    // file:// alike. Inlined-only left every image plane white in a build while
+    // the editor drew it (MANAGER-PROJECT-01 W2; Principle 2).
+    mediaUrl: (name) => {
+      const inlined = mediaUrlSync(name);
+      if (inlined) return inlined;
+      const r = world.resolveMedia(name);
+      return r ? `media/${r.hash}.${r.ext}` : null;
+    },
     fill: false, // a shipped game is lit by its own lights, not editor fill
     // A one-shot clip ran out (the 180 turn) — tell the element, the same
     // onFinished contract as Sprite/Video.
