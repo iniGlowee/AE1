@@ -1,3 +1,33 @@
+# AE1 — Angel's Egg 1 · v0.3.0-alpha
+
+**The first release shaped by an outside user.** The first person to try AE1 without being shown how changed the Starter,
+broke the player with two keystrokes in the script pane, could not get back, and was told by the guide to do something
+that cannot work in a 3D project. This release is the answer, and the engine's version string moves to `0.3.0-alpha`
+with it — features, so the minor number moves.
+
+- **Restore default script.** A script that came with a sample project gets **↺ Restore default** in the script pane:
+  the text the sample shipped with, back in one click. Script edits are outside the undo history, so this is the way
+  back from a cleared or broken script. The shipped copies live in the new read-only `samples/` folder.
+- **Save as…** copies the whole project under a new name and continues in the copy; the original is left as it is.
+- **Restore sample…** (in the Starter itself) puts a sample back the way it shipped — after listing exactly what would
+  be lost (edited scripts, added media by name, scene objects by name) and offering **Save a copy, then restore**.
+  Cancel changes nothing.
+- **Images in 3D scenes.** Drop an image onto a 3D viewport and it stands up as an **Image Plane**: a flat card on the
+  ground where you dropped it, facing the camera, at the picture's own shape, transparent background cut out. Size,
+  sides, lighting and picture are editable in Properties.
+- **Media preview.** Click a tile in the Media Collection to see it — picture, sound or video — without placing it.
+- **Fixed: exported games drew images and particle sheets white.** The shipped game only resolved assets it inlined;
+  it now finds images the export ships as files.
+- **Fixed: the hosted demo's banner could take the editor's whole height.** Every part of the editor layout is now
+  placed by name, so an optional banner can never push the workspace out of the window.
+- **The guide** says which drag-and-drop flows belong to 2D and which to 3D projects, documents everything above, and
+  adds "Keeping your work on the hosted demo" (private to you, not backed up — use Build & Ship to keep it).
+- **Housekeeping.** A scrub of names from the commercial games used while AE1 was being built, throughout the docs,
+  comments and example scripts; `CONTRIBUTING.md` gains "Cutting a release" (version change first, tag second);
+  `PUBLIC-ONLY.md` lists what exists only in this repository.
+
+---
+
 # AE1 — Angel's Egg 1 · v0.2.1-alpha
 
 **The alpha as hosted at ae1.ausa.dev.** Tag `v0.2.1-alpha` is the release the hosted demo pins. It carries two commits over v0.2.0-alpha:

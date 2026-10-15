@@ -14,7 +14,8 @@ exists only in this repository.** A re-derivation that does not read this file f
 
 ## Entries (MANAGER-PROJECT-01, the public UX fixes from the first outside test, 2026-10-14)
 
-The hashes below are those on the held branches; rebasing onto main changes them. They stay findable by subject: every code commit's
+The hashes below are those on the held branches. v0.3.0-alpha brought every held branch onto `main` by MERGE, not rebase, so these
+hashes are the ones on `main` too; a later rebase would change them. They stay findable by subject: every code commit's
 subject ends `(MANAGER-PROJECT-01 W<n>)`, so `git log --grep "MANAGER-PROJECT-01 W5"` finds a commit whatever its hash is now. The
 layout fix (W8) is found by `git log --grep "cannot take the editor's row"`, the docs (W1) by `git log --grep "viewport-drop flow"`.
 
@@ -29,6 +30,7 @@ layout fix (W8) is found by `git log --grep "cannot take the editor's row"`, the
 | W5 | Restore the sample project: `GET .../sample/diff`, `POST .../sample/restore`, `store.forgetProject`, "Restore sample" with the dialog that names what will be lost and offers a copy first (depends on W4) | `7d2658b` on `held/mp01-ux-2026-10-14` | restore and its safety dialog |
 | W6 | Media preview strip (`editors.js`, `workspace.css`) and `elementsUsingMedia` counting image planes | `f82f8be` on `held/mp01-ux-2026-10-14` | the preview and the delete guard for image-plane pictures |
 | W8 | Every `#app` child is placed by grid area so the hosted banner cannot take the editor's row | `17fa9df` on `held/hosted-banner-css-2026-10-14` | the layout fix; with the banner on, the editor collapses to a 22px strip (it did on 2026-10-14) |
+| R1 | Release prep for v0.3.0-alpha: the guide (02, 06) describes the shipped 3D image drop, tile preview, Restore default, Save as and Restore sample, and that script edits are outside undo — replacing W1's interim "dropping an image does nothing yet"; three line-wrapped names the scrub missed | found by `git log --grep "Release prep"` (Admin (Engine)) | the guide's account of the new controls (a re-derivation would bring back the interim wording) |
 | W7 | The hosted banner's wording | kit-side only (`config.json` of the hosting kit, outside this repository) | nothing in this repo; listed so the set is complete |
 
 W3 (script edits in the undo history, a design change) is the one row still pending. The ledger is deliberately over-complete rather than tidy.
