@@ -83,7 +83,7 @@ offset 12+tocLength : payloads   raw asset bytes, each 8-byte aligned
 Each TOC entry:
 
 ```json
-{ "name": "2b.glb", "bag": "glbs", "offset": 0, "length": 12245320,
+{ "name": "hero.glb", "bag": "glbs", "offset": 0, "length": 12245320,
   "sha256": "…" }
 ```
 

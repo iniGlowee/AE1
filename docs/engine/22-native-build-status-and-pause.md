@@ -1,7 +1,7 @@
 # 22 — Native build: status & pause (2026-09-09)
 
 *We are pausing the Windows-native target here to enrich the single browser 3D
-project (devroom) with a real the reference action game map, so features get tested against real
+project (devroom) with a real map from the reference action game, so features get tested against real
 content. This is the state of the native build at the pause, how to drive it,
 what's deliberately reduced, and the ordered list to pick up when we return.*
 
@@ -18,10 +18,10 @@ Over this session the native player (Win32 + D3D11 + QuickJS + miniaudio, built 
 each verified with a headless screenshot:
 
 - **Bone physics** ("kawaii") — the browser's `bonephys.js`, driven natively; the
-  Commander's sash/veil/dress hang under gravity (`f3b3539`).
+  Officer's sash/veil/dress hang under gravity (`f3b3539`).
 - **NPC interaction + dialogue** — restored after a deep-proxy audit; the critical
   bug was `world.find` resolving to the truthy proxy, which killed *every*
-  `element.find()`. Talk to the companion character → FF-style box, arrow/WASD/pad nav (`eef47a6`).
+  `element.find()`. Talk to the companion character → JRPG-style box, arrow/WASD/pad nav (`eef47a6`).
 - **Industry-standard saves** — the real `save.js`/`settings.js` run natively;
   atomic durable slot files (temp→flush→rename + `.bak`) + a file-backed
   `localStorage`; load-from-disk ~0.2 ms, survives restarts (`7107d4a`).
@@ -82,9 +82,9 @@ without a human at the keyboard):
 | `--savetest <write\|read\|full>` | exercise the save system (cross-process durability), then exit |
 | `--spawntest <ElementName>` | clone a model element at runtime (proves rescan tick+draw) |
 | `--fxtest <kind>` | spawn a looping particle emitter (flame/smoke/explosion) |
-| `--fxbonetest` | anchor a looping flame to the Commander's head bone |
+| `--fxbonetest` | anchor a looping flame to the Officer's head bone |
 | `--gotoscene` | synthesize a 2nd scene at runtime and switch (then toggles, to stress teardown) |
-| `--scattertest` | make the Commander a scatter archetype (a ring of instanced copies) |
+| `--scattertest` | make the Officer a scatter archetype (a ring of instanced copies) |
 | `--testaudio` | play a looping sound (verify the audio device) |
 
 The C++ harness silences per-tick `console.error` but now **dedupes + dumps unique
@@ -133,7 +133,7 @@ None of these block a shippable 3D game; they're polish + reach.
 The native runtime now exercises every engine subsystem, but it's been proven
 against the **devroom test scene** (a white void with a handful of characters). The
 next leverage is *content*: enrich the single browser 3D project with a real,
-stripped-down the reference action game map (a city-ruins ground tile + a few props) so the whole
+stripped-down the reference action game map (a city-tile ground tile + a few props) so the whole
 feature set — locomotion, camera, dialogue, FX, scatter, saves, PBR — is tested
 against a real environment. That work happens in the **browser build** (rebuilt to
 browser each iteration); the native target inherits it for free through the shared

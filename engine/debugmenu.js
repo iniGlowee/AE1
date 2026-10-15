@@ -1,5 +1,5 @@
 /**
- * AE1 — DebugMenu (§18.56): the the reference action game-style debug flag wall.
+ * AE1 — DebugMenu (§18.56): the reference action game-style debug flag wall.
  *
  * Hold SELECT+START on a pad — or hit ` / ~ on the keyboard — and the game
  * freezes AT THAT FRAME: the loop stops dispatching ticks (a hard pause,

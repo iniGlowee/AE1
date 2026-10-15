@@ -1,6 +1,6 @@
 <?dat
 ; THE DOOR THAT APPEARS (Playtest 1, Level 2): invisible until both duel
-; stubbies are dead, then it simply IS there — and E leads to the gauntlet.
+; runts are dead, then it simply IS there — and E leads to the gauntlet.
 (pickable false)
 (hasPhysics false)
 ?>
@@ -18,8 +18,8 @@ function setup() {
 
 function check(dt) {
   if (this.revealed) return;
-  const g = this.find("GreenStubby");
-  const r = this.find("RedStubby");
+  const g = this.find("GreenRunt");
+  const r = this.find("RedRunt");
   if (g && r && g._dead && r._dead) {
     this.revealed = true;
     this.visible = true;

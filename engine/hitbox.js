@@ -83,7 +83,7 @@ export class AE1Hitbox extends AE1Element {
     const radius = Math.max(...cross) / 2;
     // How far BELOW this element's own origin the geometry's lowest point
     // sits — the number gravity actually needs. A prop's origin is wherever
-    // it was authored (the type-3 fist's is `RarmAxis`, a grip marker deep
+    // it was authored (the fist pair's is `RarmAxis`, a grip marker deep
     // inside the mesh, not its base), so resting the ORIGIN on the ground ray
     // buried everything below it in the floor (Austin's screenshot).
     const bottomOffset = (this.y ?? 0) - b.min.y;

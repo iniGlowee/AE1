@@ -1,5 +1,5 @@
 <?dat
-; THE FISHING SPOT (§18.49): E at the pier's end starts the the reference action game fishing
+; THE FISHING SPOT (§18.49): E at the pier's end starts the reference action game fishing
 ; loop on the real extracted animations — enter (e0cb), cast (e0cc), the
 ; long waiting cycle (e0cd), and the rise (e0ce). A roll decides the bite:
 ; nothing = she recasts; a CATCH = the koi surfaces at her focus point and

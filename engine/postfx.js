@@ -9,7 +9,7 @@
  * camera → character distance (the same focal the aim system uses — chest
  * height, the thing you're looking at) and eases `_focusDist` toward it at
  * `dofFocusLag` — the CinematicDOF "AutoFocusTransitionSpeed" feel from
- * Austin's own the reference action game ReShade preset. Rack-focus moments (lock-on swings,
+ * Austin's own ReShade preset for the reference action game. Rack-focus moments (lock-on swings,
  * scene entries) glide instead of popping. `(dofFocusDist)` > 0 pins manual
  * focus instead.
  */

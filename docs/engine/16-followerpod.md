@@ -1,7 +1,7 @@
 # 16 — The Follower Pod (§18.55)
 
-The floating companion: the reference action game's pod, here wearing the Grimoire
-Weiss DLC book skin, hovering at the character's shoulder. Stellar Blade's
+The floating companion: the reference action game's pod, here wearing the book skin
+the DLC book skin, hovering at the character's shoulder. Another recent action game's
 drone is the same creature. One new base element carries the whole system.
 
 ## The element: `FollowerPod`
@@ -12,7 +12,7 @@ script exactly like `Aircraft`:
 ```
 <?def
 (extends FollowerPod)
-(name "GrimoirePod")
+(name "BookPod")
 ags?>
 ```
 
@@ -26,7 +26,7 @@ Design rules, in the engine's usual shape:
   pod skins share the <asset> pod SKELETON, so the companion pod plays real
   pod motions with no retargeting (`Idle` = the 0000 hover, `Fire` = the
   0010 fire cycle, `Special` = the <asset> flourish).
-- **Flight-unit rule** (Austin's spec): the pod vanishes while its host
+- **Flight-craft rule** (Austin's spec): the pod vanishes while its host
   pilots an Aircraft and reappears on dismount. The engine reads
   `host._pilotCraft` — the truth the aircraft already maintains — so no
   aircraft wiring exists at all. `(hideWhenPiloted false)` opts out.
@@ -38,7 +38,7 @@ Design rules, in the engine's usual shape:
   camera's aim point.
 - **The special** is a charged shot on a cooldown: a heavy slow bolt
   that detonates into a FRIENDLY AoeWave (§18.44, `_friendly` mode — the
-  flight unit AOE's sibling), so a sidestepping target still eats the
+  flight craft AOE's sibling), so a sidestepping target still eats the
   splash. Kills credit the host — combat-feel hooks (slow-mo, rumble)
   fire there. `podSpecial` remains as an OPTIONAL dedicated extra button
   (empty by default).
@@ -85,13 +85,13 @@ damage)`.
 - `bake_enemy_glb.py` bakes the book + curated clips (no retarget — the
   skins share the pod skeleton). New flag: `--emissive-lift 0.4` feeds
   each material's own base-color texture into its emission — companion
-  props rendered as silhouettes under the night City Ruins without it.
+  props rendered as silhouettes under the night city tiles without it.
 - `pod_bolt.glb` is FORGED (a Blender-generated emissive dart, the
   clipforge doctrine) — pale gold, spun on Y in flight by the element.
 
 ## Verified (pod1, real inputs)
 
-Follow + idle bob at the shoulder; a held Q burst took a 60 hp stubby to
+Follow + idle bob at the shoulder; a held Q burst took a 60 hp runt to
 0; the C special one-shot another (heavy bolt + wave); E into the flight
 unit hid the pod, E out brought it back; every bolt cleaned up after
 itself.

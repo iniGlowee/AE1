@@ -2919,7 +2919,7 @@ function checkBufferGeometryIntersection( ray, position, normal, uv, uv1, a, b, 
 
 			intersection.normal = Triangle.getInterpolation( _intersectionPoint, _vA, _vB, _vC, _normalA, _normalB, _normalC, new Vector3() );
 			// AE1 LOCAL PATCH: three r166+ getInterpolation returns null for a
-			// DEGENERATE (zero-area) triangle — the NieR map meshes contain
+			// DEGENERATE (zero-area) triangle — large ripped map meshes contain
 			// some, and the unguarded .dot crashed every enemy ground probe
 			// that grazed one. Fall back to the face normal computed below.
 			if ( intersection.normal && intersection.normal.dot( ray.direction ) > 0 ) {

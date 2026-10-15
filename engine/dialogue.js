@@ -10,8 +10,8 @@
  *
  * That is the same division that made SaveHandler work (DESIGN.md §16.3): the
  * engine owns the structure, the moment, and the ordering; the author owns the
- * contents. A delegate knows what Cartman says and nothing about pixels; a box
- * knows about pixels and nothing about Cartman.
+ * contents. A delegate knows what Bram says and nothing about pixels; a box
+ * knows about pixels and nothing about Bram.
  *
  * WHY THE BOX IS ELEMENTS AND NOT A DOM OVERLAY
  *
@@ -39,7 +39,7 @@ import { AE1Button } from './button.js';
  *
  *   (dialogue
  *     (start (text "Hey.") (choice "Who are you?" who))
- *     (who   (text "Cartman.") (does bragging) (goto start)))
+ *     (who   (text "Bram.") (does bragging) (goto start)))
  *
  * The reader already produces this — nested lists of primitives — which is the
  * whole reason the declarative sections are LISP (DESIGN.md §6.1): a new form
@@ -307,7 +307,7 @@ defineDatAccessors(AE1DialogueBox);
 /**
  * `AE1DialogueDelegate` — an element that can hold a conversation.
  *
- * The tree lives in this element's dat, so Cartman's dialogue is Cartman's. It is
+ * The tree lives in this element's dat, so Bram's dialogue is Bram's. It is
  * never persisted: `serialize()` writes only dat that DIFFERS from the declared
  * default (DESIGN.md §5), and a tree is a declaration, not state — so it stays in
  * the .ags.txt where an author (or a modder) can read and edit it.

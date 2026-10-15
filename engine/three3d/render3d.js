@@ -19,12 +19,12 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 // §18.53 phase 3b: BVH-accelerated raycasts (three-mesh-bvh, vendored).
-// three has NO ray acceleration — a ground probe against the City Ruins'
+// three has NO ray acceleration — a ground probe against the city tiles'
 // megameshes was 3 ms PER CALL (per-triangle tests), and every character
 // fires several per tick: three chasing enemies alone ate the frame budget.
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three/addons/utils/three-mesh-bvh.module.js';
 // §18.66: the Kawaii-style secondary-bone pass (ponytails, sashes, the
-// Commander's sword) — runs after the mixers, before the render.
+// Officer's sword) — runs after the mixers, before the render.
 import { createBonePhys } from './bonephys.js';
 
 // Opt-in per geometry: acceleratedRaycast uses the BVH only where a
@@ -58,7 +58,7 @@ export function conditionGltf(root, maxAniso = 8) {
       }
       // §18.97 HAIR = ALPHA BLEND WITH DEPTH. The long history: §18.84 hashed
       // hair (soft, but "staticy" dither); §18.86 switched authored-MASK hair
-      // to a hard cutout (crisp, but this the reference action game head's soft feathered alpha
+      // to a hard cutout (crisp, but this authored head's soft feathered alpha
       // punches HOLES through the strands at any threshold — Austin: "spotty,
       // holes", and it survives even uncompressed PNG). Blending is the
       // answer neither earlier pass used: `transparent` renders the soft
@@ -265,7 +265,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
       // ground slides under them — Austin's "scan lines strobbing on every
       // texture." So a big-footprint mesh starts with its BASE material (never
       // dithers by default). But it STILL gets a twin, so an element that opts in
-      // (`nearFade true`) can fade a big spread-out OCCLUDER — the the reference MMO town's
+      // (`nearFade true`) can fade a big spread-out OCCLUDER — the reference MMO town's
       // per-material meshes each span the whole map yet are walls, not floor, and
       // must dither out when the camera backs into them. Geometry bounds are the
       // glb's authored metres (terrain ships 1:1), before element scale.
@@ -303,7 +303,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     // exists to keep visible, and it lives closer to the camera than any
     // wall — the band would shave it.
     const mounted = !!el.components?.model?.mount?.host;
-    // Tri-state: an EXPLICIT nearFade wins (a spread-out occluder like the the reference MMO
+    // Tri-state: an EXPLICIT nearFade wins (a spread-out occluder like the reference MMO
     // town sets it true to dither near the camera; a floor sets it false). With
     // nothing set, the DEFAULT is per-mesh — small meshes fade, big-footprint
     // (floor-scale) meshes don't — so existing projects are unchanged and grounds
@@ -614,7 +614,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
         const light = !(el.lightScene === false || el.lightScene === 'false');
         // §18.67: the LIGHTING copy is PMREM-prefiltered. The raw equirect
         // has no roughness mips, so metals sampled the sharp texel grid and
-        // glittered angle-dependently in motion (the flight unit's strobing
+        // glittered angle-dependently in motion (the flight craft's strobing
         // panels). PMREM builds the blurred mip chain PBR expects —
         // reflections go smooth and uniform; the BACKDROP keeps the raw
         // sharp texture (that crispness is wanted there).
@@ -1609,7 +1609,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
   // §18.46 PER-INSTANCE ANIMATION — the instancing round's renderer half.
   // A clone-bound element may drive clips of its OWN: a mixer rooted at ITS
   // clone binds the SHARED glb's clips by node name (cloneWithSkeleton
-  // preserves names), so twenty stubbies play twenty timelines over ONE
+  // preserves names), so twenty runts play twenty timelines over ONE
   // loaded glb — one download, shared geometry and materials, per-instance
   // state. OPT-IN by an explicitly set clip: an unset clip on a clone stays
   // the static snapshot it always was (projectile rounds, carried-item
@@ -2114,7 +2114,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     }
     // §the reference MMO render — element-declared CLIP RANGE. frameCamera's radius-scaled
     // near/far (0.08 / 1600 on a 1.6 m character = ~20,000:1) leaves almost no
-    // depth precision, so dense coplanar tile geometry (RS walls/decor stacked
+    // depth precision, so dense coplanar tile geometry (the reference MMO's walls/decor stacked
     // on the ground) z-fights and flickers. A tight far plane restores it.
     const nearP = Number(el.nearPlane) || 0, farP = Number(el.farPlane) || 0;
     if (nearP > 0 && farP > nearP && (camera.near !== nearP || camera.far !== farP)) {
@@ -2284,7 +2284,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
    * Is something DIRECTLY OVERHEAD? (§element-graph roof-removal.) Cast a ray
    * straight up from a world point and return the nearest NAMED node it hits, or
    * null for open sky. The ElementGraph asks this at the player's feet each tick:
-   * a "roof" node overhead → hide the roofs (classic RS steps-inside behaviour).
+   * a "roof" node overhead → hide the roofs (the classic steps-inside behaviour of the reference MMO).
    */
   function rayUp(x, y, z, maxDist = 40, exclude = null) {
     if (buildsInFlight > 0) return null;
@@ -2308,7 +2308,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
    * (at the character) toward the ideal camera position; return the free
    * distance to the first static hit, or null when the path is clear. The
    * third-person camera pulls its boom in to this distance so it never clips
-   * through a wall/roof — the the reference MMO "camera zooms in when blocked" feel.
+   * through a wall/roof — the reference MMO "camera zooms in when blocked" feel.
    * `exclude` is the character's own object (the ray starts inside it).
    */
   function cameraClip(lx, ly, lz, cx, cy, cz, exclude = null) {
@@ -2818,7 +2818,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
 
   // DISTANCE CULLING (§18.53 phase 2): any element with `(cullDistance N)`
   // in its dat hides its bound object when the CAMERA is farther than N
-  // from the element — the nine-tile City Ruins only ever shows a few
+  // from the element — the nine-tile city tiles only ever shows a few
   // tiles' worth of geometry. 1 Hz is plenty at flight speeds; hidden
   // means pruned from ground rays too, so pick N well past gameplay range.
   // PHASE 3 LOD PAIRS: `cullDistanceMin M` hides the object when the camera
@@ -2855,7 +2855,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
     sweepLodPairs();
   }
 
-  // PER-MESH LOD (§18.53 phase 3). The City Ruins chunks are NOT a spatial
+  // PER-MESH LOD (§18.53 phase 3). The city tiles chunks are NOT a spatial
   // grid — all nine overlap one ~±150 m area, so element-level distance
   // swapping can never separate near from far. Instead a full-detail element
   // names its decimated twin in the model bag (`lodPair` + `lodDistance D`),
@@ -2864,7 +2864,7 @@ export function createRenderer3D(canvas, { elements, loadGlb, mediaUrl = null, f
   // unjoined from the same blends, so meshes pair by name + occurrence.
   // Verdicts land on mesh.userData.ae1LodHidden — applyParts re-asserts
   // every mesh's visibility each frame and folds that flag in.
-  // FLIGHT LOD (setLodFar): measured on the City Ruins, the whole ~9 ms
+  // FLIGHT LOD (setLodFar): measured on the city tiles, the whole ~9 ms
   // tile bill lives in the giant meshes the camera is always inside of —
   // honest distance LOD can't touch them, but decimating EVERYTHING cut
   // 22 ms to 13 ms. The aircraft flips this on for flight mode, where

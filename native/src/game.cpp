@@ -690,7 +690,7 @@ globalThis.__rigWorldsArr = (elId) => {
 };
 
 // ---- bone physics (the browser's real bonephys.js, driven natively) ----
-// glTF-anim NPCs (e.g. the Commander's sword sash) carry a components.model.
+// glTF-anim NPCs (e.g. the Officer's sword sash) carry a components.model.
 // bonePhys config but are skinned in C++ with no JS graph. Here we give them a
 // JS bone graph, pose its LOCAL TRS from the native clip sample (__bonePhysStep
 // gets it as a Float64Array), run the verlet spring sim, and the native side
@@ -793,15 +793,15 @@ globalThis.__scatterElements = () => {
   }
   return rows.join('\n');
 };
-// Debug (--scattertest): make the Commander a scatter archetype — a ring of
+// Debug (--scattertest): make the Officer a scatter archetype — a ring of
 // render copies around her, to prove the native instancing path.
 globalThis.__addScatterTest = () => {
-  const c = scene.all().find(e => e.name === 'Commander'); if (!c) return 'no Commander';
+  const c = scene.all().find(e => e.name === 'Officer'); if (!c) return 'no Officer';
   const rows = [];
   for (let i = 0; i < 16; i++) { const a = i/16*Math.PI*2;
     rows.push([Math.cos(a)*3.2, 0, Math.sin(a)*3.2 - 3, i*23, 0.55]); }
   c.spawns = rows; c.spawnList = () => rows; c.spawnSnap = false;
-  return 'scattered ' + rows.length + ' copies around the Commander';
+  return 'scattered ' + rows.length + ' copies around the Officer';
 };
 // Multi-scene: the native renderer watches __sceneEpoch and, on change, rebuilds
 // its per-scene visuals (lighting, skybox, ground, camera, ids); the instances
@@ -810,7 +810,7 @@ globalThis.__sceneEpoch = 0;
 globalThis.__sceneEpochGet = () => globalThis.__sceneEpoch | 0;
 globalThis.__sceneFileKey = () => String(base.sceneFile || '');
 // Debug (--gotoscene): synthesize a small second scene at runtime (no re-export)
-// — Skybox (brighter) + SunLight + the Commander moved — and register it so
+// — Skybox (brighter) + SunLight + the Officer moved — and register it so
 // goToScene has a real target to switch to.
 globalThis.__addTestScene = () => {
   const src = data.scenes[__entryScene()];
@@ -820,9 +820,9 @@ globalThis.__addTestScene = () => {
   const add = (e, nid) => { if (!e) return; e.id = nid; e.parent = null; els[nid] = e; };
   add(pick('Skybox'), 's2-sky');
   add(pick('SunLight'), 's2-sun');
-  const cmd = pick('Commander'); if (cmd) { cmd.x = 0; cmd.y = 0.2; cmd.z = -2; add(cmd, 's2-cmd'); }
+  const cmd = pick('Officer'); if (cmd) { cmd.x = 0; cmd.y = 0.2; cmd.z = -2; add(cmd, 's2-cmd'); }
   if (els['s2-sky']) els['s2-sky'].skyOpacity = 0.8;
-  data.scenes['scene-test.json'] = { name: 'Bunker Hangar', elements: els };
+  data.scenes['scene-test.json'] = { name: 'Station Hangar', elements: els };
   return 'scene-test.json';
 };
 globalThis.__gotoTestScene = () => {
@@ -903,8 +903,8 @@ globalThis.__saveSelfTest = (mode) => {
   mode = String(mode || 'full');
   const out = { mode };
   if (mode === 'write' || mode === 'full') {
-    world.saveData = { chapter: 7, checkpoint: 'bunker-uplink', pos: [3, 0.2, -3],
-                       flags: { metNines: true, sashFixed: true }, note: 'beast save' };
+    world.saveData = { chapter: 7, checkpoint: 'station-uplink', pos: [3, 0.2, -3],
+                       flags: { metCompanion: true, sashFixed: true }, note: 'beast save' };
     out.write = base.saveToSlot('demo', { playtimeSec: 123 });
     out.list  = base.listSaves();
     base.setSetting('musicVolume', 0.33);        // settings are separate from saves
@@ -952,12 +952,12 @@ globalThis.__fxTest = (kind) => {
   if (world.loop && world.loop.rescan) world.loop.rescan();
   return 'fx emitter spawned kind=' + (kind||'flame') + ' at (0,0.6,2)';
 };
-// Debug (--fxbonetest): anchor a looping flame to a BONE of the Commander (her
+// Debug (--fxbonetest): anchor a looping flame to a BONE of the Officer (her
 // highest bone — head) to prove host-node/bone anchoring (the flame rides the
 // bone, not the element origin).
 globalThis.__addFxBoneTest = () => {
-  const c = scene.all().find(e => e.name === 'Commander'); if (!c) return 'no Commander';
-  const g = env3d.objectFor(c); if (!g || !g.__nodes) return 'no rig graph for Commander (bonephys not stepped yet?)';
+  const c = scene.all().find(e => e.name === 'Officer'); if (!c) return 'no Officer';
+  const g = env3d.objectFor(c); if (!g || !g.__nodes) return 'no rig graph for Officer (bonephys not stepped yet?)';
   g.updateMatrixWorld(true);
   let best = null, bestY = -1e9;
   for (const n of g.__nodes) { const wp = n.getWorldPosition(new THREE.Vector3()); if (wp.y > bestY) { bestY = wp.y; best = n; } }
@@ -969,7 +969,7 @@ globalThis.__addFxBoneTest = () => {
   el.setComponent('fx', 'host', c.name); el.setComponent('fx', 'node', best.name);
   el.setComponent('fx', 'scale', 1.4);
   if (world.loop && world.loop.rescan) world.loop.rescan();
-  return 'fx on Commander bone "' + best.name + '" (localY=' + bestY.toFixed(2) + ')';
+  return 'fx on Officer bone "' + best.name + '" (localY=' + bestY.toFixed(2) + ')';
 };
 // The DialogueUI's current state, or null: { speaker, text, options:[label...], sel }.
 // The DialogueUI element runs natively (its DOM render no-ops), so _dlg is live.
@@ -1807,8 +1807,8 @@ int main(int argc, char** argv) {
         else if (a == "--spawntest" && i+1 < argc) spawnName = argv[++i]; // debug: clone this element at runtime
         else if (a == "--fxtest" && i+1 < argc) fxTestKind = argv[++i];    // debug: spawn a looping particle emitter
         else if (a == "--gotoscene") gotoTest = true;                     // debug: synthesize + switch to a 2nd scene
-        else if (a == "--scattertest") scatterTest = true;                // debug: scatter copies around the Commander
-        else if (a == "--fxbonetest") fxBoneTest = true;                  // debug: bone-anchored FX on the Commander
+        else if (a == "--scattertest") scatterTest = true;                // debug: scatter copies around the Officer
+        else if (a == "--fxbonetest") fxBoneTest = true;                  // debug: bone-anchored FX on the Officer
         else if (a == "--savetest" && i+1 < argc) {                     // debug: exercise the save system, then exit
             std::string mode = argv[++i];
             double t0 = plat.now();
@@ -2020,7 +2020,7 @@ int main(int argc, char** argv) {
             Mat4 model = elemModelLH(v);   // element's LIVE transform, read from JS
             Mat4 drawModel = model;
             if (inst.rig) {
-                // Latch bone-physics NPCs (e.g. the Commander's sword sash): a
+                // Latch bone-physics NPCs (e.g. the Officer's sword sash): a
                 // glTF-anim rig that also carries a components.model.bonePhys.
                 // These route through a JS bone graph running the browser's real
                 // verlet sim — checked BEFORE the MM readback, because once the
@@ -2311,14 +2311,14 @@ int main(int argc, char** argv) {
             fxTested = true;
         }
 
-        // --fxbonetest: anchor a looping flame to a bone of the Commander.
+        // --fxbonetest: anchor a looping flame to a bone of the Officer.
         if (fxBoneTest && !fxBoned && jsCallStr(host.ctx(), "__mmAllReady") == "true"
             && plat.now() >= (shotAt > 3 ? shotAt - 3 : shotAt * 0.5)) {
             std::printf("--fxbonetest: %s\n", jsCallStr(host.ctx(), "__addFxBoneTest").c_str());
             fxBoned = true;
         }
 
-        // --scattertest: make the Commander a scatter archetype (a ring of copies).
+        // --scattertest: make the Officer a scatter archetype (a ring of copies).
         if (scatterTest && !scattered && jsCallStr(host.ctx(), "__mmAllReady") == "true"
             && plat.now() >= (shotAt > 3 ? shotAt - 3 : shotAt * 0.5)) {
             std::printf("--scattertest: %s\n", jsCallStr(host.ctx(), "__addScatterTest").c_str());

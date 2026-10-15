@@ -1,6 +1,6 @@
 /**
  * AE1 — MouseCursor: a custom mouse pointer shown the whole time the player is
- * hovering the game window (the the reference MMO gold pointer, say).
+ * hovering the game window (the reference MMO gold pointer, say).
  *
  * `(extends MouseCursor)` swaps the OS arrow for a custom image over the game
  * canvas — drawn by the browser itself via the CSS `cursor` property, so it
@@ -15,7 +15,7 @@
  */
 import { AE1Element, defineDatAccessors } from './element.js';
 
-// Built-in default: a the reference MMO-style gold arrow pointer whose TIP sits at image
+// Built-in default: a reference MMO-style gold arrow pointer whose TIP sits at image
 // pixel (2,2) — the default hotspot below matches it, so the tip is exactly where
 // clicks register. (A custom `image` sets its own hotspotX/Y.)
 const DEFAULT_CURSOR =

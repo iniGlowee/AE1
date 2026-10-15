@@ -29,3 +29,7 @@ AI coding assistants. Contributions of every size are welcome, at your own pace.
 
 By contributing you agree your contribution is licensed under the repository's MIT
 license.
+
+## Cutting a release
+
+An alpha sync goes **version change first, tag second**: a tag that asserts a version must point at a commit where the assertion is true. Move `ENGINE_VERSION` in `server.py` (it lands in `/api/status`, the `Server` header and every project file's `engineVersion`), add the CHANGELOG entry for what the tag will carry, commit, and only then cut the annotated tag on that commit and push the tag. A tag cut first and "fixed" by later commits names a release that does not contain its own version — v0.2.0-alpha was cut that way, which is why v0.2.1-alpha exists. Existing tags are never moved or deleted.

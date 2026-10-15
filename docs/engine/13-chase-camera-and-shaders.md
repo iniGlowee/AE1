@@ -1,18 +1,18 @@
-# 13. The Fox Camera & the Shader Layer
+# 13. The Chase Camera & the Shader Layer
 
-*(DESIGN.md §18.47 — the MGSV-feel round. Research base: the Fox Engine
-camera is parameterized as a REAL LENS — extracted TPP Lua shows 16–35 mm
+*(DESIGN.md §18.47 — the stealth-game-feel round. Research base: the reference stealth game's
+camera is parameterized as a REAL LENS — its extracted camera scripts show 16–35 mm
 focal lengths at f/1.875 — with raw input rotation over damped position
 chase, and a 3-octave handheld sway gated by the game's own Camera Shake
-toggle. Post stack per Courrèges' MGSV frame study; DOF triggers per
-NVIDIA's guide. The environment pipeline rides along: real the reference action game ground under
+toggle. Post stack per Courrèges' frame study of the reference stealth game; DOF triggers per
+NVIDIA's guide. The environment pipeline rides along: real ground from the reference action game under
 all of it.)*
 
-## The Fox camera (`AE1ThirdPersonCamera`, §18.47)
+## The chase camera (`AE1ThirdPersonCamera`, §18.47)
 
 Three principles from the research, kept exactly:
 
-1. **Never smooth the stick.** `_yaw`/`_pitch` stay raw input — MGSV's
+1. **Never smooth the stick.** `_yaw`/`_pitch` stay raw input — the reference stealth game's
    low-latency feel — and every consumer (mouse-steer, lock-on, aim math,
    billboards) keeps reading them clean.
 2. **Smooth the POSITION.** The camera chases its ideal spherical spot
@@ -26,7 +26,7 @@ Three principles from the research, kept exactly:
    octave only sprint wakes) rides the final rotation fields — pitch, yaw,
    and the new camera ROLL — scaled from `swayIdle 0.15°` (barely-alive
    breathing) to `swaySprint 1.6°` (the documentary chase). `(handheld 0)`
-   is MGSV's own Camera Shake toggle: the old rigid camera, exactly.
+   is the reference stealth game's own Camera Shake toggle: the old rigid camera, exactly.
 
 The lens: `fovBase 48` (the 28 mm feel), `fovSprintAdd 4` — speed reads
 from lag + sway, NOT a fisheye kick. Framing: `shoulder 0.25` slides the
@@ -47,7 +47,7 @@ uber-pass composites to screen. No element → the plain path, byte-for-byte;
 targets allocate lazily; a 1 Hz scan notices the element appearing or
 leaving mid-play.
 
-The pass, modeled on Austin's own the reference action game ReShade stack (CinematicDOF + film
+The pass, modeled on Austin's own ReShade stack for the reference action game (CinematicDOF + film
 grain + Prism CA + grade):
 
 - **Cinematic DOF**: per-pixel circle-of-confusion from |viewZ − focus|,
@@ -63,7 +63,7 @@ grain + Prism CA + grade):
 Dats on the element (see `postfx.ags.txt` — a two-line `(extends PostFX)`
 script, the Skybox pattern): `dofEnabled/dofAperture/dofMaxBlur/
 dofFocusLag/dofFocusDist/grainAmount/vignette/caAmount`. Phase 2 queue
-(ROADMAP): bloom, Fox's soft-shoulder tone curve, LUT slot, motion blur,
+(ROADMAP): bloom, the reference stealth game's soft-shoulder tone curve, LUT slot, motion blur,
 lens dirt.
 
 ## The environment pipeline (§18.47)
@@ -73,7 +73,7 @@ CPK → museum .blend (`bulk_import_models.py`, which already handled
 wd/ba/bg formats) → **`export_static_glb.py`** (LOD/shadow/collision strip,
 single named root, dds→png, `--upload` straight into a project). First
 asset shipped: the **flooded-city colosseum** (`g5a900`, 949 meshes,
-237 MB) — the foxcam project's ground.
+237 MB) — the camtest project's ground.
 
 Traps paid for:
 
@@ -108,7 +108,7 @@ render3d — created on sight, retyped live on `lightType` change, swept with
 the element): the element owns position + dat state, the renderer owns GPU
 objects. **That seam is the generalization hook** — shadows, light probes,
 and whatever a future Windows GPU build wants (the someday-ray-tracing
-conversation) plug in behind it without touching elements. Foxcam's
+conversation) plug in behind it without touching elements. Camtest's
 `sun.ags.txt` is the reference; a lamp prop is the same script with
 `(lightType "point")(distance 12)` parented near a mesh.
 
@@ -116,11 +116,11 @@ Trap paid for (again): the follow height dat was born `height` — a BASE
 SCHEMA field (invariant 17) — and the sun hovered at 0.5 m. It is
 `lightHeight`.
 
-## The foxcam project
+## The camtest project
 
-`projects/foxcam` — the camera/shader testbed: the player character + the Fox camera +
-ScenePostFX on the colosseum arena, bracers ahead of spawn, one stubby.
+`projects/camtest` — the camera/shader testbed: the player character + the chase camera +
+ScenePostFX on the colosseum arena, bracers ahead of spawn, one runt.
 Verified: idle micro-sway alive at ±0.05° roll, sprint energy 0→1 with the
 48→52 FOV ease and the trailing chase, clean settle, DOF focus gliding
 3.6 m → 7.2 m with the sprint pull-back, and the full combat loop (aggro,
-hits, kill) on real the reference action game ground.
+hits, kill) on real ground from the reference action game.

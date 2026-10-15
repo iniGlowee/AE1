@@ -171,7 +171,7 @@ export class AE1TileMover extends AE1ThirdPersonCharacter {
     const input = this.world?.input3d;
     if (input && !input.cursorMode) input.cursorMode = true;
 
-    // 1) INTENT — turn clicks into a route. But first, the RS LEFT-CLICK rule:
+    // 1) INTENT — turn clicks into a route. But first, the reference MMO's LEFT-CLICK rule:
     // if the click landed on something with a DEFAULT ACTION (a door to open,
     // say), do that instead of walking. A duck-typed handler (the ElementGraph)
     // decides via tryPrimary; only clicks it declines fall through to movement.

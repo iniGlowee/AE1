@@ -67,7 +67,7 @@ Four consequences, each a real bug avoided:
 ### Clicking a character did nothing
 
 **What happened:** `runInfo` didn't inherit. `dat` merged down the chain; scheduling didn't. A
-`Cartman` that `(extends Kid)` and defines no methods had an **empty** runInfo — nothing
+`Bram` that `(extends Kid)` and defines no methods had an **empty** runInfo — nothing
 registered for `onClick`.
 
 Class correct. Methods present. Compile clean. Never called.

@@ -430,7 +430,7 @@ export class AE1Element {
   }
 
   /** INSTANCING (§18.46) — spawn a live copy of a prototype element with
-   *  overrides: `this.spawnInstance("StubbyProto", {x: 4, z: -2, health: 30})`.
+   *  overrides: `this.spawnInstance("RuntProto", {x: 4, z: -2, health: 30})`.
    *  Returns the new element (or null). `instancesOf(name)` queries every
    *  live instance spawned from that prototype. `setTint("#40ff90")` colors
    *  THIS element's textures without touching any other instance's. */
@@ -458,7 +458,7 @@ export class AE1Element {
   }
 
   /**
-   * Play a one-shot. Takes a media NAME ("cartman-hey.mp3") because that is what
+   * Play a one-shot. Takes a media NAME ("bram-hey.mp3") because that is what
    * an author sees in the Media Collection; hashes are an implementation detail
    * they should never have to type.
    */
@@ -565,7 +565,7 @@ export class AE1Element {
    * The game's open save bag. Anything you put here goes into the save file.
    *
    *   this.saveData.chapter = 2;
-   *   if (this.saveData.metCartman) { … }
+   *   if (this.saveData.metBram) { … }
    *
    * The engine never looks inside it. That is the point: what a save MEANS is the
    * author's business, and the format is an envelope around this.

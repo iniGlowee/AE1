@@ -1,12 +1,12 @@
 <?dat
-; THE MEDIUM BIPED (§18.40): em0010, the lanky humanoid machine — the second
+; THE MEDIUM BIPED (§18.40): <asset>, the lanky humanoid machine — the second
 ; enemy species, and proof the pipeline is now one bake command
-; (bake_enemy_glb.py, 12 clips from em001f.dat, native 64-bone skeleton).
+; (bake_enemy_glb.py, 12 clips from <asset>.dat, native 64-bone skeleton).
 ;
-; The TANK next to the stubby's skirmisher: more than twice the health,
+; The TANK next to the runt's skirmisher: more than twice the health,
 ; half the sting — slow, committed swings you can see coming. HOSTILE ON
 ; SIGHT (friendlyUntilAttacked false), so the room holds one of each
-; temperament: the biped comes at you, the stubby holds his grudge policy.
+; temperament: the biped comes at you, the runt holds his grudge policy.
 (health 150)
 (aiType "melee")
 (friendlyUntilAttacked false)

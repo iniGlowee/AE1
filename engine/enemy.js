@@ -186,7 +186,7 @@ export class AE1Enemy extends AE1NPC {
     else this.setComponent('model', 'clip', '__bind__');
   }
 
-  /** FLIERS (§18.44): `(hoverHeight 2)` floats the ground snap — the em0030
+  /** FLIERS (§18.44): `(hoverHeight 2)` floats the ground snap — the <asset>
    *  small flyer's whole locomotion is the same wander/chase brain at
    *  altitude. Death drops the hover: the machine falls out of the sky. */
   _groundSnap(dt) {
@@ -243,7 +243,7 @@ export class AE1Enemy extends AE1NPC {
   }
 
   /** RANGED (§18.44): one round toward the player's center as of the shot —
-   *  straight flight, the the reference action game orb convention. Spawned live; game3d's
+   *  straight flight, the reference action game orb convention. Spawned live; game3d's
    *  element-count rebuild loads the glb. */
   _spawnRound(p) {
     const scn = this.world?.scene;

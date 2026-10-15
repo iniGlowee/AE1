@@ -2,19 +2,19 @@
  * AE1 — FollowerPod (§18.55): the floating companion. the reference game's pod — here
  * wearing the companion pod — hovers at the host character's shoulder, bobs,
  * lags behind movement on a spring, faces where the camera faces, and
- * shoots on its own button. Stellar Blade's drone is the same creature.
+ * shoots on its own button. another recent action game's drone is the same creature.
  *
  * Design rules, in the engine's usual shape:
  *
  *  - The pod is its OWN element with its own model + clips (Idle/Fire/
- *    Special baked from the game's wp3000 pod motion set — the DLC skins
- *    share the pod skeleton, so Weiss plays pod motions unretargeted).
+ *    Special baked from the game's <asset> pod motion set — the DLC skins
+ *    share the pod skeleton, so the book skin plays pod motions unretargeted).
  *  - The HOST stays the root of truth: the pod reads the host's position
  *    and the camera's yaw every tick and chases a camera-relative shoulder
  *    offset. It never pushes back. `host` dat names the element; empty
  *    auto-finds the player (the inventory-bearing character).
  *  - AIRCRAFT INTEGRATION (Austin's rule): a pod vanishes while its host
- *    pilots a flight unit. `host._pilotCraft` is the truth the aircraft
+ *    pilots a flight craft. `host._pilotCraft` is the truth the aircraft
  *    already maintains — set on board, cleared on dismount — so the pod
  *    needs no wiring into aircraft.js at all.
  *  - FIRE is a held button (`podFire` dat, keyboard + pad tokens like every
@@ -22,7 +22,7 @@
  *    when the host has one, else at the camera's aim point. SPECIAL
  *    (`podSpecial`) is a charged shot on a cooldown — a heavy bolt that
  *    detonates into a friendly AoeWave (the §18.44 wave, `_friendly` mode,
- *    same as the flight unit's AOE).
+ *    same as the flight craft's AOE).
  *  - PodBolt mirrors AE1EnemyRound but hunts the OTHER side: it damages
  *    anything with `takeDamage` in the NPC/Enemy family and never the
  *    player. Damage rides the bolt from the pod's dats at spawn.
@@ -116,7 +116,7 @@ export class AE1FollowerPod extends AE1Model {
     const cam = findCamera(this.world?.scene);
     if (!host) return;
 
-    // -- flight unit rule: the pod vanishes while its host pilots ---------- //
+    // -- flight craft rule: the pod vanishes while its host pilots ---------- //
     // (POD_HIDE is the §18.56 debug wall's version of the same idea)
     if (this.world?.debugFlags?.POD_HIDE
       || ((this.hideWhenPiloted ?? true) !== false && host._pilotCraft)) {
@@ -275,14 +275,14 @@ AE1FollowerPod.agsDat = {
   offsetHeight: 1.9,
   offsetForward: 0.15,
   followLag: 7, // spring stiffness, 1/s — lower floats lazier
-  // the AUTHORED idle clip already hovers (wp3000_0000 breathes on its
+  // the AUTHORED idle clip already hovers (<asset>_0000 breathes on its
   // own) — the procedural bob is only a slow drift on top. Stacking a
   // fast sine here read as frantic bobbing (Austin's report); 0 is a
   // fine value when the clip carries the motion.
   bobAmp: 0.02,
   bobFreq: 0.35,
   faceOffset: 0, // deg trim if the model's forward axis disagrees
-  // -- clips (baked from the wp3000 pod motion set) ------------------------ //
+  // -- clips (baked from the <asset> pod motion set) ------------------------ //
   clipIdle: 'Idle',
   clipFire: 'Fire',
   clipSpecial: 'Special',
@@ -326,7 +326,7 @@ defineDatAccessors(AE1FollowerPod);
  * damages the first ENEMY-family element it overlaps (anything with
  * `takeDamage` + `_npcAnimate`, never the player, never the pod's host),
  * then pops. A special bolt detonates into a friendly AoeWave instead of
- * just popping — the same §18.44 wave the flight unit's AOE uses.
+ * just popping — the same §18.44 wave the flight craft's AOE uses.
  */
 export class AE1PodBolt extends AE1Element {
   _dir = { x: 0, y: 0, z: 1 };
@@ -385,7 +385,7 @@ export class AE1PodBolt extends AE1Element {
         scaleY: 0.1,
         scaleZ: 0.1,
         // invisible wave — the specialFx Particles burst carries the visual,
-        // the flight-unit AOE precedent (Austin retired the orange orb)
+        // the flight-craft AOE precedent (Austin retired the orange orb)
       });
       wave._mode = 'orb';
       wave._friendly = true;

@@ -1,6 +1,6 @@
 # 12. Instancing & Instance-Overriding
 
-*(DESIGN.md §18.46. The Stubby Horde behind the green door is the living
+*(DESIGN.md §18.46. The Runt Horde behind the green door is the living
 demo: twenty machines, one glb download, one animation package, twenty
 independent timelines, tints, health pools, and punch values.)*
 
@@ -20,7 +20,7 @@ differences"). That is precisely Unity's prefab-override model:
 | GPU instancing / HISM (shared mesh memory) | shared glb + clones (geometry/materials shared by three.js clone) — animation was the missing half |
 | per-instance material property block | **`model.tint`** — new |
 
-Platinum-style crowds (the machine mobs of the reference action game) are this same recipe: one
+Crowd-style mobs (the machine mobs of the reference action game) are this same recipe: one
 rig, one clip set, N lightweight animation states.
 
 ## What was actually missing, and what was built
@@ -47,7 +47,7 @@ when cleared); no shader work, no texture copies.
 **3. The programmatic API (§ the instance-overriding ask).**
 
 ```js
-const inst = this.spawnInstance("StubbyProto", {
+const inst = this.spawnInstance("RuntProto", {
   x: 4, z: -2,          // its own transform
   health: 80,           // any dat override
   aiType: "melee",      // even ones the prototype set differently
@@ -55,7 +55,7 @@ const inst = this.spawnInstance("StubbyProto", {
 inst.setTint("#ff5050");
 inst.setAttackDamage("Attack_1", 7);   // per-instance combat tuning (§18.44)
 
-this.instancesOf("StubbyProto")        // every live member of the group
+this.instancesOf("RuntProto")        // every live member of the group
 ```
 
 `world.spawnInstance` serializes the prototype, deep-copies its components
@@ -71,7 +71,7 @@ AE1 way; methods stay on the shared class, and dats like `aiType`,
 Park a hidden pacifist in the scene: `visible false`, `(aiType "friendly")
 (wander false)`. It claims the glb's primary timeline invisibly; every
 spawn overrides itself alive (`aiType: "melee", wander: true`). See
-`StubbyProto` + `horde-spawner.ags.txt` — the whole horde is ~20 lines of
+`RuntProto` + `horde-spawner.ags.txt` — the whole horde is ~20 lines of
 AngelScript.
 
 ## Traps found and paid for

@@ -215,7 +215,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
     // -- Â§18.49 CAMERA CURVE HANDOVER --------------------------------------- //
     // While a CharacterCameraCurve holds the camera, its sample IS the view:
     // position + a look-at, converted to this camera's YXZ fields. The orbit
-    // (and the Fox layers below) resume the frame the curve releases. _yaw/
+    // (and the chase-camera layers below) resume the frame the curve releases. _yaw/
     // _pitch stay untouched, so control returns exactly where the player
     // left it.
     const cc = this.world?._camCurveActive;
@@ -234,7 +234,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
       // DISCARD look input while the curve owns the camera: deltas otherwise
       // accumulate unconsumed for the whole shot and dump into _yaw in one
       // frame at release â€” the orbit resumed on a random side (Austin's
-      // "camera in front of the flight unit" after the boarding cinematic).
+      // "camera in front of the flight craft" after the boarding cinematic).
       input?.consumeLook?.();
       return;
     }
@@ -244,7 +244,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
     // (heading/pitch/roll/dist/fov); this camera flies formation: eased
     // position behind the craft's nose vector, banked with it, FOV opening
     // with airspeed. The field clearing (dismount, unfold, mode change)
-    // hands the fox orbit back on the very next frame.
+    // hands the chase orbit back on the very next frame.
     const fc = t._flightCam;
     if (fc) {
       const fy = fc.yaw * DEG;
@@ -321,7 +321,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
         if (ky || kp) rawMag += 5;
       }
       // -- Â§18.61 LOOK MOMENTUM: a touch of mass on the orbit --------------- //
-      // The MGSV doctrine kept input RAW; Austin asked for "just a little"
+      // The reference stealth game's doctrine kept input RAW; Austin asked for "just a little"
       // inertia â€” so the orbit is carried by a smoothed VELOCITY: input
       // accelerates it in over `lookSmooth` seconds and, when input stops,
       // it decelerates out over the same constant (the glide). 0 = raw.
@@ -344,7 +344,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
 
     // LOCK-ON (Â§18.43): while the character holds a living target, the
     // camera owns its own yaw â€” eased onto the playerâ†’target bearing so the
-    // enemy stays centered, Souls-style. Pitch settles to a fixed combat
+    // enemy stays centered, action-RPG-style. Pitch settles to a fixed combat
     // angle; the sticks keep working the moment the lock drops. Opt-in by
     // nature: no lock, no change.
     const lt = t._lockTarget;
@@ -356,8 +356,8 @@ export class AE1ThirdPersonCamera extends AE1Element {
       this._pitch += (wantPitch - this._pitch) * Math.min(1, 4 * dt);
     }
 
-    // -- Â§18.47 THE FOX CAMERA ------------------------------------------- //
-    // MGSV's model, from the research: input rotation stays RAW (never
+    // -- Â§18.47 THE CHASE CAMERA ------------------------------------------- //
+    // the reference stealth game's model, from the research: input rotation stays RAW (never
     // smooth the stick â€” low latency is the whole feel), while camera
     // POSITION chases the pivot through a damped spring whose lag loosens
     // with speed (idle: composed; sprint: the character visibly leads, the
@@ -365,7 +365,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
     // wander, a mid tremor, a tiny high shiver, plus a gait-locked octave
     // that only sprint wakes â€” applied to the OUTPUT rotation only, so
     // steering, lock-on, and aim math keep reading clean _yaw/_pitch.
-    // `(handheld 0)` is MGSV's own Camera Shake toggle.
+    // `(handheld 0)` is the reference stealth game's own Camera Shake toggle.
     const spdNow = Number(t._mm?.speed) || 0;
     this._camSpd = (this._camSpd ?? 0)
       + (spdNow - (this._camSpd ?? 0)) * Math.min(1, dt / 0.35);
@@ -402,7 +402,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
       y: (t.y ?? 0) + (Number(this.lookHeight) || 1.6) - e * (Number(this.runLower) || 0.22),
       z: t.z ?? 0,
     };
-    // MGSV shoulder framing: the pivot slides along the camera's RIGHT so
+    // the reference stealth game's shoulder framing: the pivot slides along the camera's RIGHT so
     // the character sits a third off-center instead of dead middle.
     // (Off in first person â€” an offset eye reads as a broken neck.)
     const shoulder = fp ? 0 : Number(this.shoulder) || 0;
@@ -438,7 +438,7 @@ export class AE1ThirdPersonCamera extends AE1Element {
     const lagXZ = (Number(this.chaseLag) || 0.08)
       + e * ((Number(this.chaseLagSprint) || 0.3) - (Number(this.chaseLag) || 0.08));
     const far = Math.hypot(ix - (this.x ?? 0), iy - (this.y ?? 0), iz - (this.z ?? 0));
-    // First person snaps every frame: the Fox chase-lag is the third-person
+    // First person snaps every frame: the chase-lag is the third-person
     // cameraman's drag, but at the eyes it reads as your head swimming
     // loose from your body.
     if (far > 4 || !this._camPlaced || fp) {
@@ -512,7 +512,7 @@ AE1ThirdPersonCamera.agsDat = {
   // §the reference MMO render: element-declared clip range + distance fog (applied in
   // render3d.setView). Defaults are inert (0 clip = keep frameCamera's; fog
   // off) so existing cameras are unchanged. A tight farPlane fixes z-fighting;
-  // fog fades the world into the sky like 2004 RS.
+  // fog fades the world into the sky like the reference MMO of 2004.
   nearPlane: 0,
   farPlane: 0,
   fog: false,
@@ -531,8 +531,8 @@ AE1ThirdPersonCamera.agsDat = {
   camCollide: false,
   camMargin: 0.3,
   camMinDist: 0.6,
-  // Â§18.47 the Fox camera (MGSV feel). `handheld` is the master sway scale
-  // â€” MGSV's own Camera Shake toggle; 0 = the old rigid camera exactly.
+  // Â§18.47 the chase camera (stealth-game feel). `handheld` is the master sway scale
+  // â€” the reference stealth game's own Camera Shake toggle; 0 = the old rigid camera exactly.
   handheld: 1,
   swayIdle: 0.15, // deg â€” barely-alive breathing at rest
   swaySprint: 1.6, // deg â€” the documentary chase at full tilt
@@ -540,11 +540,11 @@ AE1ThirdPersonCamera.agsDat = {
   // dreamier drift, higher = back toward the old nervousness.
   swaySpeed: 1,
   // Â§18.61: seconds of "mass" on the orbit â€” input accelerates the look
-  // in over this constant and glides out over the same. 0 = raw MGSV.
+  // in over this constant and glides out over the same. 0 = raw reference-stealth-game.
   lookSmooth: 0.07,
   chaseLag: 0.08, // s â€” position damping at rest (composed)
-  // steady-state drag â‰ˆ speed Ã— lag: the player character sprints ~12 m/s (Snake ~6), so the
-  // MGSV research value of 0.3 s trailed 3.6 m â€” halved for the same LOOK
+  // steady-state drag â‰ˆ speed Ã— lag: the player character sprints ~12 m/s (the reference ~6), so the
+  // research value of 0.3 s trailed 3.6 m â€” halved for the same LOOK
   chaseLagSprint: 0.15, // s â€” the character leads ~1.8 m at full sprint
   shoulder: 0.25, // m â€” off-center framing along the camera's right
   runLower: 0.22, // m â€” the pivot rides lower at speed
@@ -588,7 +588,7 @@ export class AE1ThirdPersonCharacter extends AE1Model {
    *  first item, or an empty hand) EQUIP it. Dispatches onPickup to the item.
    *
    *  `(pickupAs "OtherElementName")` on the touched item REDIRECTS the whole
-   *  pickup to that other element first (Â§ the type-3 fist's pair): a
+   *  pickup to that other element first (Â§ the fist pair's pair): a
    *  companion piece that is never itself the inventory item â€” walking up to
    *  either half of a pair and pressing E picks up the SAME real item either
    *  way, wherever its own physics happened to leave it. */
@@ -704,7 +704,7 @@ export class AE1ThirdPersonCharacter extends AE1Model {
    *  the splice below â€” after it, `this.equipped` no longer names this item,
    *  so a dispatch built from `prev` inside the equipIndex() call further
    *  down would either miss it or land on the wrong element) and onDrop.
-   *  A PAIR weapon's off-hand cleanup (Type3Fist's `stowed()`, which calls
+   *  A PAIR weapon's off-hand cleanup (FistPair's `stowed()`, which calls
    *  `unmountExtra`) lives on onUnequip â€” without this the left arm stayed
    *  mounted on her hand after the right one hit the ground (Austin's
    *  "a bracer has fallen off"). */

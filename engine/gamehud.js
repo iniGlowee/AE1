@@ -1,5 +1,5 @@
 /**
- * AE1 — GameHUD: the the reference MMO interface as a DOM overlay pinned to the game
+ * AE1 — GameHUD: the reference MMO interface as a DOM overlay pinned to the game
  * canvas. First slice: the SKILLS panel (all 23 skills + total & combat level),
  * the CHATBOX (game messages), and floating XP DROPS. Structured to grow into the
  * full tab panel / orbs / minimap (see the project plan §C).
@@ -30,7 +30,7 @@ export class AE1GameHUD extends AE1Element {
     this._skillEls = {};
 
     const root = document.createElement('div');
-    root.style.cssText = 'position:fixed;z-index:99990;pointer-events:none;font:12px/1.3 "the reference MMO UF",Helvetica,Arial,sans-serif;';
+    root.style.cssText = 'position:fixed;z-index:99990;pointer-events:none;font:12px/1.3 "AE1 UF",Helvetica,Arial,sans-serif;';
     document.body.appendChild(root);
     this._root = root;
 
@@ -105,7 +105,7 @@ export class AE1GameHUD extends AE1Element {
     const r = st.addXp(skill, amount);
     if (!r) return null;
     this.xpDrop(skill, amount);
-    if (r.leveled) this.chat(`<span style="color:#ff0">Congratulations, you just advanced a ${skill} level! You are now level ${r.to}.</span>`);
+    if (r.leveled) this.chat(`<span style="color:#ff0">Level up: ${skill} is now ${r.to}.</span>`);
     return r;
   }
 

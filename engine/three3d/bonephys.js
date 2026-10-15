@@ -2,7 +2,7 @@
  * AE1 — BONE PHYSICS (§18.66): the Kawaii-Physics idea, homebrewed.
  *
  * the reference action game rigs ship whole families of SECONDARY bones (hair, coat tails, the
- * Commander's sword sash — the `bone3xxx` chains) that the original game
+ * Officer's sword sash — the `bone3xxx` chains) that the original game
  * simulated at runtime; frozen at rest they read as starched cloth and
  * floating props. This module is the missing simulation: a pseudo-physics
  * pass that runs AFTER the animation mixers each frame — a post-FX layer
@@ -114,7 +114,7 @@ export function createBonePhys(THREE) {
       // §18.69 GOAL SMOOTHING: a time-constant low-pass on the written
       // pose — 60 Hz solver chatter dies, slow swoop passes through.
       smoothTime: Math.max(0, Number(o.smoothTime ?? cfg.smoothTime ?? 0.05)),
-      // §18.73 DRAPE MODE: a chain anchored at BOTH ends (the Commander's
+      // §18.73 DRAPE MODE: a chain anchored at BOTH ends (the Officer's
       // waist chain: bone ids jump mid-chain where the return side starts,
       // and its bind shape descends then RISES home). Simulated as an open
       // tail the far anchor flops free and "curls" hunting for its bind

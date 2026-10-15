@@ -140,7 +140,7 @@ localize a bug. This is the prose summary.
   equirect .hdr skybox, sun shadow map + PCF, image-based ambient, DOF, grain,
   alpha-blend transparency, CPU skinning (motion-matching + glTF clips), and native
   bone physics (the browser's `bonephys.js`, driven through a JS bone graph).
-- **Native UI overlays** (immediate-mode, C++): control hint, the FF-style
+- **Native UI overlays** (immediate-mode, C++): control hint, the JRPG-style
   dialogue box, and a **save/load menu** (F6 / F5 / F9). These are the plan's
   "platform UI modules" — the DOM versions no-op natively; the state lives in JS
   and the pixels are drawn by the overlay pass.

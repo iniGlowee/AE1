@@ -491,7 +491,7 @@ now," never "discard this element's state." Two fixes, both kept:
 
 **`runInfo` inherits, exactly like `dat`.**
 
-Without this, a subclass that inherits behaviour loses its scheduling. A `Cartman` that
+Without this, a subclass that inherits behaviour loses its scheduling. A `Bram` that
 `(extends Kid)` and defines no methods of its own had an **empty** runInfo — nothing registered
 for `onClick`, so clicking him did *nothing*. The class was right, the methods were there, the
 compile was clean; he simply never got called. This is the template-method pattern — a `Kid`
@@ -719,7 +719,7 @@ compiler in reach (Principle 3).
 Gzip on the host recovers most of what minification would have.
 
 > **Assets named only in scripts must not be pruned.** A sound reached solely via
-> `playSound("cartman-hey.mp3")` has no element pointing at it, so a sprite-only sweep prunes
+> `playSound("bram-hey.mp3")` has no element pointing at it, so a sprite-only sweep prunes
 > it and the game falls silent **in the build but not in the editor** — precisely the
 > export-only failure Principle 2 exists to prevent. `collect_name_refs()` scans script text
 > for asset names. Deliberately crude: an author can build a filename at runtime, so no static
@@ -993,8 +993,8 @@ lives where pictures live.
 | `DialogueBox` | the **presentation** — where the line is drawn, where the choices sit |
 
 The same division that made `SaveHandler` work (§16.3): the engine owns the structure, the
-moment, and the ordering; the author owns the contents. A delegate knows what Cartman says and
-nothing about pixels. A box knows about pixels and nothing about Cartman.
+moment, and the ordering; the author owns the contents. A delegate knows what Bram says and
+nothing about pixels. A box knows about pixels and nothing about Bram.
 
 ### 12.7.1 Why the box is elements, and not the DOM
 
@@ -1113,7 +1113,7 @@ explodes just because nothing is running:
 | `this.setSprite(name)` | swap the picture (the door-opens case) |
 | `this.inventory` | the project's inventory, if any |
 
-Media is addressed **by name** (`playSound("cartman-hey.mp3")`) because that is what the Media
+Media is addressed **by name** (`playSound("bram-hey.mp3")`) because that is what the Media
 Collection shows. Hashes are an implementation detail an author should never type.
 
 ## 14. Audio
@@ -1806,8 +1806,8 @@ The pieces:
 - **New RUN_INFO modes**: `onPickup`/`onDrop`/`onEquip`/`onUnequip` (category `item`), dispatched
   TO THE ITEM with the actor as argument.
 
-Verified end-to-end with `DragoonLance.glb` (`(extends Hitbox)`): walked into the volume, E —
-inventory `["DragoonLance"]`, auto-equipped, lance VISIBLY in her right hand tracking the idle
+Verified end-to-end with `lance.glb` (`(extends Hitbox)`): walked into the volume, E —
+inventory `["Lance"]`, auto-equipped, lance VISIBLY in her right hand tracking the idle
 (screenshot; auto-detected bone); `[Lance] picked up by the player character` and `[Lance] stab!` both reached the
 item script; Shift+E dropped it 0.8 m ahead with clean bounds at the new spot; picked back up and
 re-equipped. NOT yet verified: scroll cycling (needs a second item to mean anything) and the 2D
@@ -1849,12 +1849,12 @@ equipped item in her hand IS the visual for now).
   surface for the full system (soft mesh collisions, morph-by-contact) lives here; the depth is
   future work — declared honestly as the seed, not the tree.
 
-Verified end-to-end with `enemy_no_animations.glb` ("Enemy", a machine lifeform): wandered 2.36 m
+Verified end-to-end with `enemy_no_animations.glb` ("Enemy", a machine enemy): wandered 2.36 m
 in 2.5 s with a 4-point cyan route drawn on the floor (screenshot); E → `[Enemy] the player character pokes me`;
 strike one 99→49, strike two 49→−1 → toppled to 90° → gone at 3 s; `onHit` carried
 `(attacker, amount)` into the script both times.
 
-**NPCs animate** (added with `pascal_moving.glb`): `(animLibs …)` + `(move "file.glb")` /
+**NPCs animate** (added with `npc_moving.glb`): `(animLibs …)` + `(move "file.glb")` /
 `(idle "file.glb")` on the NPC — the same by-file clip addressing as the player (§18.10),
 libs copied dat → component at `_npcBegin` (the Model pattern; renderers read only
 components). `_npcAnimate` is a two-state machine: `move` while a leg is underfoot, `idle`
@@ -1964,7 +1964,7 @@ element `(extends Projectile)` is a TEMPLATE, not a prop:
 
 Verified live: fire → "Missile round" appears in the Outliner at ~50% of the firing clip,
 flies with acceleration, expires at range and leaves the list; centered shot dealt exactly 90
-("[Enemy] hit for 90! Health now 9", "[Missile] hit Pascal").
+("[Enemy] hit for 90! Health now 9", "[Missile] hit NPC").
 
 ### 18.16 The aim triangulation: muzzle → camera focal point
 
@@ -2019,7 +2019,7 @@ The third-person-shooter baseline (guns now; grenades and throwables will reuse 
 
 Verified live: tracer visible through her to the crosshair with the muzzle leg attached;
 camera centered on the wandering NPC → fired → round left the muzzle, converged on the view
-center, hit ("[Missile] hit Pascal") — aiming is now LOOK-and-shoot, no body alignment needed.
+center, hit ("[Missile] hit NPC") — aiming is now LOOK-and-shoot, no body alignment needed.
 
 ### 18.18 Passive proximity dialogue
 
@@ -2051,7 +2051,7 @@ stays the DialogueDelegate's domain — this deliberately shares nothing with it
 
 Demo: "the companion character" (Austin renamed the idling hero; armature.ags.txt now
 `(extends PassiveDialogue)`; his idle keeps playing via the scene's persisted model-component
-clip — no Model script needed). Four lines (`9s_audio_00N_idle_passive.mp3`). Verified live:
+clip — no Model script needed). Four lines (`npc_audio_00N_idle_passive.mp3`). Verified live:
 line on approach, three DIFFERENT lines at cooldown cadence with no repeats and no overlap,
 two silent rolls at 60%, and the walking-away trace matched the falloff formula exactly
 (2.18 m → 0.818, 5.02 m → 0.582 at hearRange 12).
@@ -2122,12 +2122,12 @@ Two changes, one inheritance move:
   entry today; add more and one is picked at random. Fires inside `takeDamage`'s death
   block, tagged through `emitVoice` like every voice.
 
-Demo: Pascal (enemy.ags.txt) — seven `pascal_audio_00N_idle_passive.mp3` lines +
-`pascal_audio_001_death_event.mp3`. Verified live: his roll fired and played (caught by a
+Demo: the placeholder NPC (enemy.ags.txt) — seven `npc_audio_00N_idle_passive.mp3` lines +
+`npc_audio_001_death_event.mp3`. Verified live: his roll fired and played (caught by a
 playSound spy — his lines are 2.2 s, easy to miss between polls), and the death blow set
 `_dead`, started the topple, and put the death cry live in `world.voices` in the same tick.
 A finding worth keeping: with the player character standing between them, the companion character's 7.7-second lines against his
-8-second cooldown nearly SATURATE the one-voice-world-wide channel and starve Pascal's rolls
+8-second cooldown nearly SATURATE the one-voice-world-wide channel and starve the NPC's rolls
 — organic crowd behaviour, by design, but worth remembering when tuning line lengths and
 cooldowns for scenes with several talkers.
 
@@ -2221,7 +2221,7 @@ offered to cross it off — the light layer was worth keeping).
   settle by the LOWER foot's drop below the base plane (clamped 0.35 — past that is a
   ledge), smoothed; each foot tilts halfway to the slope normal under it. Flat ground is a
   no-op by construction. Bones auto-detected (mixamorig RightArm/RightForeArm/LeftFoot/
-  RightFoot/Hips); elements without them (Pascal's bone0 skeleton) skip silently.
+  RightFoot/Hips); elements without them (the placeholder NPC's bone0 skeleton) skip silently.
 
 Verified live: interact near the key → reach weight ramped 0 → 0.498 with all five bones
 found, ramp-out back to exactly 0 with the reach cleared; on the grass, per-foot ground
@@ -2653,8 +2653,8 @@ player who arrives empty-handed.)
 
 ### 18.39 Weapon-type CLASSES, and the registry that made the second one cheap
 
-The type-3 fists proved a weapon could own the searched locomotion table
-(§18.15's successor). The Dragoon Lance asked the real question: is the
+The fist pairs proved a weapon could own the searched locomotion table
+(§18.15's successor). The lance asked the real question: is the
 SECOND weapon class cheap? It was not, at first — "Bracer", "CombatAir" and
 "combat" were spelled into two dozen decisions across the matcher.
 
@@ -2715,17 +2715,17 @@ The first real combatant (docs/engine/09-enemy-system.md). Decisions:
   place to reason about all combat AI.
 - **`AE1Enemy extends AE1NPC`, and NPC survived.** The goober still runs on
   the old class; the rewrite Austin authorized became a subclass + a wander
-  factor-out (`_wanderTick`) instead of a replacement. Pascal (the placeholder
+  factor-out (`_wanderTick`) instead of a replacement. the NPC (the placeholder
   enemy element and `enemy.ags.txt`) was retired with his blessing.
 - **Enemy clips are in-place; the AI owns travel.** The glTF exporter bakes
   object-level root tracks into every clip, own-glb clips are not
   root-drift-locked, and the mixer stomped the element transform — the
-  stubby walked in place at the origin while his element crossed the room.
+  runt walked in place at the origin while his element crossed the room.
   `strip_root_channels()` in the bake tool is the law now.
 - **<asset> was the right first enemy** because the game ships its own
   labels: `AnimationTable.csv` maps state → motion id, so the 118-mot pack
-  needed no triage gallery. The variants (em0002…, desert/forest/factory
-  stubbies) re-skin the same rig and reuse `<asset>` — the second enemy
+  needed no triage gallery. The variants (<asset>…, desert/forest/factory
+  runts) re-skin the same rig and reuse `<asset>` — the second enemy
   species costs one bake command.
 - **Known ceiling:** one ANIMATED instance per glb (render3d's
   one-glb-one-timeline rule) — "a bunch of enemies" needs per-instance glb
@@ -2745,7 +2745,7 @@ The impact layer (docs/engine/10-combat-feel.md). Decisions:
 - **The kill is the loud moment**: slowMo(0.7 s @ 0.12, ease 0.45) fires
   only on a killing blow (melee sweep or projectile); ordinary hits get
   80–130 ms hit stops. Values sit inside researched genre ranges (the publisher
-  6–8 frame stops; Smash's damage-scaled hitlag; UE tutorials' 0.2–0.5
+  6–8 frame stops; a platform fighter's damage-scaled hitlag; UE tutorials' 0.2–0.5
   dilation).
 - **Rumble is garnish**: `input.rumble(strong, weak, ms)`, feature-detected,
   never throws, newest pulse wins. Keyboard players lose nothing.
@@ -2778,7 +2778,7 @@ the carried double rode the hand. Fixes, both in `world.goToScene`:
 
 ### 18.43 Lock-on
 
-Dark-Souls Z-targeting (docs/engine/10-combat-feel.md#lock-on). Decisions:
+action-RPG lock-on (docs/engine/10-combat-feel.md#lock-on). Decisions:
 
 - **The aim ray picks the target** — Austin's spec verbatim: the enemy
   nearest the camera→focal ray wins, so lock-on and the bazooka agree about
@@ -2850,34 +2850,34 @@ Austin's "doozy" turned out half-built (docs/engine/12-instancing.md):
   tint) — methods stay on the shared class.
 - **`model.tint`** is the per-instance material story: lazy material clone
   + color multiply, `setTint(hex)` from any script.
-- **The horde is the regression test**: 20 stubbies from one parked
+- **The horde is the regression test**: 20 runts from one parked
   pacifist prototype, ring-scaled health/damage, eight tints, ~20 lines of
   AngelScript, one glb download.
 - **Trap recorded**: an open editor tab journals + beacon-saves its scene —
   file-side scene edits lose; go through the live store or the Projects
   page.
 
-### 18.47 The Fox camera, the shader layer, and the reference action game environments
+### 18.47 The chase camera, the shader layer, and the reference action game environments
 
-The MGSV-feel round (docs/engine/13-fox-camera-and-shaders.md). Decisions:
+The stealth-game-feel round (docs/engine/13-chase-camera-and-shaders.md). Decisions:
 
-- **The camera is a lens, input stays raw.** Fox Engine's model, verified
-  from extracted TPP Lua (16–35 mm at f/1.875): never smooth the stick;
+- **The camera is a lens, input stays raw.** the reference stealth game engine's model, verified
+  from its extracted camera scripts (16–35 mm at f/1.875): never smooth the stick;
   damp POSITION per-axis with speed-loosened lag; sway is 3-octave noise on
   the OUTPUT rotation only, so steering/lock-on/aim keep clean state.
   `(handheld 0)` restores the rigid camera exactly. Chase lag retuned for
-  the player character's 12 m/s sprint (drag ≈ speed × lag — Snake's constants trail double).
+  the player character's 12 m/s sprint (drag ≈ speed × lag — the reference's constants trail double).
 - **PostFX is an element, passes are a module.** One uber-pass (focal DOF /
-  grain / vignette / CA) modeled on Austin's own the reference action game ReShade preset;
+  grain / vignette / CA) modeled on Austin's own ReShade preset for the reference action game;
   autofocus eases camera→chest distance the way CinematicDOF does. Zero
-  cost absent; scaffolded for the rest of the Fox stack (bloom, tone
+  cost absent; scaffolded for the rest of the reference stealth game's stack (bloom, tone
   shoulder, LUT, motion blur — ROADMAP).
 - **Environments are museum assets now**: bulk_import already ate wd/ba/bg
   formats; export_static_glb.py is the missing half (LOD strip, single
   named root — from bpy.data.objects, the sub-collection trap — dds→png,
   --upload). Map tiles carry world offsets: grid-probe the floor, offset
   the element. First ground shipped: the flooded-city colosseum, live under
-  the player character in the foxcam testbed.
+  the player character in the camtest testbed.
 - **docs/ROADMAP.md is the reassessed checklist** — the standing answer to
   "what next", refreshed this round.
 
@@ -2938,16 +2938,16 @@ The chair-under-her round (docs/engine/14, "TriggerBox, bloom..."):
   through the REAL input path, not dispatchTo); long-lived editor tabs
   predate new builtins — reload after registering one.
 
-### 18.51 The City Ruins and the flight unit
+### 18.51 The city tiles and the flight craft
 
 The flight1 round. Decisions and finds:
 
-- **Main-game map tiles are now routine**: nine city-ruins center tiles
+- **Main-game map tiles are now routine**: nine city-tile center tiles
   pulled headlessly from Steam's <pack>/014 via LibCPK (the scripted
   recipe), museum-converted per-process, art-only exported — and the center
   tile g10716 sits AT the world origin (the crater is the map's center), so
   the cluster needed zero re-homing. 121/121 ground probes walkable.
-- **The flight unit is <asset>** (already a museum blend), its 97-mot
+- **The flight craft is <asset>** (already a museum blend), its 97-mot
   library is <asset>, and boarding is a SYNCED PAIR: the player character's <asset>
   and the unit's <asset> share an id — she climbs while it opens. The
   unit baked through the enemy pipeline (Board/Idle/Unboard/Cockpit); her
@@ -2960,7 +2960,7 @@ The flight1 round. Decisions and finds:
   her seated height in the cockpit is the polish knob (mount-anchor offset
   or a vertical-preserving re-bake) once seen on screen.
 
-Austin's first playtest (the exploded flight unit) closed the round with
+Austin's first playtest (the exploded flight craft) closed the round with
 three engine-level finds:
 
 - **The mot importer had a position-channel sign bug** (plugin
@@ -2974,7 +2974,7 @@ three engine-level finds:
 - **`world.env3d.groundAt` is frame-dependent** — do NOT use it to place
   scene objects. The reliable ground probe is the character herself:
   teleport, let gravity settle (≥1.4 s), read `element.y` (= feet). The
-  City Ruins center is crater-rim rubble; the flat spot that hosts the
+  city tiles center is crater-rim rubble; the flat spot that hosts the
   unit is the boulevard around (−6, z −10.5), found by grid-probing the player character.
   A unit's element.y = its rendered bounds min (base of the model).
 - **Seat cosmetics are dats, not code**: the boarded snap places her via
@@ -2986,9 +2986,9 @@ three engine-level finds:
 
 ### 18.52 Aircraft — the pilotable vehicle base element
 
-Request 12: fly the flight unit. `engine/aircraft.js` (builtin `Aircraft`,
-`(extends Aircraft)`) is the generic seam; the flight unit is its first tenant
-(flight1's `flight-unit.ags.txt` is pure dat configuration).
+Request 12: fly the flight craft. `engine/aircraft.js` (builtin `Aircraft`,
+`(extends Aircraft)`) is the generic seam; the flight craft is its first tenant
+(flight1's `flight-craft.ags.txt` is pure dat configuration).
 
 **The root-of-truth contract**: the third-person character stays the root —
 input, position, hitbox. Boarding puts her driver in LADDER MODE (physics
@@ -3000,12 +3000,12 @@ while `_pilotCraft` is set she only advances her held riding pose and
 mirrors out — no interact, no combat, no locomotion (the fishing-state
 doctrine). Weapons sheathe automatically (ladder mode's existing edge).
 
-**Modes** (the flight unit's own canon): TRAVEL = "Asura", upright hover, Armored
-Core hands — camera-relative inertial strafe, mech faces the camera aim,
+**Modes** (the flight craft's own canon): TRAVEL = "Strider", upright hover, mech-game
+hands — camera-relative inertial strafe, mech faces the camera aim,
 boost held / QUICK-BOOST on a sub-0.24 s tap (the a030/a031 spin evades),
 terrain-following hover that rises with ground but only ever DESCENDS
 slowly on input (hoverRise/hoverFall), melee lunge + shot attacks (melee =
-frontal-arc `takeDamage` sweep + hitStop). FLIGHT = "Cygnus", jet — Ace
+frontal-arc `takeDamage` sweep + hitStop). FLIGHT = "Falcon", jet — Ace
 Combat hands: throttle (Shift/Ctrl), stick pitch, roll-to-turn
 (`bankTurnRate` × bank fraction), dive-gain/climb-bleed on speed, ground
 skim clamp, and a `voidFloor` (past the map edge the ground ray answers
@@ -3026,7 +3026,7 @@ Transform(a508) / TransformBack(a530)). The scene element's model
 them. The pilot HIDES (`visible=false`) in flight mode and during travel
 attacks (the hull swings through the seat); rides visible otherwise.
 
-**Cameras**: travel keeps the fox orbit untouched (she IS the craft).
+**Cameras**: travel keeps the chase orbit untouched (she IS the craft).
 Flight publishes `pilot._flightCam` {yaw,pitch,roll,dist,fov} every tick;
 a block in `AE1ThirdPersonCamera._camTick` (after the curve handover)
 flies formation — eased chase position, banked horizon, FOV opening with
@@ -3047,7 +3047,7 @@ gated off, the CUT board/exit seams (the ID-pairing trap: unit a020/a023
 are knockbacks sharing her mount numbers; her mounts are authored at
 cockpit height), the exit's guaranteed drop above local ground, travel
 strafe handedness (right = aim MINUS 90), the YXZ `rotationOrder` opt-in
-(XYZ pitched a yawed craft into visible roll), stubby combat + the
+(XYZ pitched a yawed craft into visible roll), runt combat + the
 _friendly AoeWave, the export prune trap for runtime-spawned media, the
 looping-held-action frames-2 guard, and the reference action game effect-sprite pipeline
 (fx `texture`/`color`, <pack> effect/texture → DDS slice → PNG).
@@ -3109,7 +3109,7 @@ bill. The refined version (join per material within ~25 m spatial cells,
 keeping culling granularity) is ROADMAP phase 3.
 
 Future levers: spatial-cell material join (above); THREE.InstancedMesh
-for repeated props; skinned mesh count on the 63 MB unit (the flight unit
+for repeated props; skinned mesh count on the 63 MB unit (the flight craft
 renders every part always).
 
 The measurement kit that found all of this: a rAF delta sampler pushed
@@ -3119,7 +3119,7 @@ run before and after every perf-relevant change. Numbers, not feelings.
 **Phase 3 (2026-08-26): LOD pairs + flight LOD — 45 → 75 fps in flight.**
 
 Attribution first: element-ablation put the whole bill in the tiles
-(9.1 ms of 22.4; PostFX ≈ 0, unit ≈ 0.2, stubbies ≈ 0). Three findings
+(9.1 ms of 22.4; PostFX ≈ 0, unit ≈ 0.2, runts ≈ 0). Three findings
 reshaped the design before anything paid off:
 
 - **`cullDistance` was silently inert since phase 2.** Two clobbers: the
@@ -3162,13 +3162,13 @@ Shipped machinery:
 
 **Phase 3b (same day): BVH raycasts — combat 23 ms → 14 ms (71 fps).**
 
-Austin's repro (fight the stubbies after flight round-trips → "massive
+Austin's repro (fight the runts after flight round-trips → "massive
 frame drop", recovers when they die) attributed to RAYCASTS, not the LOD
 system: three.js has NO ray acceleration — every `groundAt` probe does
 per-triangle tests against whatever the bounding spheres pass, and the
-City Ruins megameshes made that **3.06 ms PER CALL** (measured), with
+city tiles megameshes made that **3.06 ms PER CALL** (measured), with
 ~400–700 probes/s at idle and every chasing enemy adding several per
-tick. Three aggroed stubbies alone ate the frame budget; killing them
+tick. Three aggroed runts alone ate the frame budget; killing them
 freed it — hence "frame rate returns when they're dead". A ray that
 MISSES everything (off the map edge) is the worst case of all, which is
 what "leaving the map causes a big drop" was. The same garbage churn was
@@ -3183,7 +3183,7 @@ acceleratedRaycast` at module scope, and the static-freeze pass builds a
 `boundsTree` for every static mesh (same no-animation gate; skinned
 meshes keep the stock path — acceleratedRaycast only engages where a
 tree exists, semantics unchanged). Measured: groundAt 3.06 → 0.24 ms;
-lock-on combat vs 3 aggroed stubbies 14.2 ms/71 fps, identical after two
+lock-on combat vs 3 aggroed runts 14.2 ms/71 fps, identical after two
 full flight round-trips; the idle GC spikes gone.
 
 **LOCAL PATCH in the vendored lib** (marked `AE1 LOCAL PATCH` in the
@@ -3199,7 +3199,7 @@ both read the project from disk through the same exporter.
 
 the reference action game's pod as a base element (`engine/followerpod.js`, builtin
 `FollowerPod`; docs/engine/16-followerpod.md is the full page; `pod1` is
-the demo — flight1's City Ruins + the flight unit + stubbies, plus the book).
+the demo — flight1's city tiles + the flight craft + runts, plus the book).
 
 The shape of it: the pod is its OWN element with its own model + clips;
 the HOST stays the root of truth (the pod chases a camera-relative
@@ -3214,7 +3214,7 @@ AUTHORED idle clip carries the hover — the procedural bob is a slow
 drift only (a stacked fast sine read as frantic bobbing). `PodBolt` is EnemyRound's mirror: hunts `takeDamage` +
 `_npcAnimate`, never the player. Kills credit the HOST (combat-feel
 hooks fire there). Named-Particles fx dats (`muzzleFx/hitFx/specialFx`);
-`hitFx` is moved to the impact point before bursting. **The flight-unit
+`hitFx` is moved to the impact point before bursting. **The flight-craft
 rule costs zero wiring**: the pod reads `host._pilotCraft` each tick —
 set on board, cleared on dismount by the aircraft already — and hides
 itself while piloting.
@@ -3230,10 +3230,10 @@ hover, 0010 = the 25 f fire cycle (0011 is a 0-frame POSE, not the
 loop), <asset> = a 33 f flourish (the special). Tooling grown for this:
 `bulk_import_models.py` `cpkdlc` root; `bake_enemy_glb.py
 --emissive-lift F` (base-color → emission at F — companion props were
-silhouettes under the night City Ruins); the plugin `dat_unpacker`'s
+silhouettes under the night city tiles); the plugin `dat_unpacker`'s
 extract path joins with a leading backslash and lands at the DRIVE ROOT.
-Verified in pod1 through real inputs: Q burst 60→0 on a stubby, C
-special one-shot another, E in/out of the flight unit hides/reveals.
+Verified in pod1 through real inputs: Q burst 60→0 on a runt, C
+special one-shot another, E in/out of the flight craft hides/reveals.
 
 ### 18.56 The Debug Menu (2026-08-26) — the flag wall
 
@@ -3276,7 +3276,7 @@ a full second.
 **The game console proved the surfaces compose** (tower1
 `scripts/console.ags.txt` — a PURE PROJECT SCRIPT, zero engine changes):
 ALT+C freezes the frame through the same `loop.paused` +
-`env3d.setPaused` pair and drops a quake-style command line. Commands
+`env3d.setPaused` pair and drops a console-style command line. Commands
 are the GAME's namespace, not the engine's (`blur.radius = 2;
 blur.intensity = 99` → the ScenePostFX element's dofMaxBlur/dofAperture
 dats), split on `;`, with `list`, `reset`, bare-name queries, and ↑/↓
@@ -3349,13 +3349,13 @@ arena, only distant walls soften. Console: `blur.range`.
 
 ### 18.61 Camera feel — beats and momentum (2026-08-26)
 
-Two changes to the Fox camera after Austin's "rigid, fast, dizzying".
+Two changes to the chase camera after Austin's "rigid, fast, dizzying".
 **Sway rewrite**: the 3-octave sines ran to 9.3 Hz — motor territory,
 read as machine vibration. Each octave is now a PAIR of nearby slow
 frequencies BEATING, so amplitude itself swells and fades over ~10 s:
 drift, not vibration. Nothing above 0.61 Hz at rest; sprint wakes one
 1.7 Hz gait bob. Dat `swaySpeed` multiplies every frequency. **Look
-momentum**: dat `lookSmooth` (0.07 s; 0 = the raw MGSV response) — the
+momentum**: dat `lookSmooth` (0.07 s; 0 = the raw reference-stealth-game response) — the
 orbit is carried by a smoothed VELOCITY: input accelerates it in over
 the constant and glides out over the same after release (measured: a
 3.6° flick coasted a further 1.8°). The look block now gathers deltas
@@ -3450,7 +3450,7 @@ dispatched KeyboardEvents, which exercise the same engine listeners.
 
 ### 18.65 The Bunker & the two model paths (2026-08-30)
 
-`bunker1`: the orbital Bunker, found the hard way. r550 (<pack> st5) is
+`bunker-level`: the orbital Bunker, found the hard way. r550 (<pack> st5) is
 AUDIO ONLY (sound banks + hap); the station is not in wd5 (g50100 = the
 Copied City, mesh names say "Copycity"); the community docs doesn't list it. A
 string-scan of every ba/bg/bh/et dat+dtt for "unker/angar" found it:
@@ -3458,7 +3458,7 @@ string-scan of every ba/bg/bh/et dat+dtt for "unker/angar" found it:
 singlerooms, four corridor-ring floors, handrails, the station shell,
 and a 16 km `universe` starfield sphere: the level ships with its own
 space backdrop. <asset>/2/3 are the bunker doors, <asset>/<asset> props,
-**<asset> = the companion character's ARMED flight unit (missiles) — the enemy stock for the
+**<asset> = the companion character's ARMED flight craft (missiles) — the enemy stock for the
 space battles**. Texture audit: self-sufficient except the known
 LightMap/EnvMap aux ids and one glass albedo that exists nowhere.
 
@@ -3489,7 +3489,7 @@ ground probes can't tell orientations apart on this map!). The
 discriminator was the GLASS: window panes lie flat under ±90 and stand
 vertical only at identity. Walk surfaces (identity): equator ring at
 y −2.3, control room's stepped decks at −32.5/−48.6, singlerooms and
-hangars below. Spawn: the ring at (−45, −1.3, 15), flight unit down
+hangars below. Spawn: the ring at (−45, −1.3, 15), flight craft down
 the corridor.
 
 ## 11. Open questions
@@ -3505,7 +3505,7 @@ the corridor.
 `env3d.materialsOf(el, pattern)` hands AGS scripts the live three.js
 materials of an element's bound object by name-regex — the shared
 originals, so a map's whole screen bank changes at once. First user:
-bunker1's `bunker-screens.ags.txt` flips the map's own the reference action game screen
+bunker-level's `bunker-screens.ags.txt` flips the map's own in-game screen
 materials emissive (emissiveMap = map, RepeatWrapping) and animates
 offsets: the code-column crawl, the Earth display's scan sweep, the
 2x3 operator-dashboard atlas hopping pages, the faction emblem breathing.
@@ -3516,7 +3516,7 @@ render3d capability does nothing until forwarded there.
 ### 18.80 The ring gravity stabilizer (2026-08-30)
 
 the reference action game's bunker ring keeps the player upright by rotating camera+gravity.
-AE1's physics is y-down to the bone, so bunker1 rotates the WORLD
+AE1's physics is y-down to the bone, so bunker-level rotates the WORLD
 instead (Austin's call: no forced camera — a "fixed camera box" comes
 later): `ring-stability.ags.txt` samples the floor normal under the
 player each tick (groundInfo now returns the world-space hit normal `n`)
@@ -3567,9 +3567,9 @@ Talking to NPCs, the extremely-simple version Austin asked for. Three
 pieces: (1) ENGINE `world.uiLock` — while truthy, the motion-matching
 character updates on neutral input (the piloting/death pattern): she
 idles, no locomotion/interact/combat/inventory. (2) `dialogue.ags.txt`
-(bunker1): a DialogueUI element that renders a DOM overlay box (the
+(bunker-level): a DialogueUI element that renders a DOM overlay box (the
 debug-menu pattern — 3D projects have no 2D HUD canvas): speaker name,
-line, FF-style options with a white &#9656; cursor; up/down or
+line, JRPG-style options with a white &#9656; cursor; up/down or
 dpad/stick to move, E / pad-X to confirm; an option with no `next`
 closes (two-tick unlock tail so the confirming E cannot re-open). It
 parks the NPC's wander and faces him at the player; NPC dat
@@ -3610,7 +3610,7 @@ function — "//" after (a ";" in the methods section fails the WHOLE
 compile and the element silently falls back to AE1Element); runInfo
 event names are a fixed whitelist — route custom dialogue events through
 onCall(eventName, from); Blender 4.2's glTF exporter ignores
-blend_method and ships every material alphaMode BLEND (the commander
+blend_method and ships every material alphaMode BLEND (the officer
 disease — body parts ghost/vanish by angle): patch the glb JSON after
 export (scratchpad patch_glb_alpha.py). Dialogue cinematography rides
 the EXISTING §18.49 camera-curve handover: DialogueUI sets
@@ -3619,14 +3619,14 @@ OTS/two-shot/low angles, LOS-checked, slow dolly per cut).
 
 ### 18.83 The native the companion character pack pipeline (2026-08-30)
 
-"9s only skeleton, 9s only motion matching, 9s only animations" — the
+"one NPC's skeleton, one NPC's motion matching, one NPC's animations" — the
 transplant experiment is retired. New pieces: (1) the companion character's complete personal
 animation archive: <asset> (<pack>) -> 483 native <asset> mots,
 triaged by the standalone mot-extractor into a gallery, 393 auto-named
 from the community the player character/A2 sheet by SHARED INDEX (the faction androids share the
 moveset layout) with per-clip metric validation. (2) The Curator grew
-multi-source triage (?src=9s, serve.py TRIAGE_SOURCES) — browse, name,
-set, select any character's gallery. (3) tools/bake_9s_native.py: bakes
+multi-source triage (?src=npc, serve.py TRIAGE_SOURCES) — browse, name,
+set, select any character's gallery. (3) tools/bake_npc_native.py: bakes
 curator-selected <asset> clips STRAIGHT from the gallery blends into the
 standard pack format — no retarget. The reference action game mots root travel on the ARMATURE
 OBJECT (action channel "location"), so sampling must be world-space; the
@@ -3636,10 +3636,10 @@ pi because his rest faces -Y), stores pelvis sway/bob as root-frame
 rest-relative residuals, and DE-YAWS the hips basis (the root carries
 facing; doubled yaw = double-speed turns). (4) The runtime hardcodes
 canonical role names (pelvis/foot_l/LEG_RE), so pack bone list AND the
-runtime body (9s_native.glb, a pure node-name patch of npc_9s_clean.glb)
+runtime body (npc_native.glb, a pure node-name patch of npc_clean.glb)
 wear canonical labels on his untouched native skeleton — renaming, not
-retargeting. (5) serve.py /convert?src=9s runs the native bake and pushes
-the pack into bunker1 media as mm_<pack>_* — the curator's one button
+retargeting. (5) serve.py /convert?src=npc runs the native bake and pushes
+the pack into the level's media as `<pack>_*` — the curator's one button
 does gallery -> database -> game media. Verified on idle/walk/dash:
 travel 11.37 m, forward vel +0.97 m/s in the fwd slot, pelvis residuals
 in centimetres, quats normalized.
@@ -3654,7 +3654,7 @@ rotation from _yaw/_pitch INDEPENDENT of position, so distance = -fpAhead
 view keeps pointing forward -- head and hair land BEHIND the near plane,
 nothing is hidden or clipped, mouse look and character steering are
 untouched. Two side rules: shoulder framing zeroes (an offset eye reads
-as a broken neck) and the Fox chase-lag snaps every frame (the
+as a broken neck) and the chase-lag snaps every frame (the
 cameraman's drag reads as your head swimming loose at 0 m). _target()'s
 possession rule (SS18.82) means the flag follows whoever you''re playing:
 possess the companion character and the eyes are his. Toggle it mid-frame on the frozen
@@ -3663,7 +3663,7 @@ wall; it applies the instant play resumes.
 ## 18.86 Hair alpha: an authored MASK beats the hash (the cut value)
 
 SS18.84 hashed every hair material because hard alphaTest chewed soft
-strands. The authored-head the player character flipped the trade: her the reference action game hair textures
+strands. The authored-head the player character flipped the trade: her hair textures from the reference action game
 sit heavily in the soft mid-alpha band and stack TWO shells, so the hash
 dither read as visible static (Austin: "staticy"), while the crisp
 cutout looked right in playtest. Revision in conditionGltf: hair that
@@ -3671,7 +3671,7 @@ ARRIVES with alphaTest > 0 (an authored MASK) keeps its cut value --
 the asset chose its look, the engine stops overriding; hair that arrives
 BLEND still gets hashed exactly as SS18.84 prescribed. Practical split:
 the player character ships MASK (cut value 0.4, tunable per ship in the alpha patch);
-the companion character/Commander/the operator ship BLEND and keep their hashed look untouched. The
+the companion character/Officer/the operator ship BLEND and keep their hashed look untouched. The
 per-frame alphaTest=0 invariant only fires on hashed materials, so a
 masked cut value survives it.
 
@@ -3681,7 +3681,7 @@ The first phase of the break-out-of-the-browser plan (docs/engine/20): make
 the existing runtime industry-standard BEFORE abstracting it. Audited by
 three deep passes (render pipeline / asset pipeline / frame loop); measured
 result in the dev room: p99 frame time 21.5 -> 13.7 ms (spikes erased),
-2b.glb 167 -> 24 MB, the shipped build 667 -> 445 MB, heap -300 MB.
+hero.glb 167 -> 24 MB, the shipped build 667 -> 445 MB, heap -300 MB.
 
 RENDER: canvas antialias OFF + 4x MSAA on the postfx scene target (the old
 setup paid canvas MSAA to antialias one composite triangle -- the shipped
@@ -3901,7 +3901,7 @@ Three rounds this session chasing the player character's hair, ending at the rig
 compression alpha error, so hair/lash CUTOUT baseColor textures skip KTX2
 entirely (kept PNG, downscale-capped; detected by material name ->
 baseColorTexture source). §18.97 THE FIX: the holes were never really about
-compression — this authored the reference action game head's soft feathered hair alpha punches
+compression — this authored head's soft feathered hair alpha punches
 holes at ANY hard alphaTest threshold, even on uncompressed PNG (the
 original §18.84 complaint). Both prior treatments were wrong for it:
 §18.84's alphaHash read as "static", §18.86's cutout as "spotty, holes".

@@ -52,8 +52,8 @@ feeds the matcher, stops clean.
 - **Project `3d-sandbox-mm`** (+ .ae1proj): clone of 3d-sandbox; player script
   extends the motion-matching character †, dat carries `(mmPacks "<pack> <pack>")`
   + literal media names so the exporter's reference scan keeps them; player
-  element wears `2b.glb` (node `UE5_Manny_DEFORM`). Media imported content-
-  addressed: 2b.glb 177 MB (merged:true) + six db files (~181 MB).
+  element wears `hero.glb` (node `UE5_Manny_DEFORM`). Media imported content-
+  addressed: hero.glb 177 MB (merged:true) + six db files (~181 MB).
 
 **Lessons paid for:** (1) the 2b armature authors scale 0.01 (cm rig) and
 applyTransform stomps node transforms with ELEMENT fields — an element at
@@ -101,7 +101,7 @@ the frame, and release is the new `'__none__'` renderer sentinel
 (render3d.js: stop the action, restore NOTHING — `'__bind__'` would flash
 the rest pose for a frame). `_modelBegin` must hold `clip: '__none__'` from
 load or the empty-clip fallback auto-plays the first library clip. The
-clips themselves are `2b_actions.glb` (sword_attack, fire_bazooka),
+clips themselves are `hero_actions.glb` (sword_attack, fire_bazooka),
 retargeted from the old Mixamo one-shots by
 `motion-matching/tools/retarget_actions.py` — joint-frame DIRECTION matching,
 because delta retargeting would carry the T-pose/A-pose rest difference
@@ -137,7 +137,7 @@ strings, not the game's total; boot collects the blocks without ever
 concatenating. (3) The reference scan works unchanged: all 12 dead
 player_character libs pruned automatically once no script named them —
 nothing to configure, the Build button stays a button. The shipped
-index.html is 647 MB (2b.glb + both databases + course); first paint takes
+index.html is 647 MB (hero.glb + both databases + course); first paint takes
 ~20 s of decode.
 
 **FOOTSTEPS RUN ON THE MATCHER (2026-08-02), non-destructively:** the old
@@ -340,14 +340,14 @@ Menu (looping video + hamburger) → New Game / Load Game / Settings / Credits. 
 placeholder ffmpeg videos; Austin will swap in real assets. The New Game / Load Game / Settings
 / Credits scenes exist but are **empty** — they are where the next work goes.
 
-There is a `south-park` demo project on disk — three characters, a key, a door, a scene
+There is a small 2-D demo project on disk — three characters, a key, a door, a scene
 change. It's a test bed, not the point. Austin has said explicitly it is **not** the focus.
 
 The **`3d-sandbox`** project IS the 3D project type's living demo — and Austin is actively
 building it into a real place. **Current cast** (20 media files, ~25 elements): character
 **"the player character"** (`player.ags.txt`, extends ThirdPersonCharacter — full locomotion clip set + jump +
-interact + attack), hero **"92"**, **"Pascal"**, **"Enemy"** (extends NPC, the machine
-lifeform), **"DragoonLance"** (weapon, damage 50) + **"key"** (non-weapon) pickables,
+interact + attack), hero **"Companion"**, **"Villager"**, **"Enemy"** (extends NPC, the machine
+enemy), **"Lance"** (weapon, damage 50) + **"key"** (non-weapon) pickables,
 **"Skybox"** (`PSX_NIGHTSKY.hdr` — the world is NIGHT), Camera, Controller, and a furnished
 PSX-style plaza: tiled floor (`sampleFloor`), grass (`ForestFLoor`), office set
 (`scene1_map_details`: desk, couch, bookcase, whiteboard reading "EDITABLE!") — much of it
@@ -711,7 +711,7 @@ ramp-out aims at the REMEMBERED point); FOOT PLANT (`(footPlant true)`) rays und
 and plant-under-a-fire-stance read as recoil), settles the hips by the lower foot's drop
 (clamp 0.35, smoothed, applied as a WORLD-down vector through the parent's quaternion —
 `hips.position.y +=` on a rotX-90 armature pushes along world Z, the recoil bug; lessons),
-tilts the sampled foot to its slope normal. Bones auto-detected (mixamorig names; Pascal's
+tilts the sampled foot to its slope normal. Bones auto-detected (mixamorig names; the placeholder NPC's
 bone0 skeleton skips silently). Flat ground = no-op. NOTE: `_groundHit` prunes skinned
 meshes BEFORE casting now (the aimPoint lesson lived on in its sibling) — ground physics
 sped up engine-wide (75 fps, above the pre-procedural baseline).
@@ -753,7 +753,7 @@ Projectile TEMPLATES never render anywhere — `wantsVisible` in render3d (duck-
 
 **NPCs SPEAK now** (`DESIGN.md §18.21`): `AE1NPC extends AE1PassiveDialogue` (which extends
 Hitbox — nothing lost) — every NPC gets the companion character's proximity-chatter machine via dat alone
-(`(passiveLines …)` in enemy.ags.txt: seven pascal_audio lines); `_pvTick` refuses the dead.
+(`(passiveLines …)` in enemy.ags.txt: seven npc_audio lines); `_pvTick` refuses the dead.
 TWO gotchas honoured: the builtin runInfo lists `_pvTick` EXPLICITLY (hand-built defs don't
 merge up), and passivedialogue.js precedes npc.js in ENGINE_MODULES (base before subclass in
 one bundle scope). `(deathSounds (…))` is the DEATH EVENT TREE — no silence roll, never
@@ -780,7 +780,7 @@ it. Scene-level control is the std-lib: ANY element can `this.stopMusic()` /
 `this.playMusic(…)`; the element's `setMusic("file"|"")` swaps/stops with its fade. Demo
 element "Ambience" (ambience.ags.txt). Verified live: loop + a passive line simultaneously,
 stop from the player character's script, restore via setMusic. Verified: camera centered on the wandering NPC → fire → round left the muzzle,
-converged, "[Missile] hit Pascal", exactly 90 damage once. Aiming is look-and-shoot;
+converged, "[Missile] hit NPC", exactly 90 damage once. Aiming is look-and-shoot;
 grenades/throwables should reuse this, NOT rebuild it.
 
 **Asset removal has a real order now** (`merged` flag on media entries, §18.12.1): a glb
@@ -822,10 +822,10 @@ the weapon's `(damage 50)` dat; `takeDamage` dispatches `onHit (attacker, amount
 TOPPLE (physics-as-animation, world-axis tip composed onto rest) → vanish after `(vanishAfter 3)`.
 E on a NON-pickable hitbox dispatches `onInteract` to IT (poke the machine). `hasPhysics` on every
 Hitbox: v1 gravity+floor for free items — the SEED of the physics system, not the tree. Demo:
-"Enemy" (enemy_no_animations.glb, a machine lifeform) — wander/path/poke/two-strike-kill/topple/
+"Enemy" (enemy_no_animations.glb, a machine enemy) — wander/path/poke/two-strike-kill/topple/
 vanish all verified; screenshot shows the cyan route. NOTE: bundle-collision guard forced
 `NPC_DEG` (not DEG) in npc.js — concatenated scope. **NPCs animate now**: `(animLibs
-("pascal_moving.glb")) (move "pascal_moving.glb")` in enemy.ags.txt — the walk clip plays
+("npc_moving.glb")) (move "npc_moving.glb")` in enemy.ags.txt — the walk clip plays
 while a leg is underfoot, stops/death pin `'__bind__'` EXPLICITLY (with libs attached an
 empty clip resolves first-anywhere and a stopped NPC walks in place); `(idle "file.glb")`
 is there when an idle clip exists. The clip is a subtle up-down bob — Austin confirmed it
@@ -842,7 +842,7 @@ the grip in real time. Scroll wheel cycles; Shift+E drops 0.8 m ahead; `onPickup
 onUnequip` dispatch to the item, and `onPrimary/onSecondary` FORWARD to the equipped item (the
 wield framework). **`(isWeapon true)` + `(attack "file.glb")` turn left click into the `attack`
 one-shot** (uninterruptible like interact; hooks fire first; unarmed clicks stay hooks-only) —
-wired for DragoonLance + player_character_sword_attack1.glb, verified armed/unarmed. Demo items: DragoonLance (weapon, damage 50) + **key** (key.ags.txt, non-weapon — clicking with
+wired for Lance + player_character_sword_attack1.glb, verified armed/unarmed. Demo items: Lance (weapon, damage 50) + **key** (key.ags.txt, non-weapon — clicking with
 it does NOT swing). **Scroll cycling verified with both**: wraps in BOTH directions (backward
 from slot 0 → the LAST item; the first two-item test caught `equipIndex(-1)` emptying the hand —
 fixed: the hand only empties with the inventory). Still true: no 2D HUD overlay in 3D yet
