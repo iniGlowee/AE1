@@ -15,8 +15,9 @@ Each file uploads independently, so **one bad file won't sink a batch of forty**
 | model | gltf glb obj fbx stl |
 
 Images render — as whole pictures, or as [spritesheets](03-elements.md#spritesheets). Audio
-plays. Video plays: add one with **+ Video**, or drop a video file onto the viewport. **model**
-is recognised and stored, but nothing draws it yet.
+plays. Video plays: add one with **+ Video**, or drop a video file onto the viewport.
+**model** files (glTF/GLB) are drawn in 3D projects, by an element whose model points at the file; in a 2D
+point-and-click project they are stored but nothing draws them.
 
 ### Video in the editor
 
@@ -75,8 +76,8 @@ stores the hash.
 
 | | |
 |---|---|
-| Drag a tile → Viewport | becomes an element there, at natural size |
-| Double-click a tile | adds it at the frame centre |
+| Drag a tile → Viewport | **2D point-and-click projects:** becomes an element there, at natural size. **3D projects (the Starter, and anything the Wizard scaffolds for 3D):** the viewport shows a scene, so an image dropped on it does nothing yet. See the note below |
+| Double-click a tile | **2D projects:** adds it at the frame centre |
 | `this.setSprite("name.png")` | swaps an existing element's picture |
 | `icon: "name.png"` in `give()` | an inventory item's picture |
 | `this.playSound("name.mp3")` | audio |
@@ -132,3 +133,7 @@ white box over your scene.
 For a thing painted into a background you want clickable, you don't need art at all: place an
 element with **`opacity: 0`** over it. It still hit-tests. That's the most common trick in the
 genre.
+
+> **Working in a 3D project?** A picture is not an object in a 3D scene, it has to be on a surface, and the editor has no way yet to
+> turn a dropped image into one. Until it does: put the picture on a surface in your 3D tool, export a `.glb`, and import that;
+> or use a 2D point-and-click project for picture-based work. `this.setSprite("name.png")` applies to 2D elements.

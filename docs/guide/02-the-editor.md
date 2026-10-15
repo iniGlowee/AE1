@@ -74,8 +74,9 @@ Those dat fields are the same values your script reads. Change `locked` here and
 
 Drag files in, or **+ Import**. See [Media](06-media.md).
 
-Tiles show usage counts (`3×`). Drag a tile to the viewport to make it an element.
-Double-click adds it at the frame centre.
+Tiles show usage counts (`3×`). **In a 2D point-and-click project**, drag a tile to the viewport to make it an element;
+double-click adds it at the frame centre. **In a 3D project** (the Starter) the viewport shows a scene, so dropping an
+image does nothing yet; see the note under [Media](06-media.md#using-an-asset).
 
 ### Angel Script
 
