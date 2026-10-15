@@ -1,3 +1,19 @@
+# AE1 — Angel's Egg 1 · v0.3.1-alpha
+
+**The AE1 logo, and a hardening.** A patch release: nothing new to learn, two things a visitor sees and one they
+should never have to.
+
+- **The AE1 egg is the editor's icon.** Browser tabs, bookmarks and phone home screens show the egg from the AE1 logo
+  (favicon 16/32/48 px, 32 and 512 px PNGs, a 180 px touch icon), from `editor/assets/`; the server also answers
+  `/favicon.ico` at the root, which browsers and link scrapers ask for whatever a page declares.
+- **Shared links show the logo.** The editor and docs pages carry Open Graph and Twitter card tags, so a link to the
+  hosted demo previews with the whole AE1 logo, a title and a one-line description.
+- **Hardening: sample paths.** The sample folder a project restores from is now resolved by one checked function that
+  admits only a plain name inside `samples/`. Nothing reached it with a hostile value — no route can write the fields it
+  reads — but restore copies from that path into a project a visitor can read, so it is closed anyway.
+
+---
+
 # AE1 — Angel's Egg 1 · v0.3.0-alpha
 
 **The first release shaped by an outside user.** The first person to try AE1 without being shown how changed the Starter,
