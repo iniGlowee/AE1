@@ -321,6 +321,23 @@ SAMPLES_DIR = Path(__file__).resolve().parent / "samples"
 _SAMPLE_SKIP_DIRS = {"saves", "snapshots"}
 
 
+_SAMPLE_NAME_RE = re.compile(r"[a-z0-9][a-z0-9-]{0,63}")
+
+
+def sample_dir(name) -> Path | None:
+    """The shipped sample folder for a name — or None. The ONE way any code here
+    turns a sample name into a path: a plain slug only (no separators, no dots,
+    no traversal) whose resolved folder sits directly inside samples/. The names
+    come from server-written project fields today, so nothing reaches this with
+    a hostile value; the check is here so that stays true if a field ever does."""
+    if not isinstance(name, str) or not _SAMPLE_NAME_RE.fullmatch(name):
+        return None
+    path = (SAMPLES_DIR / name).resolve()
+    if path.parent != SAMPLES_DIR.resolve() or not path.is_dir():
+        return None
+    return path
+
+
 def sample_of(project: dict) -> str | None:
     """The sample a project came from: itself if it IS one, else its `basedOn`.
 
@@ -328,12 +345,10 @@ def sample_of(project: dict) -> str | None:
     copied from one (save-as) records `basedOn` and is NOT itself a sample, so it
     can restore a shipped SCRIPT but never be reset wholesale."""
     based = project.get("basedOn")
-    if based and (SAMPLES_DIR / based).is_dir():
-        return based
+    if based:
+        return based if sample_dir(based) else None
     folder = project.get("folder") or project.get("slug")
-    if not based and folder and (SAMPLES_DIR / folder).is_dir():
-        return folder
-    return None
+    return folder if sample_dir(folder) else None
 
 
 def is_sample(project: dict) -> bool:
@@ -421,7 +436,7 @@ def sample_diff(slug: str) -> dict:
     sample = sample_of(project)
     if not sample:
         raise ApiError(404, f"'{slug}' is not based on a sample project.")
-    mine, shipped = _tree_files(pdir), _tree_files(SAMPLES_DIR / sample)
+    mine, shipped = _tree_files(pdir), _tree_files(sample_dir(sample))
     manifest = {}
     try:
         manifest = read_json(pdir / "media" / "manifest.json").get("entries", {})
@@ -504,7 +519,7 @@ def restore_sample(slug: str) -> dict:
     if not is_sample(project):
         raise ApiError(400, f"'{slug}' is not a sample project; only a sample can be restored.")
     sample = sample_of(project)
-    src = SAMPLES_DIR / sample
+    src = sample_dir(sample)
     staging = pdir.with_name(f".{pdir.name}.restoring")
     retired = pdir.with_name(f".{pdir.name}.retired")
     for stale in (staging, retired):
@@ -518,7 +533,7 @@ def restore_sample(slug: str) -> dict:
     staging.rename(pdir)
     shutil.rmtree(retired, ignore_errors=True)
 
-    shipped_file = SAMPLES_DIR / f"{sample}.ae1proj"
+    shipped_file = src.parent / f"{src.name}.ae1proj"
     restored = read_json(shipped_file) if shipped_file.is_file() else dict(project)
     restored.update({
         "id": project.get("id", restored.get("id")),
@@ -884,7 +899,7 @@ def api_project_copy(body, slug):
 def api_project_sample(_body, slug):
     project = load_project(slug)
     sample = sample_of(project)
-    scripts = sorted(p.name for p in (SAMPLES_DIR / sample / "scripts").glob("*.ags.txt")) if sample else []
+    scripts = sorted(p.name for p in (sample_dir(sample) / "scripts").glob("*.ags.txt")) if sample else []
     return {"sample": sample, "isSample": is_sample(project), "scripts": scripts}
 
 
@@ -893,8 +908,9 @@ def api_project_sample_script(_body, slug, filename):
     if not AGS_RE.fullmatch(filename):
         raise ApiError(400, f"Angel Script files must be named SOMENAME.ags.txt (got '{filename}').")
     sample = sample_of(load_project(slug))
-    path = (SAMPLES_DIR / sample / "scripts" / filename).resolve() if sample else None
-    if not path or not path.is_relative_to(SAMPLES_DIR) or not path.is_file():
+    base = sample_dir(sample) if sample else None
+    path = (base / "scripts" / filename).resolve() if base else None
+    if not path or not path.is_relative_to(base) or not path.is_file():
         raise ApiError(404, f"No shipped version of '{filename}' for this project.")
     return {"file": filename, "sample": sample, "content": path.read_text(encoding="utf-8")}
 
